@@ -1,0 +1,55 @@
+{{> menuadmin}}
+
+<div class="jumbotron">
+        <h2>Agiriak aldatu</h2>
+</div>
+<div class="formContainer">
+{{#each data}}
+    <form class="form-horizontal newsletterForm" role="form" action="/admin/agiriakaldatu/{{idAgiriak}}" method="POST">
+    <input type="hidden" name="_csrf" value="{{_csrfToken}}">
+        <div class="form-group">
+            <label for="atalaAgiria" class="col-sm-2 control-label">Atala</label>
+            <div class="col-sm-4">
+                <input type="text" class="form-control" required id="atalaAgiria" name="atalaAgiria" autofocus value={{atalaAgiria}} >
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="izenaAgiria" class="col-sm-2 control-label">Agiriaren izena</label>
+            <div class="col-sm-4">
+                <textarea name="izenaAgiria" rows="1" cols="20" class="form-control" required id="izenaAgiria" > {{izenaAgiria}} </textarea>
+            </div>
+        </div> 
+
+         <div class="form-group">
+            <label for="urlAgiria" class="col-sm-2 control-label">Agiriaren URL</label>
+            <div class="col-sm-4">
+                <textarea name="urlAgiria" rows="1" cols="20" class="form-control" required id="urlAgiria" > {{urlAgiria}} </textarea>
+            </div>
+        </div> 
+
+        <div class="form-group">
+          <label for="agiria" class="col-sm-2 control-label">Agiria</label>
+          <div class="col-sm-4">
+            <input type="file" class="form-control" required id="agiria" data-url="/upload" name="agiria">
+          </div>
+        </div>
+       
+       <div class="form-group">
+            <label for="dataAgiria" class="col-sm-2 control-label">Data</label>
+            <div class="col-sm-4">
+                <input type="date" class="form-control" required id="dataAgiria" name="dataAgiria" autofocus value={{dataAgiria}} >
+            </div>
+        </div>
+
+
+        <div class="form-group">
+            <div class="col-sm-offset-3 col-sm-4">
+                <button type="submit" class="btn btn-default">Gorde</button>
+            </div>
+        </div>
+    </form>
+    {{/each}}
+</div>
+
+      </div>

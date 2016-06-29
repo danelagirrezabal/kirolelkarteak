@@ -1,0 +1,73 @@
+{{> menuadmin}}
+
+     <div class="jumbotron">
+        <h2>Elkartea editatu</h2>
+      </div>
+
+<a href="/admin/lekuak" class="btn btn-primary btn-sm" role="button">Zelaiak</a>
+<a href="/admin/mailak" class="btn btn-primary btn-sm" role="button">Mailak</a>
+<br/>
+<br/>
+
+<div class="formContainer col-sm-offset-1">
+    <form class="form-horizontal newsletterForm" role="form" action="/kirolElkarteakaldatu/{{idKirolElkarteak}}" method="POST">
+    <input type="hidden" name="_csrf" value="{{_csrfToken}}">
+        <div class="form-group">
+            <label for="izenaElk" class="col-sm-2 control-label">Kirol Elkartearen izena</label>
+            <div class="col-sm-4">
+                <input type="text" class="form-control" required id="izenaElk" autofocus name="izenaElk" value={{izenaElk}}>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="ifz" class="col-sm-2 control-label">Identifikazio Fiskaleko Zenbakia</label>
+            <div class="col-sm-4">
+                <input type="text" class="form-control" required id="ifz" name="ifz" value={{ifz}}>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="helbideaElk" class="col-sm-2 control-label">Helbidea</label>
+            <div class="col-sm-4">
+                <input type="text" class="form-control" required id="helbideaElk" name="helbideaElk" value={{helbideaElk}}>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="postaKodeaElk" class="col-sm-2 control-label">Posta kodea</label>
+            <div class="col-sm-4">
+                <input type="text" class="form-control" required id="postaKodeaElk" name="postaKodeaElk" value={{postaKodeaElk}}>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="herriaElk" class="col-sm-2 control-label">Herria</label>
+            <div class="col-sm-4">
+                <input type="text" class="form-control" required id="herriaElk" name="herriaElk" value={{herriaElk}}>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="telefonoaElk" class="col-sm-2 control-label">Telefonoa</label>
+            <div class="col-sm-4">
+                <input type="text" class="form-control" required id="telefonoaElk" name="telefonoaElk" value={{telefonoaElk}}>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="emailElk" class="col-sm-2 control-label">Email</label>
+            <div class="col-sm-4">
+                <input type="email" class="form-control" required id="emailElk" name="emailElk" value={{emailElk}}>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="pasahitzaPart" class="col-sm-2 control-label">Pasahitza</label>
+            <div class="col-sm-4">
+                <input type="password" class="form-control" required id="pasahitzaPart" name="pasahitzaPart" placeholder="Sartu pasahitza" value={{pasahitzaPart}} >
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-4">
+                <button type="submit" class="btn btn-default">Elkartea aldatu</button>
+            </div>
+        </div>
+
+    </form>
+</div>
+</div>
+
+ 

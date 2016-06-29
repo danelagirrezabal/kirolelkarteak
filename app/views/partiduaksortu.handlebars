@@ -1,0 +1,140 @@
+{{> menu}}
+
+      <div class="jumbotron">
+        <h2>Partiduak sortu</h2>
+      </div>
+
+<div class="formContainer col-sm-offset-1">
+    <form class="form-horizontal newsletterForm" role="form" action="/admin/partiduaksortu" method="POST">
+    <input type="hidden" name="_csrf" value="{{_csrfToken}}">
+        </br>
+        
+        <div class="form-group">
+            <label for="idTaldeakPartidu" class="col-sm-2 control-label">Taldea</label>
+            <div class="col-sm-4">
+            <select name="idTaldeakPartidu" id="idTaldeakPartidu">
+                <option value="">--Aukeratu taldea--</option>
+                {{#each taldeak}}
+                       <option value="{{idTaldeak}}">{{izenaTalde}} - {{izenaMaila}}</option>
+                {{/each}}
+
+            </select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="txapelketaPartidu" class="col-sm-2 control-label">Txapelketa</label>
+            <div class="col-sm-4">
+                <textarea name="txapelketaPartidu" rows="1" cols="40" class="form-control" required>{{txapelketaPartidu}}</textarea>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="jardunaldiaPartidu" class="col-sm-2 control-label">Jardunaldia</label>
+            <div class="col-sm-4">
+                <textarea name="jardunaldiaPartidu" rows="1" cols="40" class="form-control" required>{{jardunaldiaPartidu}}</textarea>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="jardunaldiDataPartidu" class="col-sm-2 control-label">Jardunaldi data</label>
+            <div class="col-sm-4">
+                <textarea name="jardunaldiDataPartidu" rows="1" cols="40" class="form-control" required>{{jardunaldiDataPartidu}}</textarea>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="etxekoaPartidu" class="col-sm-2 control-label">Etxeko taldea</label>
+            <div class="col-sm-4">
+                <textarea name="etxekoaPartidu" rows="1" cols="40" class="form-control" required>{{etxekoaPartidu}}</textarea>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="kanpokoaPartidu" class="col-sm-2 control-label">Kanpoko taldea</label>
+            <div class="col-sm-4">
+                <textarea name="kanpokoaPartidu" rows="1" cols="40" class="form-control" required>{{kanpokoaPartidu}}</textarea>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="orduaPartidu" class="col-sm-2 control-label">Ordua</label>
+            <div class="col-sm-4">
+                <textarea name="orduaPartidu" rows="1" cols="40" class="form-control" required>{{orduaPartidu}}</textarea>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="dataPartidu" class="col-sm-2 control-label">Data</label>
+            <div class="col-sm-4">
+                <!--<textarea name="dataPartidu" rows="1" cols="40" class="form-control" required>{{dataPartidu}}</textarea>-->
+                <input type="date" class="form-control" required id="dataPartidu" autofocus name="dataPartidu" value={{dataPartidu}}>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="idLekuakPartidu" class="col-sm-2 control-label">Lekua</label>
+            <div class="col-sm-4">
+            <select name="idLekuakPartidu" id="idLekuakPartidu">
+                <option value="">--Aukeratu lekua--</option>
+                {{#each lekuak}}
+                       <option value="{{idLekuak}}">{{izenaLeku}} - {{herriaLeku}}</option>
+                {{/each}}
+
+            </select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="nonPartidu" class="col-sm-2 control-label">Non</label>
+            <div class="col-sm-4">
+                <textarea name="nonPartidu" rows="1" cols="40" class="form-control" required></textarea>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="bidaiOrduaPartidu" class="col-sm-2 control-label">Bidaia ordua</label>
+            <div class="col-sm-4">
+                <textarea name="bidaiOrduaPartidu" rows="1" cols="40" class="form-control"></textarea>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="bidaiaNolaPartidu" class="col-sm-2 control-label">Bidaia nola</label>
+            <div class="col-sm-4">
+                <textarea name="bidaiaNolaPartidu" rows="1" cols="40" class="form-control">Autobusez</textarea>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="bidaiEgunaPartidu" class="col-sm-2 control-label">Bidaia eguna</label>
+            <div class="col-sm-4">
+                <textarea name="bidaiEgunaPartidu" rows="1" cols="40" class="form-control">{{dataPartidu}}</textarea>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="emaitzaPartidu" class="col-sm-2 control-label">Emaitza</label>
+            <div class="col-sm-4">
+                <textarea name="emaitzaPartidu" rows="1" cols="40" class="form-control">{{emaitzaPartidu}}</textarea>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-4">
+                <button type="submit" class="btn btn-default">Sortu</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+      </div>
+
+<script>
+
+Handlebars.registerHelper('mailaBerdina',function(kategoria, idmaila){
+  return kategoria  == idmaila;
+});
+
+
+</script>

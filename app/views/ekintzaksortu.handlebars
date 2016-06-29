@@ -1,0 +1,52 @@
+{{> menuadmin}}
+
+<div class="jumbotron">
+        <h2>Ekintzak sortu</h2>
+      </div>
+<div class="formContainer">
+    <form class="form-horizontal newsletterForm" role="form" action="/admin/ekintzaksortu" method="POST">
+    <input type="hidden" name="_csrf" value="{{_csrfToken}}">
+
+        <div class="form-group">
+            <label for="motaEkintza" class="col-sm-2 control-label">Ekintza mota</label>
+            <div class="col-sm-4">
+                <input type="text" class="form-control" required id="motaEkintza" name="motaEkintza" autofocus value={{motaEkintza}} >
+            </div>
+        </div>   
+        
+        <div class="form-group">
+            <label for="noiztikEkintza" class="col-sm-2 control-label">Ekintzaren hasiera data</label>
+            <div class="col-sm-4">
+                <input type="text" class="form-control" required id="noiztikEkintza" name="noiztikEkintza" autofocus value={{noiztikEkintza}} >
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="noraEkintza" class="col-sm-2 control-label">Ekintzaren bukaera data</label>
+            <div class="col-sm-4">
+                <input type="text" class="form-control" required id="noraEkintza" name="noraEkintza" autofocus value={{noraEkintza}} >
+            </div>
+        </div>    
+
+        <div class="form-group">
+            <label for="kontuKorronteEkintza" class="col-sm-2 control-label">Kontu korrontea</label>
+            <div class="col-sm-4">
+                <input type="text" class="form-control" required id="kontuKorronteEkintza" name="kontuKorronteEkintza" autofocus value={{kontuKorronteEkintza}} >
+            </div>
+        </div>   
+        <div class="form-group">
+            <label for="diruaEkintza" class="col-sm-2 control-label">Diru kantitatea</label>
+            <div class="col-sm-4">
+                <input type="text" class="form-control" required id="diruaEkintza" name="diruaEkintza" autofocus value={{diruaEkintza}} >
+            </div>
+        </div>       
+
+        <div class="form-group">
+            <div class="col-sm-offset-3 col-sm-4">
+                <button type="submit" class="btn btn-default">Gorde</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+      </div>

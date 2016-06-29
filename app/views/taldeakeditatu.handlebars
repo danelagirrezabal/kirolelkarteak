@@ -1,0 +1,103 @@
+{{> menu}}
+
+      <div class="jumbotron">
+        <h2>Taldeak editatu</h2>
+      </div>
+
+<div class="formContainer col-sm-offset-1">
+{{#each data}}
+    <form class="form-horizontal newsletterForm" role="form" action="/admin/taldeakaldatu/{{idTaldeak}}" method="POST">
+    <input type="hidden" name="_csrf" value="{{_csrfToken}}">
+        </br>
+        <div class="form-group">
+            <label for="izenaTalde" class="col-sm-2 control-label">Taldearen izena</label>
+            <div class="col-sm-4">
+                <textarea name="izenaTalde" rows="1" cols="40" class="form-control" required>{{izenaTalde}}</textarea>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="idMailaTalde" class="col-sm-2 control-label">Maila</label>
+            <div class="col-sm-4">
+            <select name="idMailaTalde" id="idMailaTalde">
+                {{#each mailak}}
+                    {{#if aukeratua}}
+                       <option value="{{idMailak}}" selected>{{izenaMaila}}</option>
+                    {{else}}
+                        <option value="{{idMailak}}">{{izenaMaila}}</option>
+                    {{/if}}
+                {{/each}}
+            </select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="akronimoTalde" class="col-sm-2 control-label">Akronimoa</label>
+            <div class="col-sm-4">
+                <input type="text" class="form-control" required id="akronimoTalde" name="akronimoTalde" value={{akronimoTalde}}>
+            </div>
+        </div>
+
+        <h4 style="color:#0000FF"> ARDURADUNA </h4>
+        <div class="form-group">
+            <label for="arduradunEmailTalde" class="col-sm-2 control-label">Arduradun email</label>
+            <div class="col-sm-4">
+                <input type="text" class="form-control" required id="arduradunEmailTalde" name="arduradunEmailTalde" value={{arduradunEmailTalde}}>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="idArduradunTalde" class="col-sm-2 control-label">Arduraduna</label>
+            <div class="col-sm-4">
+            <select name="idArduradunTalde" id="idArduradunTalde">
+                {{#each arduradunak}}
+                    {{#if aukeratua}}
+                       <option value="{{idPartaideak}}" selected >{{izenaPart}} {{abizena1Part}}</option>
+                    {{else}}
+                        <option value="{{idPartaideak}}">{{izenaPart}} {{abizena1Part}}</option>
+                    {{/if}}
+                {{/each}}
+            </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="urlSailkapenTalde" class="col-sm-2 control-label">Sailkapenaren URL</label>
+            <div class="col-sm-4">
+                <textarea name="urlSailkapenTalde" rows="1" cols="40" class="form-control" required>{{urlSailkapenTalde}}</textarea>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="idEkintzakTalde" class="col-sm-2 control-label">Ekintza</label>
+            <div class="col-sm-4">
+            <select name="idEkintzakTalde" id="idEkintzakTalde">
+                {{#each ekintzak}}
+                    {{#if aukeratua}}
+                       <option value="{{idEkintzak}}" selected>{{motaEkintza}}</option>
+                    {{else}}
+                        <option value="{{idEkintzak}}">{{motaEkintza}}</option>
+                    {{/if}}
+                {{/each}}
+            </select>
+            </div>
+        </div>
+        
+
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-4">
+                <button type="submit" class="btn btn-default">Sortu</button>
+            </div>
+        </div>
+    </form>
+    {{/each}}
+
+</div>
+
+      </div>
+
+<script>
+
+Handlebars.registerHelper('mailaBerdina',function(kategoria, idmaila){
+  return kategoria  == idmaila;
+});
+
+
+</script>

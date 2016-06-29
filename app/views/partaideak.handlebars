@@ -1,0 +1,67 @@
+{{> menuadmin}}
+
+<div class="jumbotron">
+        <h2>Partaideak ikusi</h2>
+      </div>
+
+     <div class="container">
+  <a href="/taldeak" class="btn btn-primary btn-sm" role="button">Taldeak ikusi</a>
+
+<div class="row marketing">
+
+        <div class="col-lg-8">
+          <div class="col-lg-2">
+          <h3 style="color:#0000FF"> Partaideak </h3>
+          <form class="form-horizontal newsletterForm" role="form" action="/partaideakgehitu" method="POST">
+        <input type="hidden" name="_csrf" value="{{_csrfToken}}">
+          </div>
+         <div class="form-group">
+            <div class="col-sm-offset-3"> 
+                <br/>
+            
+                  <button type="submit" class="btn btn-default">Banaka Gehitu</button>
+        
+
+            </div>
+        </div>
+        </form> 
+            <table class="table table-striped">
+            <tr>
+                    <th>Izena</th>
+                    <th>Abizenak</th>
+                    <th>NAN</th>
+                    <th>Emaila</th>
+                    <th>Telefonoa</th>
+                    <th>Herria</th>
+                    <th></th>
+                    <th></th>
+
+                </tr>                               
+            {{#each data}}
+                  <tr>
+                    <td>{{izenaPart}}</td>
+                    <td>{{abizena1Part}}  {{abizena2Part}}</td>
+                    <td>{{nanPart}}</td>
+                    <td>{{emailPart}}</td>
+                    <td>{{telefonoaPart}}</td>
+                    <td>{{herriaPart}}</td>
+                    <td>
+                        <a class="a-inside delete" href="../admin/bazkideaksortu/{{idPartaideak}}">Bazkide egin</a> 
+                     </td>
+                     <td>
+                        <a class="a-inside edit" href="../admin/partaideakeditatu/{{idPartaideak}}">Aldatu</a>
+                     </td>
+                     <td>
+                        <a class="a-inside delete" href="../admin/partaideakezabatu/{{idPartaideak}}">Ezabatu</a> 
+                     </td>
+                     
+
+                </tr>
+            {{/each}}
+          </table>
+        </div>
+
+        
+      </div>
+      
+</div>

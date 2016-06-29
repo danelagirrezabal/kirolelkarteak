@@ -1,0 +1,60 @@
+{{> menuadmin}}
+
+      <div class="jumbotron">
+        <h2>Partiduak kargatu</h2>
+      </div>
+
+<div class="formContainer col-sm-offset-1">
+    <form class="form-horizontal newsletterForm" role="form" action="/admin/partiduakkargatuegin" method="POST">
+    <input type="hidden" name="_csrf" value="{{_csrfToken}}">
+        </br>
+        <div class="form-group">
+            <label for="idTaldeakPartidu" class="col-sm-2 control-label">Taldearen izena</label>
+            <div class="col-sm-4">
+              <select name="idTaldeakPartidu" id="idTaldeakPartidu">
+                <option value="">--Aukeratu taldea--</option>
+                {{#each taldeak}}
+                       <option value="{{idTaldeak}}">{{izenaTalde}} - {{izenaMaila}}</option>
+                {{/each}}
+
+              </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="federazioTaldeIzena" class="col-sm-2 control-label">Federazioak jarritako taldearen izena:</label>
+            <div class="col-sm-4">
+                <textarea name="federazioTaldeIzena" rows="1" cols="40" class="form-control" required></textarea>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="txapelketa" class="col-sm-2 control-label">Txapelketa</label>
+            <div class="col-sm-4">
+                <textarea name="txapelketa" rows="1" cols="40" class="form-control" required></textarea>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="partiduakCSV" class="col-sm-2 control-label">Partiduak csv formatuan</label>
+            <div class="col-sm-8">
+                <textarea name="partiduakCSV" rows="10" cols="100" class="form-control" required></textarea>
+            </div>
+        </div>
+        
+
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-4">
+                <button type="submit" class="btn btn-default">Kargatu</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+      </div>
+
+<script>
+
+Handlebars.registerHelper('mailaBerdina',function(kategoria, idmaila){
+  return kategoria  == idmaila;
+});
+
+
+</script>

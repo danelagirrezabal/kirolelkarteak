@@ -1,0 +1,29 @@
+<div class="container">
+
+<div class="col-sm-6 col-sm-offset-3">
+
+  <h1><span class="fa fa-sign-in"></span> Ongi etorri! </h1>
+  <h4> <b> Aukeratu ezazu kirol elkarte bat, informazioa ikusi ahal izateko. </b></h4>
+
+  </br>
+  <!-- LOGIN FORM -->
+  <form action="/kirolElkarteakaukeratu" method="post">
+
+    <div class="form-group">
+      <label for="sKirolElkarteak">Elkarteak</label>
+      <select name="sKirolElkarteak" id="sKirolElkarteak">
+            <option value="">--Elkartea aukeratu--</option>
+            {{#each kirolElkarteak}}
+                <option value="{{idElkarteak}}">{{izenaElk}}</option>
+            {{/each}}
+            
+      </select>
+    </div>
+
+    <button type="submit" class="btn btn-warning btn-lg">Aukeratu</button>
+  </form>
+
+</div>
+
+</div>
+

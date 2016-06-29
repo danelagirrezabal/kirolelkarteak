@@ -1,0 +1,23 @@
+{{> menuadmin}}
+
+      <div class="jumbotron">
+        <h2>Partaide motak gehitu</h2>
+      </div>
+
+<div class="formContainer">
+    <form class="form-horizontal newsletterForm" role="form" action="/admin/partaidemotaksortu" method="POST">
+    <input type="hidden" name="_csrf" value="{{_csrfToken}}">
+        
+        <div class="form-group">
+            <label for="deskribapenMota" class="col-sm-2 control-label">Partaide motaren deskribapena</label>
+            <div class="col-sm-4">
+                <textarea name="deskribapenMota" rows="1" cols="40" class="form-control" required id="deskribapenMota">  </textarea>
+            </div>
+
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-4">
+                <button type="submit" class="btn btn-default">Gorde</button>
+            </div>
+        </div>
+    </form>
+</div>

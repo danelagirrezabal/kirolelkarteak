@@ -1,0 +1,56 @@
+  <div class="container">
+
+<div class="col-sm-6 col-sm-offset-3">
+
+  <h1><span class="fa fa-sign-in"></span> Pasahitza aldatzeko eskaera </h1>
+  </br>
+  <p> Email bat jasoko duzu zure postontzian eta bertako linkean sartu behar duzu pasahitza aldatu ahal izateko. </p>
+
+  <!-- LOGIN FORM -->
+  <form action="/forgot" method="post">
+    <div class="form-group">
+      <label>Emaila</label>
+      <input type="email" class="form-control" required id="emailaard" autofocus placeholder="Sartu emaila" name="emailaard">
+    </div>
+
+    <div class="form-group">
+      <label for="sPartaideak">Partaidearen izena</label>
+      <select name="sPartaideak" id="sPartaideak">
+        <option value=" ">--Aukeratu bat --</option>
+      </select>
+    </div>
+  
+
+    <button type="submit" class="btn btn-warning btn-lg">Aldatu</button>
+  </form>
+
+</div>
+
+</div>
+
+{{#section 'jquery'}}
+<script>
+  $(document).ready(function(){        
+
+    $('#emailaard').change(function(){
+
+      var data = 'id=' + $('#emailaard').val();
+
+      $.get('partaidemail/'+$('#emailaard').val(), function(resp) {
+        var totTal = resp.length;
+
+        sPartaideak.length = totTal;
+        for (var i = 0; i < totTal; i++){
+
+           sPartaideak.options[i] = new Option (resp[i].izenaPart, resp[i].idPartaideak)
+         };
+      });
+    });
+  });
+            
+</script> 
+        
+{{/section}}
+
+
+

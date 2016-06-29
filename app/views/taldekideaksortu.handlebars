@@ -1,0 +1,84 @@
+{{> menu}}
+
+      <div class="jumbotron">
+        <h2>Taldekideak sortu</h2>
+        {{#each talde}}
+        <h2>Taldekideak</h2>
+        <h3>{{izenaTalde}} - {{izenaMaila}}</h3> 
+        {{/each}}
+      </div>
+
+<div class="formContainer col-sm-offset-1">
+    <form class="form-horizontal newsletterForm" role="form" action="/admin/taldekideaksortu/{{idTaldeak}}" method="POST">
+    <input type="hidden" name="_csrf" value="{{_csrfToken}}">
+        </br>
+        
+        <div class="form-group">
+            <label for="idPartaideakKide" class="col-sm-2 control-label">Jokalaria</label>
+            <div class="col-sm-4">
+            <select name="idPartaideakKide" id="idPartaideakKide">
+                <option value="">--Partaidea aukeratu--</option>
+                {{#each partaideak}}
+                       <option value="{{idPartaideak}}">{{izenaPart}} {{abizena1Part}} {{abizena2Part}}</option>
+                {{/each}}
+            </select>
+            </div>
+        </div>
+
+         <div class="form-group">
+            <label for="idMotaKide" class="col-sm-2 control-label">Partaide mota</label>
+            <div class="col-sm-4">
+            <select name="idMotaKide" id="idMotaKide">
+                <option value="">--Mota aukeratu--</option>
+                {{#each motak}}
+                       <option value="{{idPartaideMotak}}">{{deskribapenMota}}</option>
+                {{/each}}
+            </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="kamixetaZenbKide" class="col-sm-2 control-label">Kamixeta zenbakia</label>
+            <div class="col-sm-4">
+                <textarea name="kamixetaZenbKide" rows="1" cols="40" class="form-control" required></textarea>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="materialaKide" class="col-sm-2 control-label">Materiala</label>
+            <div class="col-sm-4">
+                <textarea name="materialaKide" rows="1" cols="40" class="form-control" required></textarea>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="bazkideZenbKide" class="col-sm-2 control-label">Bazkide zenbakia</label>
+            <div class="col-sm-4">
+                <textarea name="bazkideZenbKide" rows="1" cols="40" class="form-control" required></textarea>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="ordainduKide" class="col-sm-2 control-label">Kuota ordainduta?</label>
+            <div class="col-sm-4">
+                <select name="ordainduKide" required id="ordainduKide">
+                    <option value="Ez">Ez</option>
+                    <option value="Bai">Bai</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-4">
+                <button type="submit" class="btn btn-default">Sortu</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+      </div>
+
+<script>
+
+Handlebars.registerHelper('mailaBerdina',function(kategoria, idmaila){
+  return kategoria  == idmaila;
+});
+
+
+</script>
