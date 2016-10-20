@@ -1,72 +1,73 @@
-{{#if menuadmin}}
-  {{> menuadmin}}
-{{else}}
-  {{> menu}}
-{{/if}}
+{{> menu}}
 
-<div class="jumbotron">
+   <div class="jumbotron">
         <h2>Partiduak</h2>
       </div>
-      {{#if menuadmin}}
-        {{else}}
-            {{#if taldekoa}} 
-                <a href="/partiduak" class="btn btn-primary btn-sm" role="button">Partidu guztiak ikusi</a>
-            {{else}}
-                <a href="/taldepartiduak" class="btn btn-primary btn-sm" role="button">Zure multzoaren partiduak ikusi</a>
-            {{/if}}
-            
-        {{/if}}
+      </br></br>
+       <div class="form-group">
+            <label for="jardunaldia" class="col-sm-2 control-label">Jardunaldia:</label>
+            <div class="col-sm-4">
+            <select name="jardunaldia" id="jardunaldia">
+                <option value="">--Aukeratu jardunaldia--</option>
+                {{#each jardunaldiak}}
+                       <option value="{{jardunaldiDataPartidu}}">{{jardunaldiDataPartidu}}</option>
+                {{/each}}
+            </select>
+            </div>
+        </div>
+      </br></br>
       <div class="row marketing">
-        <div class="col-lg-11 col-sm-offset-1">
-            
-        {{#each data}}
-                  
-                    <h2 style="color:#0000FF">{{mailaizena}}</h2>  
-                    
-                    {{#each multzoak}} 
-                        <h3>{{multzo}} </h3>  
-                        <table class="table table-striped">
-                            <tr>
-                                <th>Jardun.</th>
-                                <th>A taldea</th>
-                                <th>B taldea</th>
-                                {{#if admin}}
-                                    <th>Eguna</th>
-                                    <th>Ordua</th>
-                                    <th>Zelaia</th>
-                                    <th> </th>
-                                    <th>1.zatia</th>
-                                    <th>Urrezko1.</th>
-                                    <th>2.zatia</th>
-                                    <th>Urrezko2.</th>
-                                    <th>Shut out</th>
-                                {{/if}}
-                                <th>Emaitza</th>
-                            </tr>   
-                        {{#each partiduak}}
-                            <tr>
-                                <td align="center" width="5%">{{jardunaldia}}</td>
-                                <td>{{taldeizena1}}</td>      
-                                <td>{{taldeizena2}}</td>
-                                {{#if admin}}
-                                    <td>{{pareguna}}</td>
-                                    <td>{{parordua}}</td>
-                                    <td>{{zelaia}}-{{zelaiizena}}</td>
-                                    <td align="center" width="8%"> <a class="a-inside edit" href="/admin/partidua/{{idpartidu}}">Aldatu</a> </td> 
-                                    <td>{{golak1a}}-{{golak1b}}</td>
-                                    <td width="15%">{{goldeoro1}}</td>
-                                    <td>{{golak2a}}-{{golak2b}}</td>
-                                    <td>{{goldeoro2}}</td>
-                                    <td>{{shutout}}</td>
-                                {{/if}}
-                                <td width="5%">{{emaitza1}}-{{emaitza2}}</td>               
-                            </tr>
-                        {{/each}} 
-                      </table>
-                    {{/each}} 
-                
+        <div class="col-lg-12">
+        <table class="table table-condensed">
+            <tr>
+                    <th  width="15%">Eguna</th>
+                    <th>Maila</th>
+                    <th>Txapelketa</th>
+                    <th>A ekipoa</th>
+                    <th>B ekipoa</th>
+                    <th>Lekua</th> 
+                    <th>Ordua</th>
+                    <th>Irteera ordua</th>
+                    <th>Bidaia nola</th>
+                    <th>Bidai eguna</th>
+                    <th>Emaitza</th>
+                </tr>          
+
+            {{#each data}}
+                  <tr class="active">
+                    <td>{{dataPartidu}}</td>  
+                    <td>{{izenaMaila}}</td> 
+                    <td>{{txapelketaPartidu}}</td>  
+                    <td>{{etxekoaPartidu}}</td>   
+                    <td>{{kanpokoaPartidu}}</td> 
+                    <td>{{izenaLeku}} - {{herriaLeku}}</td>   
+                    <td>{{orduaPartidu}}</td> 
+                    <td>{{bidaiOrduaPartidu}}</td>
+                    <td>{{bidaiaNolaPartidu}}</td>
+                    <td>{{bidaiEgunaPartidu}}</td>
+                    <td>{{emaitzaPartidu}}</td> 
+                </tr>
             {{/each}}
+          </table>
+
         </div>
       </div>
 
-      
+{{#section 'jquery'}}
+<script>
+  $(document).ready(function(){        
+
+    $('#jardunaldia').change(function(){
+
+      var data = 'id=' + $('#jardunaldia').val();
+
+      //$.get('jardunaldikopartiduak/'+$('#jardunaldia').val());
+      //document.location.href= "jardunaldikopartiduakpartaide/" + $('#jardunaldia').val());
+      $(location).attr('href', '/jardunaldikopartiduakpartaide/'+$('#jardunaldia').val());
+
+    });
+  });
+            
+</script> 
+        
+{{/section}}

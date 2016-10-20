@@ -134,8 +134,8 @@ var static = require('./lib/static.js').map;
 app.use(function(req, res, next){
     //var now = new Date();
    // res.locals.logoImage = now.getMonth()==11 && now.getDate()==19 ?
-   // static('/img/txaparrotan.jpg') :
-  //  static('/img/txaparrotan.png');
+   // static('/img/kirolElkarteak.jpg') :
+  //  static('/img/kirolElkarteak.png');
   res.locals.logoImage = static('/img/ZarauzkoKirolElkartea.jpg');
    //  :
   //  static('/img/txaparrotan.png');
@@ -152,6 +152,7 @@ function authorize2(req, res, next){
   //if(req.session.idKirolElkarteak) return next();
   //  res.redirect('/kirolElkarteak');
   //req.session.idDenboraldia=2;
+
   //Jardunaldia zein den jakiteko eguneko data jakin
   var today = new Date();
   today.setHours(0,0,0,0);
@@ -187,8 +188,17 @@ function authorize2(req, res, next){
               req.session.jardunaldia=rowsd[0].jardunaldiDataPartidu;
             }
           //}
-          return next();
 
+           connection.query('SELECT * FROM atalak where zenbakiAtala>0 AND idElkarteakAtala = ? order by zenbakiAtala asc',[req.session.idKirolElkarteak],function(err,rowsatal) {
+          
+              if(err)
+                console.log("Error Selecting : %s ",err );
+
+                req.session.atalak=rowsatal;  
+
+
+            return next();
+           });
         });
 
       });
@@ -212,26 +222,19 @@ function adminKirolElkarteaonartua(req, res, next){
 }
 
 
-//Rutas
-/*app.get('/', function(req, res){
-    res.render('index.handlebars', {title : 'Txaparrotan'});
-});*/
-app.get('/', authorize2, kirolElkarteak.berriakikusi);
+//Rutak
+
+//app.get('/', authorize2, kirolElkarteak.berriakikusi);
+app.get('/', authorize2, kirolElkarteak.edukiakikusi);
 app.get('/taldeak', taldeak.taldeakikusipartaide);
-//app.get('/izenematea', authorize2, taldeak.izenematea);
 app.post('/taldeasortu',taldeak.sortu); 
 
 app.get('/taldeaeditatu', taldeak.editatu);
 app.post('/taldeaaldatu', taldeak.aldatu);
 app.get('/partaidemail/:emaila', partaideak.partaidemail);
 app.get('/partaideak', authorize2, partaideak.ikusi);
-//app.post('/jokalariasortu', partaideak.sortu);
-//app.post('/jokalariagehitu', function(req, res){
-    //res.render('partaideaksortu.handlebars', {title : 'Txaparrotan-Jokalaria gehitu', taldeizena: req.session.taldeizena});
-//});
-app.post('/partaideakgehitu', authorize2, function(req, res){
-    res.render('partaideakgehitu.handlebars', {title : 'KirolElkarteak-PartaideakGehitu',partaidea: req.session.partaidea});
-});
+
+app.post('/partaideakgehitu', authorize2, partaideak.partaideakgehitu);
 app.post('/partaideaksortu', partaideak.sortu);
 app.get('/partaideakbalidatu/:id', partaideak.balidatu);
 app.get('/partaideakezabatu/:idPartaideak', authorizePartaide, partaideak.ezabatu);
@@ -247,7 +250,6 @@ app.post('/admin/bazkideakaldatu/:idPartaideak', adminonartua, partaideak.bazkid
 app.get('/login', authorize2, function(req, res){
     res.render('login.handlebars', {title : 'KirolElkarteak-Login',partaidea: req.session.partaidea});
 });
-//app.get('/login', authorize2, taldeak.saioahasteko);
 app.post('/login', partaideak.login);
 app.get('/logout', function(req, res){
   console.log('Serving request for url [GET] ' + req.session.idtalde);
@@ -265,22 +267,16 @@ app.get('/reset/:idPartaideak', function(req, res){
     res.render('reset.handlebars', {title : 'KirolElkarteak-Reset', partaidea: req.session.partaidea, idPartaideak: req.params.idPartaideak});
 });
 app.post('/reset/:idPartaideak', partaideak.reset);
-//app.get('/partiduak', kudeaketa.partiduakikusi);
 app.get('/arauak', function(req, res){
     res.render('arauak.handlebars', {title : 'KirolElkarteak-Arauak', partaidea: req.session.partaidea});
 });
 
 app.get('/kontaktua', function(req, res){
-    res.render('kontaktua.handlebars', {title : 'kirolElkarteak-Kontaktua', partaidea: req.session.partaidea, aditestua: "Kontaktua"});
+    res.render('kontaktua.handlebars', {title : 'kirolElkarteak-Kontaktua', partaidea: req.session.partaidea, aditestua: "Kontaktua", atalak: req.session.atalak});
 });
 app.post('/kontaktuabidali',kirolElkarteak.kontaktuabidali); 
 
-app.get('/ordutegia', kudeaketa.ordutegiaikusi);
 app.get('/sailkapenak', kudeaketa.sailkapenak);
-
-app.get('/taldesailkapena', authorize, kudeaketa.sailkapenak);
-app.get('/taldepartiduak', authorize, kudeaketa.partiduakikusi);
-app.get('/taldeordutegia', authorize, kudeaketa.taldeordutegia);
 
 app.get('/admin/kirolElkarteak',adminKirolElkarteaonartua, function(req, res){
     res.render('kirolElkarteaksortu.handlebars', {title : 'kirol elkarteak sortu'});
@@ -289,9 +285,6 @@ app.post('/kirolElkarteaksortu', adminKirolElkarteaonartua, kirolElkarteak.sortu
 app.get('/kirolElkarteakeditatu', adminonartua, authorize2,kirolElkarteak.editatu);
 app.post('/kirolElkarteakaldatu/:idKirolElkarteak', adminonartua, kirolElkarteak.aldatu);
 
-/*app.get('/txapelketak', function(req, res){
-    res.render('txapelketakaukeratu.handlebars', {title : 'Txaparrotan-Txapelketak aukeratu'});
-});*/
 app.get('/kirolElkarteak', kirolElkarteak.aukeratzeko);
 app.post('/kirolElkarteakaukeratu', kirolElkarteak.aukeratu);
 
@@ -301,49 +294,6 @@ app.get('/admin/argazkiak', adminonartua,function(req, res){
 });    
 app.post('/argazkiakigo/:idKirolElkarteak', adminonartua,kirolElkarteak.argazkiakigo);
 
-/*app.get('/admin/berriak', adminonartua,function(req, res){
-    res.render('berriaksortu.handlebars', {title : 'KirolElkarteak-Berriak sortu', taldeizena: req.session.txapelketaizena});
-});
-app.post('/berriaksortu',adminonartua,kirolElkarteak.berriaksortu); 
-
-app.get('/admin/kalkuluak', adminonartua,function(req, res){
-    res.render('kalkuluak.handlebars', {title : 'Txaparrotan-Kalkuluak egin', taldeizena: req.session.txapelketaizena, idtxapelketa: req.session.idtxapelketa});
-});*/
-//TXAPARROTAN
-/*
-app.get('/admin/kalkuluak', adminonartua, kudeaketa.kalkuluak);
-app.post('/admin/multzoakegin', adminonartua, kudeaketa.multzoakegin);
-app.post('/admin/multzoakbete', adminonartua, kudeaketa.multzoakbete);
-app.post('/admin/multzoakreset', adminonartua, kudeaketa.multzoakreset);
-app.post('/admin/finalakegin', adminonartua, kudeaketa.finalakegin);
-app.post('/admin/finalpartiduak', adminonartua, kudeaketa.finalpartiduak);
-app.post('/admin/finalordutegia', adminonartua, kudeaketa.finalordutegia);
-app.post('/admin/finalakosatu', adminonartua, kudeaketa.finalakosatu);
-app.get('/admin/sailkapenak', adminonartua, kudeaketa.sailkapenak);
-app.post('/admin/partiduaksortu', adminonartua, kudeaketa.partiduaksortu);
-app.get('/admin/partiduak', adminonartua, kudeaketa.partiduakikusi);
-app.get('/admin/partiduguztiak', adminonartua, kudeaketa.partiduakikusi);
-app.post('/admin/partiduakreset', adminonartua, kudeaketa.partiduakreset);
-app.get('/admin/partidua/:partidu', adminonartua, kudeaketa.partiduordua);
-app.post('/admin/partiduorduaaldatu/:partidu', adminonartua, kudeaketa.partiduorduaaldatu);
-app.post('/admin/kamisetak', adminonartua, kudeaketa.kamisetak);
-app.get('/admin/ordutegia', adminonartua, kudeaketa.ordutegiaikusi);
-app.post('/admin/ordutegiasortu', adminonartua, kudeaketa.ordutegiaegin);
-app.post('/admin/sariak', adminonartua, kudeaketa.sariak);
-app.get('/admin/emaitzak', adminonartua, kudeaketa.emaitzakikusi);
-app.get('/admin/emaitzaguztiak', adminonartua, kudeaketa.emaitzakikusi);
-app.get('/admin/emaitza/:partidu', adminonartua, kudeaketa.emaitzapartidu);
-app.post('/admin/emaitzasartu/:partidu', adminonartua, kudeaketa.emaitzasartu);
-app.post('/admin/emaitzenorriak', adminonartua, kudeaketa.emaitzenorriak);
-*/
-//app.get('/admin/taldeakikusi', adminonartua, taldeak.taldeakjokalariakikusi);
-//app.get('/admin/taldea/:talde', adminonartua, taldeak.taldeaeditatu);
-//app.post('/admin/taldeaaldatu/:talde', adminonartua, taldeak.taldeaaldatu);
-//app.get('/admin/taldeaezabatu/:talde', adminonartua, taldeak.taldeaezabatu);
-
-//app.get('/admin/taldekopurua', adminonartua, taldeak.taldekopurua);
-//app.get('/admin/jokalarikopurua', adminonartua, taldeak.jokalarikopurua);
-//app.get('/admin/partaideakikusi', adminonartua, kirolElkarteak.partaideakikusi);
 app.get('/admin/mantenimentu', adminonartua, kirolElkarteak.mantenimentu);
 
 app.get('/admin/lekuak', adminonartua, kirolElkarteak.lekuakbilatu);
@@ -375,7 +325,37 @@ app.get('/admin/berriakezabatu/:idBerriak', adminonartua, kirolElkarteak.berriak
 app.get('/admin/berriakeditatu/:idBerriak', adminonartua, kirolElkarteak.berriakeditatu);
 app.post('/admin/berriakaldatu/:idBerriak', adminonartua, kirolElkarteak.berriakaldatu);
 
+app.get('/admin/edukiak', adminonartua, kirolElkarteak.edukiakbilatu);
+app.post('/admin/edukiaksortu/:idAzpiAtalak', adminonartua, kirolElkarteak.edukiaksortu);
+app.post('/admin/edukiakgehitu/:idAzpiAtalak', adminonartua, function(req, res){
+    res.render('edukiaksortu.handlebars', {title : 'KirolElkarteak-Edukiak gehitu', idAzpiAtalak:req.params.idAzpiAtalak, partaidea: req.session.partaidea});
+});
+app.get('/admin/edukiakezabatu/:idEdukiak', adminonartua, kirolElkarteak.edukiakezabatu);
+app.get('/admin/edukiakeditatu/:idEdukiak', adminonartua, kirolElkarteak.edukiakeditatu);
+app.post('/admin/edukiakaldatu/:idEdukiak', adminonartua, kirolElkarteak.edukiakaldatu);
+
+app.get('/edukiak/:idAtalak', kirolElkarteak.edukiakikusi);
+
+app.get('/admin/atalak', adminonartua, kirolElkarteak.atalakbilatu);
+app.post('/admin/atalaksortu', adminonartua, kirolElkarteak.atalaksortu);
+app.post('/admin/atalakgehitu', adminonartua, function(req, res){
+    res.render('atalaksortu.handlebars', {title : 'KirolElkarteak-Atalak gehitu', partaidea: req.session.partaidea});
+});
+app.get('/admin/atalakezabatu/:idAtalak', adminonartua, kirolElkarteak.atalakezabatu);
+app.get('/admin/atalakeditatu/:idAtalak', adminonartua, kirolElkarteak.atalakeditatu);
+app.post('/admin/atalakaldatu/:idAtalak', adminonartua, kirolElkarteak.atalakaldatu);
+
+app.get('/admin/azpiAtalak/:idAtalak', adminonartua, kirolElkarteak.azpiAtalakbilatu);
+app.post('/admin/azpiAtalaksortu/:idAtalak', adminonartua, kirolElkarteak.azpiAtalaksortu);
+app.post('/admin/azpiAtalakgehitu/:idAtalak', adminonartua, function(req, res){
+    res.render('azpiAtalaksortu.handlebars', {title : 'KirolElkarteak-AzpiAtalak gehitu', partaidea: req.session.partaidea, idAtalak: req.params.idAtalak});
+});
+app.get('/admin/azpiAtalakezabatu/:idAzpiAtalak', adminonartua, kirolElkarteak.azpiAtalakezabatu);
+app.get('/admin/azpiAtalakeditatu/:idAzpiAtalak', adminonartua, kirolElkarteak.azpiAtalakeditatu);
+app.post('/admin/azpiAtalakaldatu/:idAzpiAtalak', adminonartua, kirolElkarteak.azpiAtalakaldatu);
+
 app.get('/admin/agiriak', adminonartua, kirolElkarteak.agiriakbilatu);
+app.get('/agiriak', kirolElkarteak.agiriakbilatupartaide);
 app.post('/admin/agiriaksortu', adminonartua, kirolElkarteak.agiriaksortu);
 app.post('/admin/agiriakgehitu', adminonartua, function(req, res){
     res.render('agiriaksortu.handlebars', {title : 'KirolElkarteak-Agiriak gehitu', partaidea: req.session.partaidea});
@@ -395,7 +375,9 @@ app.get('/admin/denboraldiakeditatu/:idDenboraldia', adminonartua, denboraldiak.
 app.post('/admin/denboraldiakaldatu/:idDenboraldia', adminonartua, denboraldiak.denboraldiakaldatu);
 
 app.get('/admin/partiduak', adminonartua, denboraldiak.partiduakbilatu);
+app.get('/partiduak', denboraldiak.partiduakbilatupartaide);
 app.get('/admin/jardunaldikopartiduak/:jardunaldia', denboraldiak.jardunaldikopartiduakbilatu);
+app.get('/jardunaldikopartiduakpartaide/:jardunaldia', denboraldiak.jardunaldikopartiduakbilatupartaide);
 app.post('/admin/partiduaksortu', adminonartua, denboraldiak.partiduaksortu);
 app.get('/admin/partiduakgehitu', adminonartua, denboraldiak.partiduakgehitu);
 //app.post('/admin/partiduakgehitu', adminonartua, function(req, res){
@@ -411,7 +393,7 @@ app.post('/admin/partiduakkargatuegin', adminonartua, denboraldiak.partiduakkarg
 app.get('/admin/partiduordutegiak/:idDenboraldia/:jardunaldia',adminonartua,authorize2, denboraldiak.partiduordutegiak);
 
 app.get('/partiduordutegiak/:idDenboraldia/:jardunaldia', authorize2, denboraldiak.partiduordutegiak);
-
+app.get('/partiduordutegiak/:idDenboraldia', authorize2, denboraldiak.partiduordutegiak);
 
 app.get('/admin/ekintzak', adminonartua, denboraldiak.ekintzakbilatu);
 app.post('/admin/ekintzaksortu', adminonartua, denboraldiak.ekintzaksortu);
@@ -430,6 +412,7 @@ app.get('/admin/taldeakeditatu/:idTaldeak', adminonartua, taldeak.taldeakeditatu
 app.post('/admin/taldeakaldatu/:idTaldeak', adminonartua, taldeak.taldeakaldatu);
 
 app.get('/admin/taldekideak/:idTaldeak', adminonartua, taldeak.taldekideakbilatu);
+app.get('/taldekideak/:idTaldeak', taldeak.taldekideakbilatupartaideargazkiekin);
 app.post('/admin/taldekideaksortu/:idTaldeak', adminonartua, taldeak.taldekideaksortu);
 app.get('/admin/taldekideakgehitu/:idTaldeak', adminonartua, taldeak.taldekideakgehitu);
 app.get('/admin/taldekideakezabatu/:idTaldeak/:idTaldekideak', adminonartua, taldeak.taldekideakezabatu);
@@ -454,7 +437,12 @@ app.get('/admin/ordaintzekoerakezabatu/:idOrdaintzekoErak', adminonartua, kirolE
 app.get('/admin/ordaintzekoerakeditatu/:idOrdaintzekoErak', adminonartua, kirolElkarteak.ordaintzekoerakeditatu);
 app.post('/admin/ordaintzekoerakaldatu/:idOrdaintzekoErak', adminonartua, kirolElkarteak.ordaintzekoerakaldatu);
 
+app.get('/admin/partaideakezabatu/:idPartaideak', authorizePartaide, partaideak.ezabatu);
+app.get('/admin/partaideakeditatu/:idPartaideak', authorizePartaide, partaideak.editatu);
+app.post('/admin/partaideakaldatu/:idPartaideak', authorizePartaide, partaideak.aldatu);
 
+app.get('/emaitzak', denboraldiak.emaitzakikusi);
+app.get('/jardunaldikoemaitzak/:jardunaldia', denboraldiak.jardunaldikoemaitzakikusi);
 
 var server = http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));

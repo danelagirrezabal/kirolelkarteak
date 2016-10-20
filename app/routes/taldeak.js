@@ -27,13 +27,13 @@ exports.taldeakikusipartaide = function(req, res){
   var idDenboraldia = req.session.idDenboraldia;
   req.getConnection(function(err,connection){
        
-     connection.query('SELECT * FROM taldeak, ekintzak, mailak, partaideak where idMailak=idMailaTalde and idArduradunTalde=idPartaideak and idEkintzakTalde = idEkintzak and idDenboraldiaEkintza= ? and idElkarteakTalde = ? order by noiztikEkintza desc',[idDenboraldia,id],function(err,rows) {
+     connection.query('SELECT * FROM taldeak, ekintzak, mailak, partaideak where idMailak=idMailaTalde and idArduradunTalde=idPartaideak and idEkintzakTalde = idEkintzak and idDenboraldiaEkintza= ? and idElkarteakTalde = ? order by zenbakiMaila asc',[idDenboraldia,id],function(err,rows) {
             
         if(err)
            console.log("Error Selecting : %s ",err );
          
          //console.log("Berriak:" +JSON.stringify(rows));
-          res.render('taldeak.handlebars',{title: "Taldeak", data:rows, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia});                       
+          res.render('taldeakpartaide.handlebars',{title: "Taldeak", data:rows, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, atalak: req.session.atalak});                       
       });   
   });
 };
@@ -251,6 +251,81 @@ exports.taldekideakbilatu = function(req, res){
       });   
     });
   });
+};
+
+exports.taldekideakbilatupartaide = function(req, res){
+  var id = req.session.idKirolElkarteak;
+  var idDenboraldia = req.session.idDenboraldia;
+  var idTaldeak = req.params.idTaldeak;
+  req.getConnection(function(err,connection){
+
+    connection.query('SELECT * FROM taldeak, mailak where idMailaTalde=idMailak and idTaldeak = ? and idElkarteakTalde = ?',[idTaldeak,id],function(err,rowst) {
+       
+     connection.query('SELECT * FROM taldekideak, partaideMotak, taldeak, ekintzak, mailak, partaideak where idMotaKide=idPartaideMotak and idTaldeakKide=idTaldeak and idMailak=idMailaTalde and idPartaideakKide=idPartaideak and idEkintzakTalde = idEkintzak and idDenboraldiaEkintza= ? and idTaldeakKide = ? and idElkarteakTalde = ? order by noiztikEkintza desc',[idDenboraldia,idTaldeak,id],function(err,rows) {
+            
+        if(err)
+           console.log("Error Selecting : %s ",err );
+
+
+         
+         //console.log("Berriak:" +JSON.stringify(rows));
+          res.render('taldekideakpartaide.handlebars',{title: "Taldekideak", data:rows, talde:rowst, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea: req.session.partaidea});                       
+      });   
+    });
+  });
+};
+
+
+exports.taldekideakbilatupartaideargazkiekin = function(req, res){
+  var id = req.session.idKirolElkarteak;
+  var idDenboraldia = req.session.idDenboraldia;
+  var idTaldeak = req.params.idTaldeak;
+  req.getConnection(function(err,connection){
+
+    connection.query('SELECT * FROM taldeak, mailak where idMailaTalde=idMailak and idTaldeak = ? and idElkarteakTalde = ?',[idTaldeak,id],function(err,rowst) {
+       
+     connection.query('SELECT * FROM taldekideak, partaideMotak, taldeak, ekintzak, mailak, partaideak where idMotaKide=idPartaideMotak and idTaldeakKide=idTaldeak and idMailak=idMailaTalde and idPartaideakKide=idPartaideak and idEkintzakTalde = idEkintzak and idDenboraldiaEkintza= ? and idTaldeakKide = ? and idElkarteakTalde = ? order by noiztikEkintza desc',[idDenboraldia,idTaldeak,id],function(err,rows) {
+            
+        if(err)
+           console.log("Error Selecting : %s ",err );
+            
+            var path = require('path'),
+            fs = require('fs'),
+            formidable = require('formidable');
+            var bcrypt = require('bcrypt-nodejs');
+
+            var dataDir = path.normalize(path.join(__dirname, '../public', 'data'));
+            console.log(dataDir);
+            var taldeargazkiakDir = path.join(dataDir, 'taldeargazkiak');
+            fs.existsSync(dataDir) || fs.mkdirSync(dataDir); 
+            fs.existsSync(taldeargazkiakDir) || fs.mkdirSync(taldeargazkiakDir);
+
+            var argazkiak = [];
+            var argazkia = {};
+            var idKirolElkarteak = req.session.idKirolElkarteak;
+            var elkartedir = taldeargazkiakDir + '/' + idKirolElkarteak + '/' + idTaldeak; 
+            fs.existsSync(elkartedir) || fs.mkdirSync(elkartedir);
+            fs.readdir(elkartedir, function (err, files) {
+            if (err) throw err;
+            console.log("/usr files: " + files);
+            for (var i in files){
+              //argazkiak[i] = files[i];
+              console.log(files[i]);
+              argazkia = {
+                  files    : files[i],
+                  idKirolElkarteak  : req.session.idKirolElkarteak,
+                  idTaldeak: idTaldeak
+               };
+    
+              argazkiak[i] = argazkia;
+            };
+         
+         //console.log("Berriak:" +JSON.stringify(rows));
+          res.render('taldekideakpartaide.handlebars',{title: "Taldekideak", data:rows, irudiak:argazkiak, talde:rowst, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea: req.session.partaidea, atalak: req.session.atalak});                       
+      });   
+    });
+  });
+});
 };
 
 exports.taldekideakgehitu = function(req, res){

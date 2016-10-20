@@ -13,7 +13,7 @@
             <label for="denboraldia" class="col-sm-2 control-label">Denboraldia:</label>
             <div class="col-sm-4">
             <select name="denboraldia" id="denboraldia">
-                <option value="">--Aukeratu denboraldia--</option>
+                <!--<option value="">--Aukeratu denboraldia--</option>-->
                 {{#each denboraldiak}}
                     {{#if aukeratua}}
                        <option value="{{idDenboraldia}}" selected>{{deskribapenaDenb}}</option>
@@ -103,6 +103,11 @@
   var denboraldia = $('#denboraldia').val();     
     $('#jardunaldia').change(function(){
 
+     if ($('#jardunaldia').val() =="")
+        alert("Aukeratu jardunaldia");
+     else {
+
+
       var data = 'id=' + $('#jardunaldia').val();
 
       //$.get('jardunaldikopartiduak/'+$('#jardunaldia').val());
@@ -112,10 +117,16 @@
         $(location).attr('href', '/admin/partiduordutegiak/'+$('#denboraldia').val()+'/'+$('#jardunaldia').val());
       else
         $(location).attr('href', '/partiduordutegiak/'+$('#denboraldia').val()+'/'+$('#jardunaldia').val());
-
+     
+     }   
     });
 
     $('#denboraldia').change(function(){
+
+     //if ($('#jardunaldia').val() =="")
+       // alert("Aukeratu jardunaldia");
+
+     //else {
 
       var data = 'id=' + $('#denboraldia').val();
 
@@ -123,7 +134,7 @@
         $(location).attr('href', '/admin/partiduordutegiak/'+$('#denboraldia').val()+'/'+$('#jardunaldia').val());
       else
         $(location).attr('href', '/partiduordutegiak/'+$('#denboraldia').val()+'/'+$('#jardunaldia').val());
-
+     //}
     });
   });
             

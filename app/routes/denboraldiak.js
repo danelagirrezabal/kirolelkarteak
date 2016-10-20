@@ -294,6 +294,28 @@ exports.jardunaldikopartiduakbilatu = function(req, res){
   });
 };
 
+exports.jardunaldikopartiduakbilatupartaide = function(req, res){
+  var id = req.session.idKirolElkarteak;
+  var jardunaldia = req.params.jardunaldia;
+  console.log("Jardunaldia:" + jardunaldia);
+  req.getConnection(function(err,connection){
+       
+     connection.query('SELECT *,DATE_FORMAT(dataPartidu,"%Y/%m/%d") AS dataPartidu FROM partiduak, mailak, taldeak, lekuak where idLekuak=idLekuakPartidu and idTaldeakPartidu=idTaldeak and idMailak=idMailaTalde and idElkarteakPartidu = ? and jardunaldiDataPartidu >= ? and jardunaldiDataPartidu <= ? order by dataPartidu desc',[id, jardunaldia, jardunaldia],function(err,rows) {
+            
+        if(err)
+           console.log("Error Selecting : %s ",err );
+
+        connection.query('SELECT DISTINCT DATE_FORMAT(jardunaldiDataPartidu,"%Y-%m-%d") AS jardunaldiDataPartidu FROM partiduak where idElkarteakPartidu = ? order by jardunaldiDataPartidu desc',[id],function(err,rowsd) {
+          
+          if(err)
+           console.log("Error Selecting : %s ",err );
+
+          res.render('partiduak.handlebars',{title: "Partiduak", data:rows, jardunaldiak:rowsd,jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia,atalak: req.session.atalak});
+        });                   
+      });   
+  });
+};
+
 exports.partiduakbilatu = function(req, res){
   var id = req.session.idKirolElkarteak;
   req.session.admin = 0;
@@ -310,6 +332,27 @@ exports.partiduakbilatu = function(req, res){
            console.log("Error Selecting : %s ",err );
 
           res.render('partiduakadmin.handlebars',{title: "Partiduak", data:rows, jardunaldiak:rowsd,jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia});
+        });                   
+      });   
+  });
+};
+
+exports.partiduakbilatupartaide = function(req, res){
+  var id = req.session.idKirolElkarteak;
+  req.session.admin = 0;
+  req.getConnection(function(err,connection){
+       
+     connection.query('SELECT *,DATE_FORMAT(bidaiEgunaPartidu,"%Y/%m/%d") AS bidaiEgunaPartidu,DATE_FORMAT(dataPartidu,"%Y/%m/%d") AS dataPartidu FROM partiduak, mailak, taldeak, lekuak where idLekuak=idLekuakPartidu and idTaldeakPartidu=idTaldeak and idMailak=idMailaTalde and idElkarteakPartidu = ? order by dataPartidu desc',[id],function(err,rows) {
+            
+        if(err)
+           console.log("Error Selecting : %s ",err );
+
+        connection.query('SELECT DISTINCT DATE_FORMAT(jardunaldiDataPartidu,"%Y-%m-%d") AS jardunaldiDataPartidu FROM partiduak where idElkarteakPartidu = ? order by jardunaldiDataPartidu desc',[id],function(err,rowsd) {
+          
+          if(err)
+           console.log("Error Selecting : %s ",err );
+
+          res.render('partiduak.handlebars',{title: "Partiduak", data:rows, jardunaldiak:rowsd,jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, atalak: req.session.atalak});
         });                   
       });   
   });
@@ -523,8 +566,20 @@ req.session.admin=0;
 console.log(jardunaldia);
 console.log(req.path.slice(0,24));
    req.getConnection(function(err,connection){
+
+      
+      connection.query('SELECT jardunaldiDataPartidu FROM partiduak where idElkarteakPartidu = ? and idDenboraldiaPartidu = ? order by dataPartidu',[id, idDenboraldia],function(err,rowsj) {
+
+        if(err)
+           console.log("Error Selecting : %s ",err );
+
+        if (req.session.jardunaldia == ""){
+         req.session.jardunaldia = rowsj[0];
+         jardunaldia = req.session.jardunaldia;
+       }
+      
      //connection.query('SELECT *,DATE_FORMAT(dataPartidu,"%Y/%m/%d") AS dataPartidu FROM partiduak, mailak, taldeak, lekuak where idLekuak=idLekuakPartidu and idTaldeakPartidu=idTaldeak and idMailak=idMailaTalde and idElkarteakPartidu = ? and jardunaldiDataPartidu >= ? and jardunaldiDataPartidu <= ? and idDenboraldiaPartidu = ? order by dataPartidu desc',[id, jardunaldia, jardunaldia, idDenboraldia],function(err,rows) {
-      connection.query('SELECT *,DATE_FORMAT(dataPartidu,"%Y/%m/%d") AS dataPartidu FROM partiduak, mailak, taldeak, lekuak where idLekuak=idLekuakPartidu and idTaldeakPartidu=idTaldeak and idMailak=idMailaTalde and idElkarteakPartidu = ? and jardunaldiDataPartidu = ? and idDenboraldiaPartidu = ? order by dataPartidu, zenbakiLeku, zenbakiMaila ',[id, jardunaldia, idDenboraldia],function(err,rows) {
+      connection.query('SELECT *,DATE_FORMAT(bidaiEgunaPartidu,"%Y/%m/%d") AS bidaiEgunaPartidu, DATE_FORMAT(dataPartidu,"%Y/%m/%d") AS dataPartidu FROM partiduak, mailak, taldeak, lekuak where idLekuak=idLekuakPartidu and idTaldeakPartidu=idTaldeak and idMailak=idMailaTalde and idElkarteakPartidu = ? and jardunaldiDataPartidu = ? and idDenboraldiaPartidu = ? order by dataPartidu, zenbakiLeku, zenbakiMaila ',[id, jardunaldia, idDenboraldia],function(err,rows) {
 
         if(err)
            console.log("Error Selecting : %s ",err );
@@ -630,9 +685,9 @@ console.log(req.path.slice(0,24));
             req.session.admin = 0;
         }
   
-        res.render('partiduordutegiak.handlebars', {title : 'KirolElkarteak-Partiduak', data2:egunak, jardunaldiak:rowsd, denboraldiak:rowsdenb, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea: req.session.partaidea, menuadmin:admin} );
+        res.render('partiduordutegiak.handlebars', {title : 'KirolElkarteak-Partiduak', data2:egunak, jardunaldiak:rowsd, denboraldiak:rowsdenb, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea: req.session.partaidea, menuadmin:admin, atalak: req.session.atalak} );
 
-        
+        });
      });   
     });
   });
@@ -715,3 +770,48 @@ exports.partiduakkargatuegin = function(req, res){
      });
     });
 };
+
+exports.emaitzakikusi = function(req, res){
+  var id = req.session.idKirolElkarteak;
+  req.session.admin = 0;
+  req.getConnection(function(err,connection){
+       
+     connection.query('SELECT *,DATE_FORMAT(bidaiEgunaPartidu,"%Y/%m/%d") AS bidaiEgunaPartidu,DATE_FORMAT(dataPartidu,"%Y/%m/%d") AS dataPartidu FROM partiduak, mailak, taldeak, lekuak where idLekuak=idLekuakPartidu and idTaldeakPartidu=idTaldeak and idMailak=idMailaTalde and idElkarteakPartidu = ? order by dataPartidu desc',[id],function(err,rows) {
+            
+        if(err)
+           console.log("Error Selecting : %s ",err );
+
+        connection.query('SELECT DISTINCT DATE_FORMAT(jardunaldiDataPartidu,"%Y-%m-%d") AS jardunaldiDataPartidu FROM partiduak where idElkarteakPartidu = ? order by jardunaldiDataPartidu desc',[id],function(err,rowsd) {
+          
+          if(err)
+           console.log("Error Selecting : %s ",err );
+
+          res.render('emaitzak.handlebars',{title: "Emaitzak", data:rows, jardunaldiak:rowsd,jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, atalak: req.session.atalak});
+        });                   
+      });   
+  });
+};
+
+exports.jardunaldikoemaitzakikusi = function(req, res){
+  var id = req.session.idKirolElkarteak;
+  var jardunaldia = req.params.jardunaldia;
+  console.log("Jardunaldia:" + jardunaldia);
+  req.getConnection(function(err,connection){
+       
+     connection.query('SELECT *,DATE_FORMAT(dataPartidu,"%Y/%m/%d") AS dataPartidu FROM partiduak, mailak, taldeak, lekuak where idLekuak=idLekuakPartidu and idTaldeakPartidu=idTaldeak and idMailak=idMailaTalde and idElkarteakPartidu = ? and jardunaldiDataPartidu >= ? and jardunaldiDataPartidu <= ? order by zenbakiMaila asc',[id, jardunaldia, jardunaldia],function(err,rows) {
+            
+        if(err)
+           console.log("Error Selecting : %s ",err );
+
+        connection.query('SELECT DISTINCT DATE_FORMAT(jardunaldiDataPartidu,"%Y-%m-%d") AS jardunaldiDataPartidu FROM partiduak where idElkarteakPartidu = ? order by jardunaldiDataPartidu desc',[id],function(err,rowsd) {
+          
+          if(err)
+           console.log("Error Selecting : %s ",err );
+
+          res.render('emaitzak.handlebars',{title: "Partiduak", data:rows, jardunaldiak:rowsd,jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, atalak: req.session.atalak});
+        });                   
+      });   
+  });
+};
+
+

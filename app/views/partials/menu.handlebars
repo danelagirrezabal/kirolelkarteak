@@ -1,7 +1,10 @@
 
       <div class="header">
         <ul class="nav nav-tabs" role="tablist">
-          <li><a href="/">Gaur egun</a></li>
+          <!--<li><a href="/">Gaur egun</a></li>-->
+          <!--{{#each atalak}}
+              <li><a href="/edukiak/{{idAtalak}}">{{izenaAtala}}</a></li>
+          {{/each}}-->
           <li><a href="/partiduordutegiak/{{idDenboraldia}}/{{jardunaldia}}"><b>Partiduen ordutegia</b></a></li>
           {{#if taldeizena}}
               <li><a href="/jokalariak">Zure taldea</a></li>
@@ -14,18 +17,20 @@
             {{else}}
               <li><a href="/partiduak"><b>PARTIDUAK</b></a></li>
             {{/if}}
-
-          {{#if taldeizena}}
-              <li><a href=" "><b>SAILKAPENAK</b></a></li>
-            {{else}}
-              <li><a href=" "><b>SAILKAPENAK</b></a></li>
-            {{/if}} 
-
+            
+          <li><a href="/sailkapenak">SAILKAPENAK</a></li>
+          <li><a href="/emaitzak">Emaitzak</a></li>
           <li><a href="/agiriak">Agiriak</a></li>
           <li><a href="/argazkiak"><b>ARGAZKIAK</b></a></li>
           <li><a target="_blank" href="/kontaktua">Kontaktua</a></li>
         </ul>
-        
+
+        <ul class="nav nav-tabs" role="tablist">
+        {{#each atalak}}
+              <li><a href="/edukiak/{{idAtalak}}">{{izenaAtala}}</a></li>
+        {{/each}}
+        </ul>
+
       </div>
 
       

@@ -370,13 +370,17 @@ exports.sortu = function(req,res){
 
           } );
         }
-        connection.query('SELECT * FROM elkarteak where idElkarteak = ?',[req.session.idKirolElkarteak],function(err,rowst)  {          
+        connection.query('SELECT * FROM elkarteak where idElkarteak = ?',[req.session.idKirolElkarteak],function(err,rowst){          
             
             if(err)
                 console.log("Error inserting : %s ",err );
         // Generate password hash
             var salt = bcrypt.genSaltSync();
             var password_hash = bcrypt.hashSync(input.pasahitzaPart, salt);
+            //var elkartea = rowst.izenaElk;
+            console.log("Hau da elkartea: "+rowst[0].idElkarteak);
+            console.log("Elkartea:" +JSON.stringify(rowst));
+            //console.log("Hau da elkarte id: "+req.session.idKirolElkarteak);
 
           
 
@@ -423,19 +427,39 @@ exports.sortu = function(req,res){
          }*/
 
          //Partaidea sortzeko bidaliko den mezua BALIDAZIO LINKAREKIN
-         var body = "<p>"+rowst.izenaElk+" elkartean partaidetza balidatu ahal izateko, </p>";
+         var body = "<p>"+rowst[0].izenaElk+" elkartean partaidetza balidatu ahal izateko, </p>";
          body += "<h3> klik egin: http://"+hosta+"/partaideakbalidatu/" + partaideZenbakia+ ". </h3>";
+         body += "<p> Ez bazaizu klikatzeko link moduan agertzen, kopiatu eta pegatu nabigatzailean. </p>";
          body += "<p>Ondoren, login egin ziurtatzeko dena ongi dagoela.</p>";
          body += "<p>Mila esker!</p>";
           req.session.idPartaideak = rows.insertId;
           emailService.send(to, subj, body);
           
-          res.render('partaideakeskerrak.handlebars', {title: "Mila esker!", partaideizena:data.izenaPart, elkarteizena:rowst.izenaElk, emailPart:data.emailPart});
+          res.render('partaideakeskerrak.handlebars', {title: "Mila esker!", partaideizena:data.izenaPart, elkarteizena:rowst[0].izenaElk, emailPart:data.emailPart});
           });
         }); 
       });
     });
   //});
+};
+
+exports.partaideakgehitu = function(req, res){ //Datu basetik conboBox-ak betetzeko
+  var id = req.session.idKirolElkarteak;
+  var idDenboraldia = req.session.idDenboraldia;
+  req.getConnection(function(err,connection){
+       
+     connection.query('SELECT * FROM ordaintzekoErak where idElkarteakOrdaintzekoErak = ? order by idOrdaintzekoErak asc',[id],function(err,rowso) {
+            
+        if(err)
+           console.log("Error Selecting : %s ",err );
+
+         
+         //console.log("Berriak:" +JSON.stringify(rows));
+      res.render('partaideakgehitu.handlebars', {title : 'KirolElkarteak-PartaideakGehitu', ordaintzekoErak: rowso, partaidea: req.session.partaidea});
+
+      });  
+         
+  });
 };
 exports.aldatu = function(req,res){
     
