@@ -149,7 +149,8 @@ function authorize(req, res, next){
 
 function authorize2(req, res, next){
   req.session.idKirolElkarteak=14;
-    req.session.atalak=[];  
+  req.session.atalak=[{"idAtalak":3,"izenaAtala":'GAUR EGUN',"zenbakiAtala":'1',"idElkarteakAtala":14}];  
+
   //if(req.session.idKirolElkarteak) return next();
   //  res.redirect('/kirolElkarteak');
   req.session.idDenboraldia=2;
