@@ -1,0 +1,34 @@
+{{> menuadmin}}
+
+<div class="jumbotron">
+        <h2>Atala sortu</h2>
+      </div>
+<div class="formContainer">
+    <form class="form-horizontal newsletterForm" role="form" action="/admin/atalaksortu" method="POST">
+    <input type="hidden" name="_csrf" value="{{_csrfToken}}">
+        <div class="form-group">
+            <label for="izenaAtala" class="col-sm-2 control-label">Atalaren izena</label>
+            <div class="col-sm-4">
+                <input type="text" class="form-control" required id="izenaAtala" name="izenaAtala" autofocus value={{izenaAtala}} >
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="zenbakiAtala" class="col-sm-2 control-label">Atalaren zenbakia: (0 jarrita ezkutuan geratuko da erabiltzaileentzat)</label>
+            <div class="col-sm-4">
+                <textarea name="zenbakiAtala" rows="1" cols="40" class="form-control" required id="zenbakiAtala" value={{zenbakiAtala}}></textarea>
+
+              <!--  <input type="textarea" class="form-control" required id="testua" name="testua" value={{zenbakiAtala}}> -->
+            </div>
+        </div> 
+
+
+        <div class="form-group">
+            <div class="col-sm-offset-3 col-sm-4">
+                <button type="submit" class="btn btn-default">Gorde</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+      </div>

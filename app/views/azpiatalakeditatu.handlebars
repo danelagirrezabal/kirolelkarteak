@@ -1,0 +1,35 @@
+{{> menuadmin}}
+
+<div class="jumbotron">
+        <h2>Azpi Atala aldatu</h2>
+</div>
+<div class="formContainer">
+{{#each data}}
+    <form class="form-horizontal newsletterForm" role="form" action="/admin/azpiAtalakaldatu/{{idAzpiAtalak}}" method="POST">
+    <input type="hidden" name="_csrf" value="{{_csrfToken}}">
+        <div class="form-group">
+            <label for="izenaAzpiAtala" class="col-sm-2 control-label">Azpi Atalaren izena</label>
+            <div class="col-sm-4">
+                <!--<input type="text" class="form-control" required id="izenaAzpiAtala" name="izenaAzpiAtala" autofocus value={{izenaAzpiAtala}} >-->
+                <textarea name="izenaAzpiAtala" rows="1" cols="40" class="form-control" required id="izenaAzpiAtala" value={{izenaAzpiAtala}}>{{izenaAzpiAtala}}</textarea>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="zenbakiAzpiAtala" class="col-sm-2 control-label">Azpi Atalaren zenbakia</label>
+            <div class="col-sm-4">
+                <!--<textarea name="zenbakiAzpiAtala" rows="10" cols="40" class="form-control" required id="zenbakiAzpiAtala" value={{zenbakiAzpiAtala}}>{{zenbakiAzpiAtala}}</textarea>-->
+                <input type="number" class="form-control" required id="zenbakiAzpiAtala" name="zenbakiAzpiAtala" value={{zenbakiAzpiAtala}}>
+            </div>
+        </div> 
+
+        <div class="form-group">
+            <div class="col-sm-offset-3 col-sm-4">
+                <button type="submit" class="btn btn-default">Gorde</button>
+            </div>
+        </div>
+    </form>
+    {{/each}}
+</div>
+
+      </div>

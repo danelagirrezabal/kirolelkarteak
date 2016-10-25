@@ -1,0 +1,39 @@
+	{{> menu}}
+    <!--{{#each data2}}
+      <div class="jumbotron">
+        <h2>{{izenaElk}}</h2>
+      </div>
+      {{/each}}-->
+
+      <div class="row marketing">
+      
+        <div class="col-lg-8">
+        {{#each azpiAtalak}}
+          <h2 style="color:#0000FF">{{izenaAzpiAtala}}</h2>
+          {{#each edukiak}}
+              <h3 style="color:#00000F">{{izenburuaEdukia}}</h3>
+              <pre>
+              {{testuaEdukia}}
+              </pre>
+              <!--<textarea readonly cols="100">{{testuaBerria}}</textarea> -->
+
+              <hr align="left" noshade="noshade" size="4" width="100%" />
+          {{/each}}
+          {{/each}}
+
+        </div>
+
+        <div class="col-lg-4">
+          <h3 style="color:#0000FF"> Twitter </h3>
+              <a class="twitter-timeline" width="300" height="500" href="https://twitter.com/zkeskubaloia" data-widget-id="735738688211058689"> @zkeskubaloia -ko txioak</a> <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+
+        </div>
+
+        <div class="col-lg-4 pull-right" >
+          <h3 style="color:#0000FF"> Bisitak </h3>
+          <script type="text/javascript" src="http://counter5.01counter.com/private/countertab.js?c=8bd4f9ed97fa5dd870c74ec967760928"></script>
+        
+        </div>
+        
+</div>
+      
