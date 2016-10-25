@@ -11,11 +11,34 @@ exports.sailkapenak = function (req,res){
            console.log("Error Selecting : %s ",err );
          
          //console.log("Berriak:" +JSON.stringify(rows));
-          res.render('sailkapenak.handlebars',{title: "Sailkapenak", data:rows, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, atalak: req.session.atalak});                       
+          res.render('sailkapenak.handlebars',{title: "Sailkapenak", data:rows, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, atalak: req.session.atalak, partaidea: req.session.partaidea});                       
       });   
   });
 
 };
+
+exports.sailkapenakadmin = function (req,res){ 
+  var id = req.session.idKirolElkarteak;
+  var idDenboraldia = req.session.idDenboraldia;
+  req.getConnection(function(err,connection){
+       
+     connection.query('SELECT * FROM taldeak, ekintzak, mailak, partaideak where idMailak=idMailaTalde and idArduradunTalde=idPartaideak and idEkintzakTalde = idEkintzak and idDenboraldiaEkintza= ? and idElkarteakTalde = ? order by noiztikEkintza desc',[idDenboraldia,id],function(err,rows) {
+            
+        if(err)
+           console.log("Error Selecting : %s ",err );
+         
+         //console.log("Berriak:" +JSON.stringify(rows));
+          res.render('sailkapenakadmin.handlebars',{title: "Sailkapenak", data:rows, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, atalak: req.session.atalak,partaidea: req.session.partaidea});                       
+      });   
+  });
+
+};
+
+exports.sailkapenakaldatu = function(req,res){
+    
+    //EGITEKO DAGO
+};
+
 
 
 

@@ -312,7 +312,7 @@ exports.berriakbilatu = function(req, res){
            console.log("Error Selecting : %s ",err );
          
          console.log("Berriak:" +JSON.stringify(rows));
-          res.render('berriak.handlebars',{title: "Berriak", data:rows, data2: rowst, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia});
+          res.render('berriak.handlebars',{title: "Berriak", data:rows, data2: rowst, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea: req.session.partaidea});
         });                        
       });   
   });
@@ -537,7 +537,7 @@ exports.edukiakikusi = function(req, res){
 
 
           console.log("Rows:" +JSON.stringify(rows));
-          res.render('edukiakikusi.handlebars',{title: "kirolElkarteak", azpiAtalak:azpiAtalak, data:rows, data2: rowst, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, atalak: req.session.atalak});
+          res.render('edukiakikusi.handlebars',{title: "kirolElkarteak", azpiAtalak:azpiAtalak, data:rows, data2: rowst, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, atalak: req.session.atalak, partaidea: req.session.partaidea});
         });                        
       });   
   });
@@ -633,7 +633,7 @@ exports.edukiakbilatu = function(req, res){
 
 console.log("Atalak:" +JSON.stringify(atalak));
 
-          res.render('edukiak.handlebars',{title: "Edukiak", data:rows, data2: rowst, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, atalak: atalak});
+          res.render('edukiak.handlebars',{title: "Edukiak", data:rows, data2: rowst, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, atalak: atalak, partaidea: req.session.partaidea});
         });                        
       });   
   });

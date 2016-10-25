@@ -95,14 +95,14 @@ else{
     
     connection(mysql,{
         
-        host: 'us-cdbr-iron-east-02.cleardb.net',
-        user: 'b52372483fde60',
-        password : '4d96016a',
+        host: 'us-cdbr-iron-east-04.cleardb.net',
+        user: 'b65e4830d842c6',
+        password : 'ff86419e',
       //  port : 3306, //port mysql
-        database:'heroku_4efa3ee4ff6c16c'
+        database:'heroku_3a7c26fa617acae'
     },'request')
  );
-              console.log("heroku1" );
+              console.log("herokuBerria" );
 }
   
 
@@ -277,6 +277,7 @@ app.get('/kontaktua', function(req, res){
 app.post('/kontaktuabidali',kirolElkarteak.kontaktuabidali); 
 
 app.get('/sailkapenak', kudeaketa.sailkapenak);
+app.get('/admin/sailkapenak', adminonartua, kudeaketa.sailkapenakadmin);
 
 app.get('/admin/kirolElkarteak',adminKirolElkarteaonartua, function(req, res){
     res.render('kirolElkarteaksortu.handlebars', {title : 'kirol elkarteak sortu'});
