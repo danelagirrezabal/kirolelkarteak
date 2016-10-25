@@ -226,8 +226,8 @@ function adminKirolElkarteaonartua(req, res, next){
 
 //Rutak
 
-app.get('/', authorize2, kirolElkarteak.berriakikusi);
-//app.get('/', authorize2, kirolElkarteak.edukiakikusi);
+//app.get('/', authorize2, kirolElkarteak.berriakikusi);
+app.get('/', authorize2, kirolElkarteak.edukiakikusi);
 app.get('/taldeak', taldeak.taldeakikusipartaide);
 app.post('/taldeasortu',taldeak.sortu); 
 
