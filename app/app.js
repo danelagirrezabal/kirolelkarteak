@@ -23,6 +23,8 @@ var app = express();
 var connection  = require('express-myconnection'); 
 var mysql = require('mysql');
 
+var md = require('marked');
+
 //var passport= require('./config/passport')(passport);
 
 // all environments
@@ -200,14 +202,13 @@ function authorize2(req, res, next){
 
 
             return next();
-             connection.end();
+
            });
         });
 
       });
   });
-          
-    
+
 }
 
 function authorizePartaide(req, res, next){

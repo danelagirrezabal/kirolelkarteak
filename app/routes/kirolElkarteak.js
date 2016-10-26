@@ -5,6 +5,7 @@ var VALID_TEL_REGEX = /^[0-9-()+]{3,20}/;
   fs = require('fs'),
   formidable = require('formidable');
   var bcrypt = require('bcrypt-nodejs');
+  var md = require('marked');
 
 // make sure data directory exists
 //var dataDir = path.normalize(path.join(__dirname, '..', 'data'));
@@ -298,11 +299,6 @@ exports.berriakikusi = function(req, res){
   });
 };
 
-exports.prueba = function(req, res){
-
-          res.render('prueba.handlebars',{title: "kirolElkarteak"});
-
-};
 
 exports.berriakbilatu = function(req, res){
   var id = req.session.idKirolElkarteak;
@@ -524,10 +520,14 @@ exports.edukiakikusi = function(req, res){
                };
                
           }
+
+          var testuahtml = md(rows[i].testuaEdukia);
+          console.log("HTML:   " + JSON.stringify(testuahtml));
           edukiak[j] = {
                   idEdukiak    : rows[i].idEdukiak,
                   izenburuaEdukia : rows[i].izenburuaEdukia,
-                  testuaEdukia: rows[i].testuaEdukia
+                  testuaEdukia: rows[i].testuaEdukia,
+                  htmlEdukia : testuahtml
                };
           j++;
        
