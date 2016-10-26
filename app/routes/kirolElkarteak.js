@@ -537,7 +537,7 @@ exports.edukiakikusi = function(req, res){
 
 
           console.log("Rows:" +JSON.stringify(rows));
-          conection.end();
+          connection.end();
           res.render('edukiakikusi.handlebars',{title: "kirolElkarteak", azpiAtalak:azpiAtalak, data:rows, data2: rowst, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, atalak: req.session.atalak, partaidea: req.session.partaidea});
         });                        
       });   
