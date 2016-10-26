@@ -227,8 +227,8 @@ function adminKirolElkarteaonartua(req, res, next){
 //Rutak
 
 //app.get('/', authorize2, kirolElkarteak.berriakikusi);
-//app.get('/', authorize2, kirolElkarteak.edukiakikusi);
-app.get('/', kirolElkarteak.prueba);
+app.get('/', authorize2, kirolElkarteak.edukiakikusi);
+//app.get('/', kirolElkarteak.edukiakikusi);
 app.get('/taldeak', taldeak.taldeakikusipartaide);
 app.post('/taldeasortu',taldeak.sortu); 
 
@@ -451,24 +451,5 @@ app.get('/jardunaldikoemaitzak/:jardunaldia', denboraldiak.jardunaldikoemaitzaki
 var server = http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
 });
-//if ('development' == app.get('env')) {
-if (process.env.NODE_ENV != 'production'){  
-var cliente = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password : 'root',
-    port : 8889, //port mysql
-    database:'kirolElkarteak'
-});
-            console.log("localhost2" );
-}
-else{
-  var cliente = mysql.createConnection({
-    host: 'us-cdbr-iron-east-02.cleardb.net',
-    user: 'b52372483fde60',
-    password : '4d96016a',
-    //  port : 3306, //port mysql
-    database:'heroku_4efa3ee4ff6c16c'
-});
-              console.log("heroku2" );
-}
+
+
