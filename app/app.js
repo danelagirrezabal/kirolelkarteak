@@ -200,6 +200,7 @@ function authorize2(req, res, next){
 
 
             return next();
+             connection.end();
            });
         });
 
