@@ -300,7 +300,7 @@ exports.berriakikusi = function(req, res){
 
 exports.prueba = function(req, res){
 
-          res.render('prueba.handlebars',{title: "kirolElkarteak", jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, atalak: req.session.atalak});
+          res.render('prueba.handlebars',{title: "kirolElkarteak"});
 
 };
 
