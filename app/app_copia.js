@@ -151,11 +151,11 @@ function authorize(req, res, next){
 
 function authorize2(req, res, next){
   req.session.idKirolElkarteak=14;
-  req.session.atalak=[{"idAtalak":3,"izenaAtala":'GAUR EGUN',"zenbakiAtala":'1',"idElkarteakAtala":14}];  
+ // req.session.atalak=[{"idAtalak":3,"izenaAtala":'GAUR EGUN',"zenbakiAtala":'1',"idElkarteakAtala":14}];  
 
   //if(req.session.idKirolElkarteak) return next();
   //  res.redirect('/kirolElkarteak');
-  req.session.idDenboraldia=2;
+  //req.session.idDenboraldia=2;
 
   //Jardunaldia zein den jakiteko eguneko data jakin
   var today = new Date();
@@ -169,9 +169,9 @@ function authorize2(req, res, next){
 
   req.session.jardunaldia= year + '-' + month + '-' + day;
 
-  return next();
+  //return next();
 
-  /*req.getConnection(function(err,connection){
+  req.getConnection(function(err,connection){
 
     connection.query('SELECT idDenboraldia, deskribapenaDenb FROM denboraldiak where egoeraDenb=1 and idElkarteakDenb = ? order by deskribapenaDenb desc',[req.session.idKirolElkarteak],function(err,rowsdenb) {
           
@@ -207,7 +207,7 @@ function authorize2(req, res, next){
         });
 
       });
-  });*/
+  });
 
 }
 
@@ -255,7 +255,7 @@ app.get('/login', authorize2, function(req, res){
 });
 app.post('/login', partaideak.login);
 app.get('/logout', function(req, res){
-  console.log('Serving request for url [GET] ' + req.session.partaidea);
+  console.log('Serving request for url [GET] ' + req.session.idtalde);
   req.session.idDenboraldia = undefined;
   req.session.partaidea = undefined;
   req.session.jardunaldia = undefined;

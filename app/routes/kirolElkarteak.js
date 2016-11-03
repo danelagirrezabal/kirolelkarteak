@@ -463,7 +463,7 @@ exports.edukiakikusi = function(req, res){
   //var k = 0;
   var vAtalak, vAzpiAtalak;
  
-  req.getConnection(function(err,connection){
+  /*req.getConnection(function(err,connection){
        
      
      connection.query('SELECT * FROM edukiak, azpiAtalak where idElkarteakEdukia = ? and idAzpiAtalakEdukia = idAzpiAtalak and idAtalakAzpiAtala = ? order by zenbakiAzpiAtala asc, zenbakiEdukia asc,  dataEdukia desc',[id, idAtalak],function(err,rows)     {
@@ -504,7 +504,7 @@ exports.edukiakikusi = function(req, res){
                };
                
           }*/
-          if(vAzpiAtalak != rows[i].idAzpiAtalak){
+          /*if(vAzpiAtalak != rows[i].idAzpiAtalak){
             if(vAzpiAtalak !=null){
               azpiAtala.edukiak = edukiak;
               azpiAtalak[t] = azpiAtala;
@@ -554,8 +554,9 @@ exports.edukiakikusi = function(req, res){
 
       });   
 
-  });
- 
+  });*/
+           res.render('edukiakikusi.handlebars',{title: "kirolElkarteak", jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, atalak: req.session.atalak, partaidea: req.session.partaidea});
+
 };
      
 
