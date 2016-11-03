@@ -93,20 +93,77 @@ if (process.env.NODE_ENV != 'production'){
               console.log("localhost1" );
 }
 else{
-  app.use(
+  //app.use(
     
-    connection(mysql,{
+    /*connection(mysql,{
         
         host: 'us-cdbr-iron-east-04.cleardb.net',
         user: 'b65e4830d842c6',
         password : 'ff86419e',
       //  port : 3306, //port mysql
-        database:'heroku_3a7c26fa617acae',
-        wait_timeot: '2146486'
+        database:'heroku_3a7c26fa617acae'
     },'request')
- );
-              console.log("herokuBerria" );
+ );*/
+
+      /*var connection = mysql.createConnection({
+        
+        host: 'us-cdbr-iron-east-04.cleardb.net',
+        user: 'b65e4830d842c6',
+        password : 'ff86419e',
+      //  port : 3306, //port mysql
+        database:'heroku_3a7c26fa617acae'
+
+      });
+
+      connection.connect(function(err){
+          if (!err) {
+             console.log("herokuBerria" );
+           } else {
+              console.log("herokuERROREA" );
+
+           };
+      });*/
+
+
+
+var db_config = {
+     host: 'us-cdbr-iron-east-04.cleardb.net',
+        user: 'b65e4830d842c6',
+        password : 'ff86419e',
+      //  port : 3306, //port mysql
+        database:'heroku_3a7c26fa617acae'
+};
+
+var connection;
+
+function handleDisconnect() {
+    console.log('1. connecting to db:');
+    connection = mysql.createConnection(db_config); // Recreate the connection, since
+                          // the old one cannot be reused.
+
+    connection.connect(function(err) {                // The server is either down
+        if (err) {                                     // or restarting (takes a while sometimes).
+            console.log('2. error when connecting to db:', err);
+            setTimeout(handleDisconnect, 1000); // We introduce a delay before attempting to reconnect,
+        }                                       // to avoid a hot loop, and to allow our node script to
+    });                                       // process asynchronous requests in the meantime.
+                          // If you're also serving http, display a 503 error.
+    connection.on('error', function(err) {
+        console.log('3. db error', err);
+        if (err.code === 'PROTOCOL_CONNECTION_LOST') {  // Connection to the MySQL server is usually
+            handleDisconnect();                       // lost due to either server restart, or a
+        } else {                                        // connnection idle timeout (the wait_timeout
+            throw err;                                  // server variable configures this)
+        }
+    });
 }
+
+handleDisconnect();
+
+
+
+             
+};
   
 
 // flash message middleware
@@ -152,11 +209,11 @@ function authorize(req, res, next){
 
 function authorize2(req, res, next){
   req.session.idKirolElkarteak=14;
- // req.session.atalak=[{"idAtalak":3,"izenaAtala":'GAUR EGUN',"zenbakiAtala":'1',"idElkarteakAtala":14}];  
+  req.session.atalak=[{"idAtalak":3,"izenaAtala":'GAUR EGUN',"zenbakiAtala":'1',"idElkarteakAtala":14}];  
 
   //if(req.session.idKirolElkarteak) return next();
   //  res.redirect('/kirolElkarteak');
-  //req.session.idDenboraldia=2;
+  req.session.idDenboraldia=2;
 
   //Jardunaldia zein den jakiteko eguneko data jakin
   var today = new Date();
@@ -172,7 +229,8 @@ function authorize2(req, res, next){
 
   //return next();
 
-  req.getConnection(function(err,connection){
+  //req.getConnection(function(err,connection){
+
 
     connection.query('SELECT idDenboraldia, deskribapenaDenb FROM denboraldiak where egoeraDenb=1 and idElkarteakDenb = ? order by deskribapenaDenb desc',[req.session.idKirolElkarteak],function(err,rowsdenb) {
           
@@ -202,13 +260,16 @@ function authorize2(req, res, next){
                 req.session.atalak=rowsatal;  
 
 
+             // connection.end();
+
             return next();
 
            });
         });
 
       });
-  });
+
+  //});
 
 }
 
@@ -256,7 +317,7 @@ app.get('/login', authorize2, function(req, res){
 });
 app.post('/login', partaideak.login);
 app.get('/logout', function(req, res){
-  console.log('Serving request for url [GET] ' + req.session.idtalde);
+  console.log('Serving request for url [GET] ' + req.session.partaidea);
   req.session.idDenboraldia = undefined;
   req.session.partaidea = undefined;
   req.session.jardunaldia = undefined;
