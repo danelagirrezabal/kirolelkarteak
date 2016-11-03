@@ -463,7 +463,7 @@ exports.edukiakikusi = function(req, res){
   //var k = 0;
   var vAtalak, vAzpiAtalak;
  
-  req.getConnection(function(err,connection){
+  /*req.getConnection(function(err,connection){
        
      
      connection.query('SELECT * FROM edukiak, azpiAtalak where idElkarteakEdukia = ? and idAzpiAtalakEdukia = idAzpiAtalak and idAtalakAzpiAtala = ? order by zenbakiAzpiAtala asc, zenbakiEdukia asc,  dataEdukia desc',[id, idAtalak],function(err,rows)     {
@@ -472,10 +472,10 @@ exports.edukiakikusi = function(req, res){
            console.log("Error Selecting : %s ",err );
          
      
-        /*connection.query('SELECT * FROM elkarteak where idElkarteak = ? ',[id],function(err,rowst)     {
+        connection.query('SELECT * FROM elkarteak where idElkarteak = ? ',[id],function(err,rowst)     {
           
           if(err)
-           console.log("Error Selecting : %s ",err );*/
+           console.log("Error Selecting : %s ",err );
           
 
           //for (var i in rows){
@@ -531,16 +531,15 @@ exports.edukiakikusi = function(req, res){
 
           console.log("Rows:" +JSON.stringify(rows));
           //connection.end();
-          res.render('edukiakikusi.handlebars',{title: "kirolElkarteak", azpiAtalak:azpiAtalak, data:rows,  jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, atalak: req.session.atalak, partaidea: req.session.partaidea});
-                   // res.render('edukiakikusi.handlebars',{title: "kirolElkarteak", azpiAtalak:azpiAtalak, data:rows, data2: rowst, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, atalak: req.session.atalak, partaidea: req.session.partaidea});
+          res.render('edukiakikusi.handlebars',{title: "kirolElkarteak", azpiAtalak:azpiAtalak, data:rows, data2: rowst, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, atalak: req.session.atalak, partaidea: req.session.partaidea});
 
           //connection.end();
         });  
 
-      //});   
+      });   
 
-  });
-           //res.render('edukiakikusi.handlebars',{title: "kirolElkarteak", jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, atalak: req.session.atalak, partaidea: req.session.partaidea});
+  });*/
+           res.render('edukiakikusi.handlebars',{title: "kirolElkarteak", jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, atalak: req.session.atalak, partaidea: req.session.partaidea});
 
 };
      

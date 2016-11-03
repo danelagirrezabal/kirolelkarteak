@@ -93,7 +93,7 @@ if (process.env.NODE_ENV != 'production'){
               console.log("localhost1" );
 }
 else{
-  app.use(
+  /*app.use(
     
     connection(mysql,{
         
@@ -103,9 +103,28 @@ else{
       //  port : 3306, //port mysql
         database:'heroku_3a7c26fa617acae'
     },'request')
- );
-              console.log("herokuBerria" );
-}
+ );*/
+
+      var connection = mysql.createConnection({
+        
+        host: 'us-cdbr-iron-east-04.cleardb.net',
+        user: 'b65e4830d842c6',
+        password : 'ff86419e',
+      //  port : 3306, //port mysql
+        database:'heroku_3a7c26fa617acae'
+
+      });
+
+      connection.connect(function(err){
+          if (!err) {
+             console.log("herokuBerria" );
+           } else {
+              console.log("herokuERROREA" );
+
+           };
+      });
+             
+};
   
 
 // flash message middleware
@@ -169,9 +188,10 @@ function authorize2(req, res, next){
 
   req.session.jardunaldia= year + '-' + month + '-' + day;
 
-  return next();
+  //return next();
 
-  /*req.getConnection(function(err,connection){
+  //req.getConnection(function(err,connection){
+
 
     connection.query('SELECT idDenboraldia, deskribapenaDenb FROM denboraldiak where egoeraDenb=1 and idElkarteakDenb = ? order by deskribapenaDenb desc',[req.session.idKirolElkarteak],function(err,rowsdenb) {
           
@@ -201,13 +221,16 @@ function authorize2(req, res, next){
                 req.session.atalak=rowsatal;  
 
 
+
+
             return next();
 
            });
         });
 
       });
-  });*/
+
+  //});
 
 }
 
