@@ -1075,8 +1075,9 @@ exports.agiriaksortu = function(req,res){
     var id = req.session.idKirolElkarteak;
     var idDenboraldia = req.session.idDenboraldia;
     var now= new Date();
+    console.log(input);
 
-    var elkartedir = agiriakDir + '/' + id;
+    /*var elkartedir = agiriakDir + '/' + id;
           fs.existsSync(elkartedir) || fs.mkdirSync(elkartedir);
           var form = new formidable.IncomingForm();
           form.keepExtensions = true;
@@ -1102,8 +1103,7 @@ exports.agiriaksortu = function(req,res){
               type: 'success',
               intro: 'Oso ondo!',
               message: 'Agiria igo da.',
-            };
-
+            };*/
 
     req.getConnection(function (err, connection) {
         
@@ -1113,6 +1113,7 @@ exports.agiriaksortu = function(req,res){
             izenaAgiria   : input.izenaAgiria,
             urlAgiria : input.urlAgiria,
             dataAgiria: now,
+            publikoAgiria : 0,
             idElkarteakAgiria : id,
             idDenboraldiaAgiria : idDenboraldia
         };
@@ -1128,12 +1129,74 @@ exports.agiriaksortu = function(req,res){
           
          
           res.redirect('/admin/agiriak');
+            //res.render('agiriakigo.handlebars', {page_title:"Agiriak igo",data:rows, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea: req.session.partaidea});
+
         });
         
        // console.log(query.sql); 
     
     });
-});
+//});
+};
+
+
+exports.agiriakigo = function(req,res){
+    
+    var input = JSON.parse(JSON.stringify(req.body));
+    var id = req.session.idKirolElkarteak;
+    var idDenboraldia = req.session.idDenboraldia;
+    var now= new Date();
+    console.log(input);
+    var fitxategiIzena;
+
+    var elkartedir = agiriakDir + '/' + id;
+          fs.existsSync(elkartedir) || fs.mkdirSync(elkartedir);
+          var form = new formidable.IncomingForm();
+          form.keepExtensions = true;
+          form.uploadDir = elkartedir;
+          form.on('fileBegin', function(name, file){
+            //rename the incoming file to the file's name
+            file.path = form.uploadDir + "/" + file.name;
+            fitxategiIzena=file.name;
+
+          });
+
+          form.parse(req, function(err, fields, files){
+            console.log(fields);
+            console.log(files);
+          //if(err) return res.redirect(303, '/error');
+            if(err) {
+              req.session.flash = {
+                type: 'danger',
+                intro: 'Oops!',
+                message: 'Berriz saiatu',
+              };
+              return res.redirect(303, '/admin/agiriak');
+            }
+            //var argazkia = files.argazkia;
+            //var dir = argazkiakDir + '/' + idKirolElkarteak;
+            //var path = dir + '/' + fields.izena;
+            //fs.mkdirSync(dir);
+            //fs.renameSync(argazkia.path, dir + '/' + fields.izena);
+            //saveContestEntry('vacation-photo', fields.email,
+            //   req.params.year, req.params.month, path);
+            req.session.flash = {
+              type: 'success',
+              intro: 'Oso ondo!',
+              message: 'Agiria igo da.',
+            };
+          
+         
+          //res.redirect('/admin/agiriak');
+          res.render('agiriaksortu.handlebars', {page_title:"Agiriak igo", urlAgiria: fitxategiIzena, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea: req.session.partaidea});
+
+
+        });
+        
+       // console.log(query.sql); 
+    
+    //});
+//});
 };
 
 
@@ -1223,7 +1286,7 @@ exports.agiriakaldatu = function(req,res){
             atalaAgiria    : input.atalaAgiria,
             izenaAgiria   : input.izenaAgiria,
             urlAgiria : input.urlAgiria,
-            dataAgiria: input.dataAgiria,
+            dataAgiria: input.dataAgiria
         };
         
         connection.query("UPDATE agiriak set ? WHERE idElkarteakAgiria = ? and idAgiriak = ? ",[data,id,idAgiriak], function(err, rows)
@@ -1239,13 +1302,79 @@ exports.agiriakaldatu = function(req,res){
     });
 };
 
+exports.agiriakaldatufitxategi = function(req,res){
+    var input = JSON.parse(JSON.stringify(req.body));
+    var id = req.session.idKirolElkarteak;
+    var idAgiriak = req.params.idAgiriak;
+
+    var now= new Date();
+    console.log(input);
+    var fitxategiIzena;
+
+    var elkartedir = agiriakDir + '/' + id;
+          fs.existsSync(elkartedir) || fs.mkdirSync(elkartedir);
+          var form = new formidable.IncomingForm();
+          form.keepExtensions = true;
+          form.uploadDir = elkartedir;
+          form.on('fileBegin', function(name, file){
+            //rename the incoming file to the file's name
+            file.path = form.uploadDir + "/" + file.name;
+            fitxategiIzena=file.name;
+
+          });
+
+          form.parse(req, function(err, fields, files){
+            console.log(fields);
+            console.log(files);
+          //if(err) return res.redirect(303, '/error');
+            if(err) {
+              req.session.flash = {
+                type: 'danger',
+                intro: 'Oops!',
+                message: 'Berriz saiatu',
+              };
+              return res.redirect(303, '/admin/agiriak');
+            }
+            //var argazkia = files.argazkia;
+            //var dir = argazkiakDir + '/' + idKirolElkarteak;
+            //var path = dir + '/' + fields.izena;
+            //fs.mkdirSync(dir);
+            //fs.renameSync(argazkia.path, dir + '/' + fields.izena);
+            //saveContestEntry('vacation-photo', fields.email,
+            //   req.params.year, req.params.month, path);
+            req.session.flash = {
+              type: 'success',
+              intro: 'Oso ondo!',
+              message: 'Agiria igo da.',
+            };
+    
+    req.getConnection(function (err, connection) {
+        
+        var data = {  
+            urlAgiria : fitxategiIzena,
+        };
+        
+        connection.query("UPDATE agiriak set ? WHERE idElkarteakAgiria = ? and idAgiriak = ? ",[data,id,idAgiriak], function(err, rows)
+        {
+  
+          if (err)
+              console.log("Error Updating : %s ",err );
+         
+          res.redirect('/admin/agiriak');
+          
+        });
+    
+    });
+  });
+};
+
 exports.agiriakezabatu = function(req,res){
      var id = req.session.idKirolElkarteak;
      var idAgiriak = req.params.idAgiriak;
     
      req.getConnection(function (err, connection) {
         
-        connection.query("DELETE FROM agiriak  WHERE idElkarteakAgiriak = ? and idAgiriak = ?",[id,idAgiriak], function(err, rows)
+        connection.query("DELETE FROM agiriak  WHERE idElkarteakAgiria = ? and idAgiriak = ?",[id,idAgiriak], function(err, rows)
         {
             
              if(err)
@@ -1266,6 +1395,9 @@ exports.agiriakezabatu = function(req,res){
 exports.argazkiakigo = function(req, res){
   var idKirolElkarteak = req.session.idKirolElkarteak;
     var elkartedir = argazkiakDir + '/' + idKirolElkarteak;
+    var input = JSON.parse(JSON.stringify(req.body));
+    console.log(input);
+
   //var txapelketadir = path.join(argazkiakDir, idKirolElkarteak);
   fs.existsSync(elkartedir) || fs.mkdirSync(elkartedir);
     var form = new formidable.IncomingForm();

@@ -232,10 +232,8 @@ function adminKirolElkarteaonartua(req, res, next){
 app.get('/', authorize2, kirolElkarteak.edukiakikusi);
 //app.get('/', kirolElkarteak.edukiakikusi);
 app.get('/taldeak', taldeak.taldeakikusipartaide);
-app.post('/taldeasortu',taldeak.sortu); 
+ 
 
-app.get('/taldeaeditatu', taldeak.editatu);
-app.post('/taldeaaldatu', taldeak.aldatu);
 app.get('/partaidemail/:emaila', partaideak.partaidemail);
 app.get('/partaideak', authorize2, partaideak.ikusi);
 
@@ -361,15 +359,16 @@ app.get('/admin/azpiAtalakeditatu/:idAzpiAtalak', adminonartua, kirolElkarteak.a
 app.post('/admin/azpiAtalakaldatu/:idAzpiAtalak', adminonartua, kirolElkarteak.azpiAtalakaldatu);
 
 app.get('/admin/agiriak', adminonartua, kirolElkarteak.agiriakbilatu);
-app.get('/agiriak', kirolElkarteak.agiriakbilatupartaide);
+app.get('/agiriak', authorize2, kirolElkarteak.agiriakbilatupartaide);
 app.post('/admin/agiriaksortu', adminonartua, kirolElkarteak.agiriaksortu);
+app.post('/admin/agiriakigo', adminonartua, kirolElkarteak.agiriakigo);
 app.post('/admin/agiriakgehitu', adminonartua, function(req, res){
-    res.render('agiriaksortu.handlebars', {title : 'KirolElkarteak-Agiriak gehitu', partaidea: req.session.partaidea});
+    res.render('agiriakigo.handlebars', {title : 'KirolElkarteak-Agiriak gehitu', partaidea: req.session.partaidea});
 });
 app.get('/admin/agiriakezabatu/:idAgiriak', adminonartua, kirolElkarteak.agiriakezabatu);
 app.get('/admin/agiriakeditatu/:idAgiriak', adminonartua, kirolElkarteak.agiriakeditatu);
 app.post('/admin/agiriakaldatu/:idAgiriak', adminonartua, kirolElkarteak.agiriakaldatu);
-
+app.post('/admin/agiriakaldatufitxategi/:idAgiriak', adminonartua, kirolElkarteak.agiriakaldatufitxategi);
 
 app.get('/admin/denboraldiak', adminonartua, denboraldiak.denboraldiakbilatu);
 app.post('/admin/denboraldiaksortu', adminonartua, denboraldiak.denboraldiaksortu);
@@ -424,6 +423,11 @@ app.get('/admin/taldekideakgehitu/:idTaldeak', adminonartua, taldeak.taldekideak
 app.get('/admin/taldekideakezabatu/:idTaldeak/:idTaldekideak', adminonartua, taldeak.taldekideakezabatu);
 app.get('/admin/taldekideakeditatu/:idTaldekideak', adminonartua, taldeak.taldekideakeditatu);
 app.post('/admin/taldekideakaldatu/:idTaldeak/:idTaldekideak', adminonartua, taldeak.taldekideakaldatu);
+
+app.get('/admin/taldeargazkia/:idTaldeak', adminonartua, function(req, res){
+    res.render('taldeargazkia.handlebars', {title : 'KirolElkarteak-Talde argazkia', idTaldeak: req.params.idTaldeak, partaidea: req.session.partaidea});
+});
+app.post('/admin/taldeargazkiaigo/:idTaldeak', adminonartua, taldeak.taldeargazkiaigo);
 
 app.get('/admin/partaidemotak', adminonartua, kirolElkarteak.partaidemotakbilatu);
 app.post('/admin/partaidemotaksortu', adminonartua, kirolElkarteak.partaidemotaksortu);

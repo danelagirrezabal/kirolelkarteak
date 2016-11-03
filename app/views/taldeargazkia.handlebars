@@ -1,0 +1,26 @@
+{{> menuadmin}}
+
+<div class="jumbotron">
+        <h2>Taldeko argazkia</h2>
+      </div>
+<div class="formContainer">
+    <form class="form-horizontal newsletterForm" enctype="multipart/form-data" role="form" action="/admin/taldeargazkiaigo/{{idTaldeak}}" method="POST">
+    <input type="hidden" name="_csrf" value="{{_csrfToken}}">
+       
+
+        <div class="form-group">
+          <label for="argazkia" class="col-sm-2 control-label">Argazkia aukeratu</label>
+          <div class="col-sm-4">
+            <input type="file" class="form-control" required accept="image/*" id="argazkia" data-url="/upload" name="argazkia">
+          </div>
+        </div>
+        
+        <div class="form-group">
+            <div class="col-sm-offset-3 col-sm-4">
+                <button type="submit" class="btn btn-default">Gorde</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+      </div>

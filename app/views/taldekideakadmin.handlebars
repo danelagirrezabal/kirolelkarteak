@@ -5,9 +5,32 @@
         <h2>Taldekideak</h2>
         <h3>{{izenaTalde}} - {{izenaMaila}}</h3> 
 
+
    </div>
-   <a href="/admin/taldekideakgehitu/{{idTaldeak}}" class="btn btn-primary btn-sm" role="button">Taldekidea gehitu</a>
-      {{/each}}
+   <a href="/admin/taldekideakgehitu/{{idTaldeak}}" class="btn btn-primary btn-bg" role="button">Taldekidea gehitu</a>
+
+   {{/each}}
+  
+
+
+        </br>
+
+       <div class="row marketing">
+       {{#each irudiak}}
+          <div class="col-md-4 col-md-offset-4">
+             <a href="/data/taldeargazkiak/{{idKirolElkarteak}}/{{idTaldeak}}/{{files}}" class="thumbnail">
+              <img src="/data/taldeargazkiak/{{idKirolElkarteak}}/{{idTaldeak}}/{{files}}" alt="Taldearen argazkia"  ref="/data/taldeargazkiak/{{idKirolElkarteak}}/{{idTaldeak}}/{{files}}" class="thumbnail"> </img> </a>
+
+              </div>
+         {{/each}} 
+         <div class="col-md-4 col-md-offset-4">
+              <a href="/admin/taldeargazkia/{{idTaldeak}}" class="btn btn-primary btn-bg" style="margin:auto; text-align:center; display:block;" role="button">Argazkia gehitu/aldatu</a>
+          </div>
+
+      </div>
+
+      </br>
+      
       </br></br>
       <div class="row marketing">
         <div class="col-lg-12">
