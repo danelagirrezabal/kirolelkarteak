@@ -221,7 +221,7 @@ function authorize2(req, res, next){
                 req.session.atalak=rowsatal;  
 
 
-
+              connection.end();
 
             return next();
 
