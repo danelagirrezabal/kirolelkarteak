@@ -169,11 +169,11 @@ function authorize2(req, res, next){
 
   req.session.jardunaldia= year + '-' + month + '-' + day;
 
-  //return next();
+  return next();
 
-  req.getConnection(function(err,connection){
+  /*req.getConnection(function(err,connection){
 
-    /*connection.query('SELECT idDenboraldia, deskribapenaDenb FROM denboraldiak where egoeraDenb=1 and idElkarteakDenb = ? order by deskribapenaDenb desc',[req.session.idKirolElkarteak],function(err,rowsdenb) {
+    connection.query('SELECT idDenboraldia, deskribapenaDenb FROM denboraldiak where egoeraDenb=1 and idElkarteakDenb = ? order by deskribapenaDenb desc',[req.session.idKirolElkarteak],function(err,rowsdenb) {
           
         if(err)
               console.log("Error Selecting : %s ",err );
@@ -191,7 +191,7 @@ function authorize2(req, res, next){
             if (req.session.jardunaldia > rowsd[0].jardunaldiDataPartidu){
               req.session.jardunaldia=rowsd[0].jardunaldiDataPartidu;
             }
-          //}*/
+          //}
 
            connection.query('SELECT * FROM atalak where zenbakiAtala>0 AND idElkarteakAtala = ? order by zenbakiAtala asc',[req.session.idKirolElkarteak],function(err,rowsatal) {
           
@@ -204,10 +204,10 @@ function authorize2(req, res, next){
             return next();
 
            });
-        //});
+        });
 
-      //});
-  });
+      });
+  });*/
 
 }
 
