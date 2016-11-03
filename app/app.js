@@ -93,9 +93,10 @@ if (process.env.NODE_ENV != 'production'){
               console.log("localhost1" );
 }
 else{
-  /*app.use(
+  app.use(
+    handleDisconnect());
     
-    connection(mysql,{
+    /*connection(mysql,{
         
         host: 'us-cdbr-iron-east-04.cleardb.net',
         user: 'b65e4830d842c6',
@@ -158,7 +159,9 @@ function handleDisconnect() {
     });
 }
 
-handleDisconnect();
+//handleDisconnect();
+
+
 
              
 };
