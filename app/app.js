@@ -207,7 +207,7 @@ function authorize2(req, res, next){
            });
         });
 
-      });
+      connection.end()});
   });
 
 }
