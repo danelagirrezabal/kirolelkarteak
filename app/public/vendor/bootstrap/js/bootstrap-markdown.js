@@ -562,6 +562,7 @@
       // Set the content based from the callback content if string otherwise parse value from textarea
       content = typeof callbackContent == 'string' ? callbackContent : this.parseContent();
 
+
       // Build preview element
       replacementContainer.html(content);
 

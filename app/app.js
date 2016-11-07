@@ -151,11 +151,11 @@ function authorize(req, res, next){
 
 function authorize2(req, res, next){
   req.session.idKirolElkarteak=14;
- req.session.atalak=[{"idAtalak":3,"izenaAtala":'GAUR EGUN',"zenbakiAtala":'1',"idElkarteakAtala":14}];  
+ //req.session.atalak=[{"idAtalak":3,"izenaAtala":'GAUR EGUN',"zenbakiAtala":'1',"idElkarteakAtala":14}];  
 
   //if(req.session.idKirolElkarteak) return next();
   //  res.redirect('/kirolElkarteak');
-  req.session.idDenboraldia=2;
+  //req.session.idDenboraldia=2;
 
   //Jardunaldia zein den jakiteko eguneko data jakin
   var today = new Date();
@@ -169,9 +169,9 @@ function authorize2(req, res, next){
 
   req.session.jardunaldia= year + '-' + month + '-' + day;
 
-  return next();
+  //return next();
 
-  /*req.getConnection(function(err,connection){
+  req.getConnection(function(err,connection){
 
     connection.query('SELECT idDenboraldia, deskribapenaDenb FROM denboraldiak where egoeraDenb=1 and idElkarteakDenb = ? order by deskribapenaDenb desc',[req.session.idKirolElkarteak],function(err,rowsdenb) {
           
@@ -207,7 +207,7 @@ function authorize2(req, res, next){
         });
 
       });
-  });*/
+  });
 
 }
 
@@ -236,6 +236,8 @@ app.get('/taldeak', taldeak.taldeakikusipartaide);
 
 app.get('/partaidemail/:emaila', partaideak.partaidemail);
 app.get('/partaideak', authorize2, partaideak.ikusi);
+
+app.get('/izenematea', partaideak.partaideakgehitu);
 
 app.post('/partaideakgehitu', authorize2, partaideak.partaideakgehitu);
 app.post('/partaideaksortu', partaideak.sortu);
@@ -453,6 +455,7 @@ app.post('/admin/partaideakaldatu/:idPartaideak', authorizePartaide, partaideak.
 
 app.get('/emaitzak', denboraldiak.emaitzakikusi);
 app.get('/jardunaldikoemaitzak/:jardunaldia', denboraldiak.jardunaldikoemaitzakikusi);
+
 
 var server = http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
