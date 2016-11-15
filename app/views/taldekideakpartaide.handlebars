@@ -4,9 +4,14 @@
       {{#each talde}}
         <h2>Taldekideak</h2>
         <h3>{{izenaTalde}} - {{izenaMaila}}</h3> 
-      {{/each}}
    </div>
+      {{/each}}
 
+
+      {{#if arduradun}}
+          <a href="/taldekideakgehitu/{{idTaldeak}}" class="btn btn-primary btn-bg" role="button">Taldekidea gehitu</a>
+      {{/if}}
+   
       
       </br>
 
@@ -31,6 +36,9 @@
                     <th>Taldea</th>
                     <th>Kamixeta zenbakia</th>
                     <th>Jokalari mota</th>
+                    {{#if arduradun}}
+                       <th>Kuota ordainduta?</th>
+                    {{/if}}
 
                 </tr>                               
             {{#each data}}
@@ -40,6 +48,12 @@
                     <td>{{izenaTalde}}</td>   
                     <td>{{kamixetaZenbKide}}</td> 
                     <td>{{deskribapenMota}}</td> 
+
+                    {{#if arduraduna}}
+                      <td>{{ordainduKide}}</td>
+                      <td><a class="a-inside edit" href="/taldekideakeditatu/{{idTaldekideak}}">Aldatu</a></td> 
+                      <td><a class="a-inside delete" href="/taldekideakezabatu/{{idTaldeak}}/{{idTaldekideak}}">Ezabatu</a></td> 
+                    {{/if}}
                 </tr>
             {{/each}}
           </table>

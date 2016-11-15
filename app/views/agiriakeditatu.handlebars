@@ -25,9 +25,22 @@
         <div class="form-group">
             <label for="dataAgiria" class="col-sm-2 control-label">Data</label>
             <div class="col-sm-4">
-                <input type="date" class="form-control" required id="dataAgiria" name="dataAgiria" autofocus value={{dataAgiria}} >
+                <input type="text" class="form-control" required id="dataAgiria" name="dataAgiria" autofocus value={{dataAgiria}} >
             </div>
         </div>
+
+         <div class="form-group">
+        <div class="checkbox col-sm-offset-3">
+              <label>
+                {{#if publikoaDa}}
+                <input type="checkbox" name="publiko" id="publiko" value="true" checked>
+                {{else}}
+                <input type="checkbox" name="publiko" id="publiko" value="true">
+                {{/if}}
+                <strong>Agiri hau publiko egingo da erabiltzaile guztientzat</strong>
+              </label>
+         </div>
+         </div>     
 
         <div class="form-group">
             <!--<label for="urlAgiria" class="col-sm-2 control-label">Agiriaren URL</label>-->

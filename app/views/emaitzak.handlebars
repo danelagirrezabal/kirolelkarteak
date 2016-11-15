@@ -3,14 +3,37 @@
    <div class="jumbotron">
         <h2>Emaitzak</h2>
       </div>
-      </br></br>
+      </br>
+      <a href="/partiduemaitzaktalde/" class="btn btn-primary btn-bg" role="button">EMAITZAK TALDEKA IKUSI</a>
+
+       </br>
+        </br></br>
        <div class="form-group">
+
+            <label for="denboraldia" class="col-sm-2 control-label">Denboraldia:</label>
+            <div class="col-sm-4">
+            <select name="denboraldia" id="denboraldia">
+                <!--<option value="">--Aukeratu denboraldia--</option>-->
+                {{#each denboraldiak}}
+                    {{#if aukeratua}}
+                       <option value="{{idDenboraldia}}" selected>{{deskribapenaDenb}}</option>
+                    {{else}}
+                       <option value="{{idDenboraldia}}">{{deskribapenaDenb}}</option>
+                    {{/if}}
+                {{/each}}
+            </select>
+            </div>
+
             <label for="jardunaldia" class="col-sm-2 control-label">Jardunaldia:</label>
             <div class="col-sm-4">
             <select name="jardunaldia" id="jardunaldia">
                 <option value="">--Aukeratu jardunaldia--</option>
                 {{#each jardunaldiak}}
+                    {{#if aukeratua}}
+                       <option value="{{jardunaldiDataPartidu}}" selected>{{jardunaldiDataPartidu}}</option>
+                    {{else}}
                        <option value="{{jardunaldiDataPartidu}}">{{jardunaldiDataPartidu}}</option>
+                    {{/if}}
                 {{/each}}
             </select>
             </div>
@@ -26,6 +49,7 @@
                     <th>A ekipoa</th>
                     <th>B ekipoa</th>
                     <th>Emaitza</th>
+                    
                 </tr>          
 
             {{#each data}}
@@ -36,6 +60,10 @@
                     <td>{{etxekoaPartidu}}</td>   
                     <td>{{kanpokoaPartidu}}</td> 
                     <td>{{emaitzaPartidu}}</td> 
+                    {{#if arduraduna}}
+                      <td><a class="a-inside edit" href="/emaitzaksartu/{{idPartiduak}}">Emaitza sartu</a></td> 
+                    {{/if}}
+
                 </tr>
             {{/each}}
           </table>
@@ -45,16 +73,33 @@
 
 {{#section 'jquery'}}
 <script>
-  $(document).ready(function(){        
+  $(document).ready(function(){    
+
+  var jardunaldia = $('#jardunaldia').val();
+  var denboraldia = $('#denboraldia').val();      
 
     $('#jardunaldia').change(function(){
 
-      var data = 'id=' + $('#jardunaldia').val();
+      if ($('#jardunaldia').val() =="")
+        alert("Aukeratu jardunaldia");
+      else {
 
-      $(location).attr('href', '/jardunaldikoemaitzak/'+$('#jardunaldia').val());
+        var data = 'id=' + $('#jardunaldia').val();
 
+        //$(location).attr('href', '/jardunaldikoemaitzak/'+$('#jardunaldia').val());
+        $(location).attr('href', '/partiduemaitzak/'+$('#denboraldia').val()+'/'+$('#jardunaldia').val());
+      }
     });
-  });
+
+
+   $('#denboraldia').change(function(){
+
+        var data = 'id=' + $('#denboraldia').val();
+
+        $(location).attr('href', '/partiduemaitzak/'+$('#denboraldia').val()+'/'+$('#jardunaldia').val());
+     
+    });
+});
             
 </script> 
         

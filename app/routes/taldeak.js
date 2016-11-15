@@ -33,7 +33,7 @@ exports.taldeakikusipartaide = function(req, res){
            console.log("Error Selecting : %s ",err );
          
          //console.log("Berriak:" +JSON.stringify(rows));
-          res.render('taldeakpartaide.handlebars',{title: "Taldeak", data:rows, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, atalak: req.session.atalak, partaidea: req.session.partaidea});                       
+          res.render('taldeakpartaide.handlebars',{title: "Taldeak", data:rows, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, atalak: req.session.atalak, partaidea: req.session.partaidea, idPartaideak:req.session.idPartaideak, arduraduna:req.session.arduraduna});                       
       });   
   });
 };
@@ -318,6 +318,7 @@ exports.taldekideakbilatupartaideargazkiekin = function(req, res){
   var id = req.session.idKirolElkarteak;
   var idDenboraldia = req.session.idDenboraldia;
   var idTaldeak = req.params.idTaldeak;
+  var arduradun = false;
   req.getConnection(function(err,connection){
 
     connection.query('SELECT * FROM taldeak, mailak where idMailaTalde=idMailak and idTaldeak = ? and idElkarteakTalde = ?',[idTaldeak,id],function(err,rowst) {
@@ -357,9 +358,35 @@ exports.taldekideakbilatupartaideargazkiekin = function(req, res){
     
               argazkiak[i] = argazkia;
             };
+
+            if (rows.length != 0){
+                for(var i in rows ){
+                  if(req.session.arduraduna == rows[i].idArduradunTalde){
+                    rows[i].arduraduna = true;
+                    //arduradun.talde = true;
+                    arduradun = true;
+                  }else{
+                    rows[i].arduraduna = false;
+                    //arduradun.talde = false
+                    arduradun = false;
+                  }
+                }
+            }else{
+                if(req.session.arduraduna == rowst[0].idArduradunTalde){
+                    arduradun = true;
+                }
+            }
+
+
+
+            
+            //arduradun.idTaldeak = idTaldeak;
+
+            //console.log("taldea: " +arduradun.idTaldeak);
+            //console.log("taldea: " + idTaldeak);
          
          //console.log("Berriak:" +JSON.stringify(rows));
-          res.render('taldekideakpartaide.handlebars',{title: "Taldekideak", data:rows, irudiak:argazkiak, talde:rowst, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea: req.session.partaidea, atalak: req.session.atalak});                       
+          res.render('taldekideakpartaide.handlebars',{title: "Taldekideak", idTaldeak:idTaldeak, arduradun:arduradun, data:rows, irudiak:argazkiak, talde:rowst, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea: req.session.partaidea, atalak: req.session.atalak, idPartaideak:req.session.idPartaideak, arduraduna:req.session.arduraduna});                       
       });   
     });
   });
@@ -382,7 +409,7 @@ exports.taldekideakgehitu = function(req, res){
             console.log("Error Selecting : %s ",err );
          
          //console.log("Berriak:" +JSON.stringify(rows));
-      res.render('taldekideaksortu.handlebars', {title : 'KirolElkarteak-Taldeak gehitu', motak:rowsm, partaideak:rowsp, idTaldeak:idTaldeak, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea: req.session.partaidea});
+      res.render('taldekideaksortu.handlebars', {title : 'KirolElkarteak-Taldeak gehitu', motak:rowsm, partaideak:rowsp, idTaldeak:idTaldeak, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea: req.session.partaidea, partaidea: req.session.partaidea, atalak: req.session.atalak, idPartaideak:req.session.idPartaideak, arduraduna:req.session.arduraduna});
       }); 
       });  
          
@@ -420,8 +447,14 @@ exports.taldekideaksortu = function(req,res){
   
           if (err)
               console.log("Error inserting : %s ",err );
+
+
+            if (req.session.arduraduna){
+              res.redirect('/taldekideak/'+idTaldeak);
+            }else{
+              res.redirect('/admin/taldekideak/'+idTaldeak);
+            }
          
-          res.redirect('/admin/taldekideak/'+idTaldeak);
         });
         
        // console.log(query.sql); 
@@ -443,9 +476,14 @@ exports.taldekideakezabatu = function(req,res){
             
              if(err)
                  console.log("Error deleting : %s ",err );
-            
-             res.redirect('/admin/taldekideak/'+idTaldeak);
-             
+
+
+            if (req.session.arduraduna){
+              res.redirect('/taldekideak/'+idTaldeak);
+            }else{
+              res.redirect('/admin/taldekideak/'+idTaldeak);
+            }
+                         
         });
         
      });
@@ -469,7 +507,10 @@ exports.taldekideakeditatu = function(req, res){
             
                 if(err)
                   console.log("Error Selecting : %s ",err );
-                
+              
+              if (rows.length == 0){
+                res.redirect('/');
+              }else{
                 for(var i in rowsm ){
                   if(rows[0].idMotaKide == rowsm[i].idPartaideMotak){
                     deskribapenMota = rowsm[i].deskribapenMota;
@@ -509,11 +550,14 @@ exports.taldekideakeditatu = function(req, res){
 
                   rows[0].ordainduKide = baiez;
 
+                  rows[0].arduraduna = req.session.arduraduna;
 
-            res.render('taldekideakeditatu.handlebars', {page_title:"Taldekideak aldatu",data:rows, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea: req.session.partaidea});
+
+                res.render('taldekideakeditatu.handlebars', {page_title:"Taldekideak aldatu",data:rows, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, atalak: req.session.atalak, partaidea: req.session.partaidea, idPartaideak:req.session.idPartaideak, arduraduna:req.session.arduraduna});
                            
-         
+              
                   });
+               } 
                 });
             });
                  
@@ -545,8 +589,11 @@ exports.taldekideakaldatu = function(req,res){
           if (err)
               console.log("Error Updating : %s ",err );
          
+         if (req.session.arduraduna){
+            res.redirect('/taldekideak/'+idTaldeak);
+         }else{
           res.redirect('/admin/taldekideak/'+idTaldeak);
-          
+         }
         });
     
     });

@@ -5,13 +5,13 @@ exports.sailkapenak = function (req,res){
   var idDenboraldia = req.session.idDenboraldia;
   req.getConnection(function(err,connection){
        
-     connection.query('SELECT * FROM taldeak, ekintzak, mailak, partaideak where idMailak=idMailaTalde and idArduradunTalde=idPartaideak and idEkintzakTalde = idEkintzak and idDenboraldiaEkintza= ? and idElkarteakTalde = ? order by noiztikEkintza desc',[idDenboraldia,id],function(err,rows) {
+     connection.query('SELECT * FROM taldeak, ekintzak, mailak, partaideak where idMailak=idMailaTalde and idArduradunTalde=idPartaideak and idEkintzakTalde = idEkintzak and idDenboraldiaEkintza= ? and idElkarteakTalde = ? order by zenbakiMaila desc',[idDenboraldia,id],function(err,rows) {
             
         if(err)
            console.log("Error Selecting : %s ",err );
          
          //console.log("Berriak:" +JSON.stringify(rows));
-          res.render('sailkapenak.handlebars',{title: "Sailkapenak", data:rows, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, atalak: req.session.atalak, partaidea: req.session.partaidea});                       
+          res.render('sailkapenak.handlebars',{title: "Sailkapenak", data:rows, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, atalak: req.session.atalak, partaidea: req.session.partaidea, idPartaideak:req.session.idPartaideak, arduraduna:req.session.arduraduna});                       
       });   
   });
 
@@ -22,13 +22,13 @@ exports.sailkapenakadmin = function (req,res){
   var idDenboraldia = req.session.idDenboraldia;
   req.getConnection(function(err,connection){
        
-     connection.query('SELECT * FROM taldeak, ekintzak, mailak, partaideak where idMailak=idMailaTalde and idArduradunTalde=idPartaideak and idEkintzakTalde = idEkintzak and idDenboraldiaEkintza= ? and idElkarteakTalde = ? order by noiztikEkintza desc',[idDenboraldia,id],function(err,rows) {
+     connection.query('SELECT * FROM taldeak, ekintzak, mailak, partaideak where idMailak=idMailaTalde and idArduradunTalde=idPartaideak and idEkintzakTalde = idEkintzak and idDenboraldiaEkintza= ? and idElkarteakTalde = ? order by zenbakiMaila desc',[idDenboraldia,id],function(err,rows) {
             
         if(err)
            console.log("Error Selecting : %s ",err );
          
          //console.log("Berriak:" +JSON.stringify(rows));
-          res.render('sailkapenakadmin.handlebars',{title: "Sailkapenak", data:rows, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, atalak: req.session.atalak,partaidea: req.session.partaidea});                       
+          res.render('sailkapenakadmin.handlebars',{title: "Sailkapenak", data:rows, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, atalak: req.session.atalak,partaidea: req.session.partaidea, idPartaideak:req.session.idPartaideak, arduraduna:req.session.arduraduna});                       
       });   
   });
 
@@ -36,7 +36,31 @@ exports.sailkapenakadmin = function (req,res){
 
 exports.sailkapenakaldatu = function(req,res){
     
-    //EGITEKO DAGO
+    var input = JSON.parse(JSON.stringify(req.body));
+    var id = req.session.idKirolElkarteak;
+    var idDenboraldia = req.session.idDenboraldia;
+    var idTaldeak = req.params.idTaldeak;
+    //var urlSailkapenTalde = req.params.urlSailkapenTalde;
+
+    
+    req.getConnection(function (err, connection) {
+        
+        var data = {
+            urlSailkapenTalde: input.urlSailkapenTalde
+        };
+        
+        connection.query("UPDATE taldeak set ? WHERE idElkarteakTalde = ? and idTaldeak = ?",[data,id, idTaldeak], function(err, rows)
+        {
+  
+          if (err)
+              console.log("Error Updating : %s ",err );
+         
+          res.redirect('/admin/sailkapenak');
+          
+        });
+    
+    });
+
 };
 
 

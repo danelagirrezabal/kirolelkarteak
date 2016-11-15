@@ -1,11 +1,18 @@
+{{#if arduraduna}}
+{{> menu}}
+{{else}}
 {{> menuadmin}}
-
+{{/if}}
       <div class="jumbotron">
         <h2>Partiduak sortu</h2>
       </div>
 
 <div class="formContainer col-sm-offset-1">
+{{#if arduraduna}}
+    <form class="form-horizontal newsletterForm" role="form" action="/partiduaksortu" method="POST">
+{{else}}
     <form class="form-horizontal newsletterForm" role="form" action="/admin/partiduaksortu" method="POST">
+{{/if}}
     <input type="hidden" name="_csrf" value="{{_csrfToken}}">
         </br>
         

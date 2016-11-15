@@ -52,6 +52,8 @@
 
             <h3> {{lekua}} </h3>
 
+            {{#if lekuaKanpoan}}
+
             <table class="table table-condensed">
                 <tr>
                     
@@ -83,8 +85,46 @@
                     <td><a class="a-inside edit" href="/admin/partiduakeditatu/{{idPartiduak}}">Aldatu</a></td>
                     {{/if}}
                 </tr>
-            {{/each}}
-          </table>
+              {{/each}}
+            </table>
+
+
+            {{else}}
+
+
+            <table class="table table-condensed">
+                <tr>
+                    
+                    <th>Maila</th>
+                    <th>Txapelketa</th>
+                    <th>A ekipoa</th>
+                    <th>B ekipoa</th>
+                    <th>Ordua</th>
+                    <th>Emaitza</th>
+                    <th>   </th>
+                </tr>          
+
+              {{#each partiduak}}
+                  <tr class="active">
+                    
+                    <td>{{izenaMaila}}</td> 
+                    <td>{{txapelketaPartidu}}</td>  
+                    <td>{{etxekoaPartidu}}</td>   
+                    <td>{{kanpokoaPartidu}}</td>   
+                    <td>{{orduaPartidu}}</td> 
+                    <td>{{emaitzaPartidu}}</td>
+                    {{#if admin}}
+                    <td><a class="a-inside edit" href="/admin/partiduakeditatu/{{idPartiduak}}">Aldatu</a></td>
+                    {{/if}}
+                </tr>
+              {{/each}}
+            </table>
+            {{/if}}
+
+
+
+
+
           {{/each}}
           {{/each}}
 
@@ -137,7 +177,13 @@
      //}
     });
   });
+
+
+
             
 </script> 
+
+
         
 {{/section}}
+

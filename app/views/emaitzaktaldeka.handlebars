@@ -1,0 +1,118 @@
+{{#if admin}}
+  {{> menuadmin}}
+{{else}}
+  {{> menu}}
+{{/if}}
+
+<input type="hidden" name="admin" id="admin" value="{{admin}}">
+
+   <div class="jumbotron">
+        <h2>Emaitzak taldeka</h2>
+      </div>
+      </br></br>
+       <div class="form-group">
+
+            <label for="taldea" class="col-sm-2 control-label">Taldea:</label>
+            <div class="col-sm-4">
+            <select name="taldea" id="taldea">
+                <option value="">-- Aukeratu taldea --</option>
+                {{#each taldeak}}
+                    {{#if aukeratua}}
+                       <option value="{{idTaldeak}}" selected>{{izenaTalde}} - {{izenaMaila}}</option>
+                    {{else}}
+                       <option value="{{idTaldeak}}">{{izenaTalde}} - {{izenaMaila}}</option>
+                    {{/if}}
+                {{/each}}
+            </select>
+            </div>
+
+           
+        </div>
+      </br></br>
+      <div class="row marketing">
+        <div class="col-lg-12">
+        <table class="table table-condensed">
+            <tr>
+                    <th  width="15%">Eguna</th>
+                    <th>Maila</th>
+                    <th>Txapelketa</th>
+                    <th>A ekipoa</th>
+                    <th>B ekipoa</th>
+                    <th>Emaitza</th>
+                </tr>          
+
+            {{#each data}}
+                  <tr class="active">
+                    <td>{{dataPartidu}}</td>  
+                    <td>{{izenaMaila}}</td> 
+                    <td>{{txapelketaPartidu}}</td>  
+                    <td>{{etxekoaPartidu}}</td>   
+                    <td>{{kanpokoaPartidu}}</td> 
+                    <td>{{emaitzaPartidu}}</td> 
+                    {{#if arduraduna}}
+                      <td><a class="a-inside edit" href="/emaitzaksartu/{{idPartiduak}}">Emaitza sartu</a></td> 
+                    {{/if}}
+                    {{#if adminis}}
+                      <td><a class="a-inside edit" href="/admin/emaitzaksartu/{{idPartiduak}}">Emaitza sartu</a></td> 
+                    {{/if}}
+                </tr>
+            {{/each}}
+          </table>
+
+        </div>
+      </div>
+
+
+
+
+{{#section 'jquery'}}
+<script>
+  $(document).ready(function(){    
+
+  //var jardunaldia = $('#jardunaldia').val();
+  //var denboraldia = $('#denboraldia').val();
+
+  var taldea = $('#taldea').val();  
+
+    $('#taldea').change(function(){
+
+        var data = 'id=' + $('#taldea').val();
+        
+        if ($('#admin').val()){
+          $(location).attr('href', '/admin/partiduemaitzaktalde/'+$('#taldea').val());
+        }
+        else{
+          $(location).attr('href', '/partiduemaitzaktalde/'+$('#taldea').val());
+        }
+     
+    });
+
+
+
+    /*$('#jardunaldia').change(function(){
+
+      if ($('#jardunaldia').val() =="")
+        alert("Aukeratu jardunaldia");
+      else {
+
+        var data = 'id=' + $('#jardunaldia').val();
+
+        //$(location).attr('href', '/jardunaldikoemaitzak/'+$('#jardunaldia').val());
+        $(location).attr('href', '/partiduemaitzak/'+$('#denboraldia').val()+'/'+$('#jardunaldia').val());
+      }
+    });
+
+
+   $('#denboraldia').change(function(){
+
+        var data = 'id=' + $('#denboraldia').val();
+
+        $(location).attr('href', '/partiduemaitzak/'+$('#denboraldia').val()+'/'+$('#jardunaldia').val());
+     
+    });*/
+});
+            
+</script> 
+        
+{{/section}}
+      

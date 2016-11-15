@@ -46,7 +46,9 @@
                     <td>{{telefonoaPart}}</td>
                     <td>{{herriaPart}}</td>
                     <td>
-                        <a class="a-inside delete" href="../admin/bazkideaksortu/{{idPartaideak}}">Bazkide egin</a> 
+                    {{#if ezbazkidea}}
+                        <a class="a-inside insert" href="../admin/bazkideaksortu/{{idPartaideak}}">Bazkide egin</a> 
+                     {{/if}}
                      </td>
                      <td>
                         <a class="a-inside edit" href="../admin/partaideakeditatu/{{idPartaideak}}">Aldatu</a>

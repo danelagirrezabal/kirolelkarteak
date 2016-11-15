@@ -17,11 +17,21 @@
                 </tr>                               
             {{#each data}}
                   <tr class="active">
+                    <input type="hidden" name="idTaldeak" id="idTaldeak" value="{{idTaldeak}}">
                     <td>{{izenaTalde}}</td>  
-                    <td>{{izenaMaila}}</td>  
+                    <td>{{izenaMaila}}</td> 
                     <!--<td><a href='{{urlSailkapenTalde}}'>{{urlSailkapenTalde}}</a></td> -->
 
-                    <td><textarea name="urlSailkapenTalde" rows="1" cols="40" class="form-control" required id="urlSailkapenTalde" value={{urlSailkapenTalde}}>{{urlSailkapenTalde}}</textarea></td>
+                    
+                    <form class="form-horizontal newsletterForm" role="form" action="/admin/sailkapenakaldatu/{{idTaldeak}}" method="POST">
+                    <td>
+                    <textarea name="urlSailkapenTalde" rows="1" cols="40" class="form-control" required id="urlSailkapenTalde" value={{urlSailkapenTalde}}>{{urlSailkapenTalde}}</textarea>
+                    </td>
+
+                    <td><button type="submit" class="btn btn-default">Gorde</button></td>
+
+                    </form>
+                    
                 </tr>
             {{/each}}
           </table>

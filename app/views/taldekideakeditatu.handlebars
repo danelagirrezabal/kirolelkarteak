@@ -10,7 +10,12 @@
 
 <div class="formContainer col-sm-offset-1">
 {{#each data}}
-    <form class="form-horizontal newsletterForm" role="form" action="/admin/taldekideakaldatu/{{idTaldeakKide}}/{{idTaldekideak}}" method="POST">
+
+    {{#if arduraduna}}
+        <form class="form-horizontal newsletterForm" role="form" action="/taldekideakaldatu/{{idTaldeakKide}}/{{idTaldekideak}}" method="POST">
+    {{else}}
+        <form class="form-horizontal newsletterForm" role="form" action="/admin/taldekideakaldatu/{{idTaldeakKide}}/{{idTaldekideak}}" method="POST">
+    {{/if}}
     <input type="hidden" name="_csrf" value="{{_csrfToken}}">
         </br>
 

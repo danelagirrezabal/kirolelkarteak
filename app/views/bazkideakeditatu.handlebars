@@ -1,0 +1,101 @@
+
+     <div class="jumbotron">
+        <h2>Bazkidea editatu</h2>
+      </div>
+
+
+<div class="formContainer">
+{{#each data}}
+    <form class="form-horizontal newsletterForm" role="form" action="/admin/bazkideakaldatu/{{idBazkideak}}" method="POST">
+    <input type="hidden" name="_csrf" value="{{_csrfToken}}">
+        <div class="form-group">
+            <label for="izenaPart" class="col-sm-2 control-label">Bazkidea: </label>
+            <div class="col-sm-4">
+                {{izenaPart}} {{abizena1Part}} {{abizena2Part}}
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="nanPart" class="col-sm-2 control-label">NAN: </label>
+            <div class="col-sm-4">
+                {{nanPart}}
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="bazkideZenbPart" class="col-sm-2 control-label">Bazkide zenbakia: </label>
+            <div class="col-sm-4">
+                {{bazkideZenbPart}}
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="herriaPart" class="col-sm-2 control-label">Herria: </label>
+            <div class="col-sm-4">
+                {{herriaPart}}
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="telefonoaPart" class="col-sm-2 control-label">Telefonoa: </label>
+            <div class="col-sm-4">
+                {{telefonoaPart}}
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="emailPart" class="col-sm-2 control-label">Email: </label>
+            <div class="col-sm-4">
+                {{emailPart}}
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="kontuZenbPart" class="col-sm-2 control-label">Kontu korronte zenbakia: </label>
+            <div class="col-sm-4">
+                {{kontuZenbPart}}
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="berezitasunakPart" class="col-sm-2 control-label">Berezitasunak: </label>
+            <div class="col-sm-4">
+                {{berezitasunakPart}}
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="idOrdaintzekoEraBazk" class="col-sm-2 control-label">Ordaintzeko era</label>
+            <div class="col-sm-4">
+            <select name="idOrdaintzekoEraBazk" id="idOrdaintzekoEraBazk">
+                {{#each ordaintzekoErak}}
+                    {{#if aukeratua}}
+                       <option value="{{idOrdaintzekoErak}}" selected>{{deskribapenaOrdainEra}}</option>
+                    {{else}}
+                       <option value="{{idOrdaintzekoErak}}">{{deskribapenaOrdainEra}}</option>
+                    {{/if}}
+                {{/each}}
+            </select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="ordainduBazk" class="col-sm-2 control-label">Ordainduta?</label>
+            <div class="col-sm-4">
+                <select name="ordainduBazk" required id="ordainduBazk">
+                {{#each ordainduta}}
+                    {{#if aukeratua}}
+                       <option value="{{izena}}" selected>{{izena}}</option>
+                    {{else}}
+                       <option value="{{izena}}">{{izena}}</option>
+                    {{/if}}
+                {{/each}}
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-4">
+                <button type="submit" class="btn btn-default">Bazkidea aldatu</button>
+            </div>
+        </div>
+    </form>
+    {{/each}}
+</div>
+
+      </div>
+
+ 

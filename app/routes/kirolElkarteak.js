@@ -293,7 +293,7 @@ exports.berriakikusi = function(req, res){
             //rows[i].testuaBerria=rows[i].testuaBerria.replace(/\r?\n/g, "<br>");
 
           //}
-          res.render('index.handlebars',{title: "kirolElkarteak", data:rows, data2: rowst, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, atalak: req.session.atalak});
+          res.render('index.handlebars',{title: "kirolElkarteak", data:rows, data2: rowst, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, atalak: req.session.atalak, idPartaideak:req.session.idPartaideak, arduraduna:req.session.arduraduna});
         });                        
       });   
   });
@@ -531,7 +531,7 @@ exports.edukiakikusi = function(req, res){
 
           console.log("Rows:" +JSON.stringify(rows));
           //connection.end();
-          res.render('edukiakikusi.handlebars',{title: "kirolElkarteak", azpiAtalak:azpiAtalak, data:rows, data2: rowst, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, atalak: req.session.atalak, partaidea: req.session.partaidea});
+          res.render('edukiakikusi.handlebars',{title: "kirolElkarteak", azpiAtalak:azpiAtalak, data:rows, data2: rowst, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, atalak: req.session.atalak, partaidea: req.session.partaidea, idPartaideak:req.session.idPartaideak, arduraduna:req.session.arduraduna});
 
           //connection.end();
         });  
@@ -633,7 +633,7 @@ exports.edukiakbilatu = function(req, res){
 
 console.log("Atalak:" +JSON.stringify(atalak));
 
-          res.render('edukiak.handlebars',{title: "Edukiak", data:rows, data2: rowst, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, atalak: atalak, partaidea: req.session.partaidea});
+          res.render('edukiak.handlebars',{title: "Edukiak", data:rows, data2: rowst, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, atalak: atalak, partaidea: req.session.partaidea, idPartaideak:req.session.idPartaideak, arduraduna:req.session.arduraduna});
         });                        
       });   
   });
@@ -1061,6 +1061,7 @@ exports.agiriaksortu = function(req,res){
     var idDenboraldia = req.session.idDenboraldia;
     var now= new Date();
     console.log(input);
+    var publikoa = 0;
 
     /*var elkartedir = agiriakDir + '/' + id;
           fs.existsSync(elkartedir) || fs.mkdirSync(elkartedir);
@@ -1090,6 +1091,10 @@ exports.agiriaksortu = function(req,res){
               message: 'Agiria igo da.',
             };*/
 
+    if (input.publiko){
+        publikoa = 1;
+    };
+
     req.getConnection(function (err, connection) {
         
         var data = {
@@ -1098,7 +1103,7 @@ exports.agiriaksortu = function(req,res){
             izenaAgiria   : input.izenaAgiria,
             urlAgiria : input.urlAgiria,
             dataAgiria: now,
-            publikoAgiria : 0,
+            publikoAgiria : publikoa,
             idElkarteakAgiria : id,
             idDenboraldiaAgiria : idDenboraldia
         };
@@ -1210,7 +1215,7 @@ exports.agiriakbilatu = function(req, res){
   var id = req.session.idKirolElkarteak;
   req.getConnection(function(err,connection){
        
-     connection.query('SELECT * FROM agiriak where idElkarteakAgiria = ? order by dataAgiria desc',[id],function(err,rows) {
+     connection.query('SELECT *, DATE_FORMAT(dataAgiria,"%Y/%m/%d") AS dataAgiria FROM agiriak where idElkarteakAgiria = ? order by publikoAgiria, dataAgiria desc',[id],function(err,rows) {
             
         if(err)
            console.log("Error Selecting : %s ",err );
@@ -1218,6 +1223,14 @@ exports.agiriakbilatu = function(req, res){
         connection.query('SELECT * FROM elkarteak where idElkarteak = ? ',[id],function(err,rowst)     {
           if(err)
            console.log("Error Selecting : %s ",err );
+          
+          for(var i in rows){
+            if (rows[i].publikoAgiria == 1){
+                rows[i].publikoAgiria = "BAI";
+            }else{
+                rows[i].publikoAgiria = "EZ";
+            }
+          }
          
           res.render('agiriakadmin.handlebars',{title: "Agiriak", data:rows, data2: rowst, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea: req.session.partaidea});
         });                        
@@ -1227,15 +1240,16 @@ exports.agiriakbilatu = function(req, res){
 
 exports.agiriakbilatupartaide = function(req, res){
   var id = req.session.idKirolElkarteak;
+  var publikoa = 1;
   req.getConnection(function(err,connection){
        
-     connection.query('SELECT * FROM agiriak, elkarteak where idElkarteakAgiria = ? and idElkarteak = idElkarteakAgiria order by dataAgiria desc',[id],function(err,rows) {
+     connection.query('SELECT *, DATE_FORMAT(dataAgiria,"%Y/%m/%d") AS dataAgiria FROM agiriak, elkarteak where idElkarteakAgiria = ? and idElkarteak = idElkarteakAgiria and publikoAgiria = ? order by dataAgiria desc',[id, publikoa],function(err,rows) {
             
         if(err)
            console.log("Error Selecting : %s ",err );
-     
+    
          
-          res.render('agiriak.handlebars',{title: "Agiriak", data:rows, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea: req.session.partaidea, atalak: req.session.atalak});
+          res.render('agiriak.handlebars',{title: "Agiriak", data:rows, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea: req.session.partaidea, atalak: req.session.atalak, idPartaideak:req.session.idPartaideak, arduraduna:req.session.arduraduna});
       });                        
         
   });
@@ -1247,11 +1261,19 @@ exports.agiriakeditatu = function(req, res){
     
   req.getConnection(function(err,connection){
        
-     connection.query('SELECT * FROM agiriak WHERE idElkarteakAgiria = ? and idAgiriak = ?',[id,idAgiriak],function(err,rows)
+     connection.query('SELECT *,DATE_FORMAT(dataAgiria,"%Y/%m/%d") AS dataAgiria FROM agiriak WHERE idElkarteakAgiria = ? and idAgiriak = ?',[id,idAgiriak],function(err,rows)
         {
             
             if(err)
                 console.log("Error Selecting : %s ",err );
+
+            for(var i in rows){
+              if (rows[i].publikoAgiria == 1){
+                rows[i].publikoaDa = true;
+              }else{
+                rows[i].publikoDa = false;
+              }
+            }
 
             res.render('agiriakeditatu.handlebars', {page_title:"Agiriak aldatu",data:rows, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea: req.session.partaidea});
                            
@@ -1264,6 +1286,11 @@ exports.agiriakaldatu = function(req,res){
     var input = JSON.parse(JSON.stringify(req.body));
     var id = req.session.idKirolElkarteak;
     var idAgiriak = req.params.idAgiriak;
+    var publikoa = 0;
+
+    if (input.publiko){
+        publikoa = 1;
+    };
     
     req.getConnection(function (err, connection) {
         
@@ -1271,7 +1298,9 @@ exports.agiriakaldatu = function(req,res){
             atalaAgiria    : input.atalaAgiria,
             izenaAgiria   : input.izenaAgiria,
             urlAgiria : input.urlAgiria,
-            dataAgiria: input.dataAgiria
+            dataAgiria: input.dataAgiria,
+            publikoAgiria : publikoa
+
         };
         
         connection.query("UPDATE agiriak set ? WHERE idElkarteakAgiria = ? and idAgiriak = ? ",[data,id,idAgiriak], function(err, rows)
@@ -1436,7 +1465,7 @@ exports.argazkiakikusi = function(req, res){
     argazkiak[i] = argazkia;
   }
   console.log(JSON.stringify(argazkiak));
-  res.render('argazkiak.handlebars', {title: "KirolElkarteak - Argazkiak", irudiak:argazkiak, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea: req.session.partaidea, atalak: req.session.atalak});
+  res.render('argazkiak.handlebars', {title: "KirolElkarteak - Argazkiak", irudiak:argazkiak, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea: req.session.partaidea, atalak: req.session.atalak, idPartaideak:req.session.idPartaideak, arduraduna:req.session.arduraduna});
   });
 };
 

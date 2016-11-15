@@ -212,8 +212,21 @@ function authorize2(req, res, next){
 }
 
 function authorizePartaide(req, res, next){
-    if(req.session.idPartaide) return next();
-    res.redirect('/kirolElkarteak');
+    if(req.session.idPartaideak) return next();
+    res.redirect('/login');
+}
+
+function authorizeBerePartaide(req, res, next){
+    if(req.session.idPartaideak == req.params.idPartaideak) return next();
+    res.redirect('/');
+}
+
+function authorizeArduradun(req, res, next){
+    if(req.session.arduraduna) return next();
+    if(req.session.idPartaideak)
+      res.redirect('/');
+    else
+      res.redirect('/login');
 }
 
 function adminonartua(req, res, next){
@@ -231,26 +244,26 @@ function adminKirolElkarteaonartua(req, res, next){
 //app.get('/', authorize2, kirolElkarteak.berriakikusi);
 app.get('/', authorize2, kirolElkarteak.edukiakikusi);
 //app.get('/', kirolElkarteak.edukiakikusi);
-app.get('/taldeak', taldeak.taldeakikusipartaide);
+app.get('/taldeak',authorize2, taldeak.taldeakikusipartaide);
  
 
 app.get('/partaidemail/:emaila', partaideak.partaidemail);
-app.get('/partaideak', authorize2, partaideak.ikusi);
+app.get('/partaideak',adminonartua, authorize2, partaideak.ikusi);
 
-app.get('/izenematea', partaideak.partaideakgehitu);
+app.get('/izenematea',authorize2, partaideak.partaideakgehitu);
 
 app.post('/partaideakgehitu', authorize2, partaideak.partaideakgehitu);
 app.post('/partaideaksortu', partaideak.sortu);
 app.get('/partaideakbalidatu/:id', partaideak.balidatu);
-app.get('/partaideakezabatu/:idPartaideak', authorizePartaide, partaideak.ezabatu);
-app.get('/partaideakeditatu/:idPartaideak', authorizePartaide, partaideak.editatu);
-app.post('/partaideakaldatu/:idPartaideak', authorizePartaide, partaideak.aldatu);
+app.get('/partaideakezabatu/:idPartaideak', authorizeBerePartaide, partaideak.ezabatu);
+app.get('/partaideakeditatu/:idPartaideak', authorizeBerePartaide, partaideak.editatu);
+app.post('/partaideakaldatu/:idPartaideak', authorizeBerePartaide, partaideak.aldatu);
 
 app.get('/admin/bazkideak', adminonartua, partaideak.bazkideakikusi);
 app.get('/admin/bazkideaksortu/:idPartaideak', adminonartua, partaideak.bazkideaksortu);
-app.get('/admin/bazkideakezabatu/:idPartaideak', adminonartua, partaideak.bazkideakezabatu);
-app.get('/admin/bazkideakeditatu/:idPartaideak', adminonartua, partaideak.bazkideakeditatu);
-app.post('/admin/bazkideakaldatu/:idPartaideak', adminonartua, partaideak.bazkideakaldatu);
+app.get('/admin/bazkideakezabatu/:idBazkideak', adminonartua, partaideak.bazkideakezabatu);
+app.get('/admin/bazkideakeditatu/:idBazkideak', adminonartua, partaideak.bazkideakeditatu);
+app.post('/admin/bazkideakaldatu/:idBazkideak', adminonartua, partaideak.bazkideakaldatu);
 
 app.get('/login', authorize2, function(req, res){
     res.render('login.handlebars', {title : 'KirolElkarteak-Login',partaidea: req.session.partaidea});
@@ -261,6 +274,9 @@ app.get('/logout', function(req, res){
   req.session.idDenboraldia = undefined;
   req.session.partaidea = undefined;
   req.session.jardunaldia = undefined;
+  req.session.arduraduna = undefined;
+  req.session.erabiltzaile = undefined;
+  req.session.idPartaideak = undefined;
 
   res.redirect('/');
 });
@@ -277,12 +293,14 @@ app.get('/arauak', function(req, res){
 });
 
 app.get('/kontaktua', function(req, res){
-    res.render('kontaktua.handlebars', {title : 'kirolElkarteak-Kontaktua', partaidea: req.session.partaidea, aditestua: "Kontaktua", atalak: req.session.atalak});
+    res.render('kontaktua.handlebars', {title : 'kirolElkarteak-Kontaktua', partaidea: req.session.partaidea, aditestua: "Kontaktua", atalak: req.session.atalak, idPartaideak:req.session.idPartaideak, arduraduna:req.session.arduraduna});
 });
 app.post('/kontaktuabidali',kirolElkarteak.kontaktuabidali); 
 
-app.get('/sailkapenak', kudeaketa.sailkapenak);
+app.get('/sailkapenak',authorize2, kudeaketa.sailkapenak);
 app.get('/admin/sailkapenak', adminonartua, kudeaketa.sailkapenakadmin);
+app.post('/admin/sailkapenakaldatu/:idTaldeak', adminonartua, kudeaketa.sailkapenakaldatu);
+
 
 app.get('/admin/kirolElkarteak',adminKirolElkarteaonartua, function(req, res){
     res.render('kirolElkarteaksortu.handlebars', {title : 'kirol elkarteak sortu'});
@@ -294,7 +312,7 @@ app.post('/kirolElkarteakaldatu/:idKirolElkarteak', adminonartua, kirolElkarteak
 app.get('/kirolElkarteak', kirolElkarteak.aukeratzeko);
 app.post('/kirolElkarteakaukeratu', kirolElkarteak.aukeratu);
 
-app.get('/argazkiak', kirolElkarteak.argazkiakikusi);
+app.get('/argazkiak',authorize2, kirolElkarteak.argazkiakikusi);
 app.get('/admin/argazkiak', adminonartua,function(req, res){
     res.render('argazkiakigo.handlebars', {title : 'KirolElkarteak-Argazkiak igo', idKirolElkarteak: req.session.idKirolElkarteak, partaidea: req.session.partaidea});
 });    
@@ -340,7 +358,7 @@ app.get('/admin/edukiakezabatu/:idEdukiak', adminonartua, kirolElkarteak.edukiak
 app.get('/admin/edukiakeditatu/:idEdukiak', adminonartua, kirolElkarteak.edukiakeditatu);
 app.post('/admin/edukiakaldatu/:idEdukiak', adminonartua, kirolElkarteak.edukiakaldatu);
 
-app.get('/edukiak/:idAtalak', kirolElkarteak.edukiakikusi);
+app.get('/edukiak/:idAtalak', authorize2, kirolElkarteak.edukiakikusi);
 
 app.get('/admin/atalak', adminonartua, kirolElkarteak.atalakbilatu);
 app.post('/admin/atalaksortu', adminonartua, kirolElkarteak.atalaksortu);
@@ -382,11 +400,15 @@ app.get('/admin/denboraldiakeditatu/:idDenboraldia', adminonartua, denboraldiak.
 app.post('/admin/denboraldiakaldatu/:idDenboraldia', adminonartua, denboraldiak.denboraldiakaldatu);
 
 app.get('/admin/partiduak', adminonartua, denboraldiak.partiduakbilatu);
-app.get('/partiduak', denboraldiak.partiduakbilatupartaide);
+app.get('/partiduak',authorize2, denboraldiak.partiduakbilatupartaide);
 app.get('/admin/jardunaldikopartiduak/:jardunaldia', denboraldiak.jardunaldikopartiduakbilatu);
-app.get('/jardunaldikopartiduakpartaide/:jardunaldia', denboraldiak.jardunaldikopartiduakbilatupartaide);
+app.get('/jardunaldikopartiduakpartaide/:jardunaldia',authorize2, denboraldiak.jardunaldikopartiduakbilatupartaide);
 app.post('/admin/partiduaksortu', adminonartua, denboraldiak.partiduaksortu);
 app.get('/admin/partiduakgehitu', adminonartua, denboraldiak.partiduakgehitu);
+
+app.post('/partiduaksortu', authorizeArduradun, denboraldiak.partiduaksortu);
+app.get('/partiduakgehitu',authorizeArduradun, denboraldiak.partiduakgehitu);
+
 //app.post('/admin/partiduakgehitu', adminonartua, function(req, res){
 //    res.render('partiduaksortu.handlebars', {title : 'KirolElkarteak-Partiduak gehitu', taldeizena: req.session.taldeizena});
 //});
@@ -419,12 +441,19 @@ app.get('/admin/taldeakeditatu/:idTaldeak', adminonartua, taldeak.taldeakeditatu
 app.post('/admin/taldeakaldatu/:idTaldeak', adminonartua, taldeak.taldeakaldatu);
 
 app.get('/admin/taldekideak/:idTaldeak', adminonartua, taldeak.taldekideakbilatu);
-app.get('/taldekideak/:idTaldeak', taldeak.taldekideakbilatupartaideargazkiekin);
+app.get('/taldekideak/:idTaldeak', authorize2, taldeak.taldekideakbilatupartaideargazkiekin);
 app.post('/admin/taldekideaksortu/:idTaldeak', adminonartua, taldeak.taldekideaksortu);
 app.get('/admin/taldekideakgehitu/:idTaldeak', adminonartua, taldeak.taldekideakgehitu);
 app.get('/admin/taldekideakezabatu/:idTaldeak/:idTaldekideak', adminonartua, taldeak.taldekideakezabatu);
 app.get('/admin/taldekideakeditatu/:idTaldekideak', adminonartua, taldeak.taldekideakeditatu);
 app.post('/admin/taldekideakaldatu/:idTaldeak/:idTaldekideak', adminonartua, taldeak.taldekideakaldatu);
+
+app.get('/taldekideakeditatu/:idTaldekideak', authorizeArduradun, taldeak.taldekideakeditatu);
+app.post('/taldekideakaldatu/:idTaldeak/:idTaldekideak', authorizeArduradun, taldeak.taldekideakaldatu);
+app.get('/taldekideakezabatu/:idTaldeak/:idTaldekideak', authorizeArduradun, taldeak.taldekideakezabatu);
+app.get('/taldekideakgehitu/:idTaldeak', authorizeArduradun, taldeak.taldekideakgehitu);
+app.post('/taldekideaksortu/:idTaldeak', authorizeArduradun, taldeak.taldekideaksortu);
+
 
 app.get('/admin/taldeargazkia/:idTaldeak', adminonartua, function(req, res){
     res.render('taldeargazkia.handlebars', {title : 'KirolElkarteak-Talde argazkia', idTaldeak: req.params.idTaldeak, partaidea: req.session.partaidea});
@@ -449,12 +478,29 @@ app.get('/admin/ordaintzekoerakezabatu/:idOrdaintzekoErak', adminonartua, kirolE
 app.get('/admin/ordaintzekoerakeditatu/:idOrdaintzekoErak', adminonartua, kirolElkarteak.ordaintzekoerakeditatu);
 app.post('/admin/ordaintzekoerakaldatu/:idOrdaintzekoErak', adminonartua, kirolElkarteak.ordaintzekoerakaldatu);
 
-app.get('/admin/partaideakezabatu/:idPartaideak', authorizePartaide, partaideak.ezabatu);
-app.get('/admin/partaideakeditatu/:idPartaideak', authorizePartaide, partaideak.editatu);
-app.post('/admin/partaideakaldatu/:idPartaideak', authorizePartaide, partaideak.aldatu);
+app.get('/admin/partaideakezabatu/:idPartaideak', adminonartua, partaideak.ezabatu);
+app.get('/admin/partaideakeditatu/:idPartaideak', adminonartua, partaideak.editatu);
+app.post('/admin/partaideakaldatu/:idPartaideak', adminonartua, partaideak.aldatu);
 
-app.get('/emaitzak', denboraldiak.emaitzakikusi);
-app.get('/jardunaldikoemaitzak/:jardunaldia', denboraldiak.jardunaldikoemaitzakikusi);
+//app.get('/emaitzak/', denboraldiak.emaitzakikusi);
+//app.get('/jardunaldikoemaitzak/:jardunaldia', denboraldiak.jardunaldikoemaitzakikusi);
+app.get('/partiduemaitzak/:idDenboraldia/:jardunaldia', authorize2, denboraldiak.partiduemaitzak);
+app.get('/admin/partiduemaitzak/:idDenboraldia/:jardunaldia', adminonartua, authorize2, denboraldiak.partiduemaitzakadmin);
+
+app.get('/admin/emaitzaksartu/:idPartidua', adminonartua, authorize2, denboraldiak.partiduemaitzaksartuadmin);
+app.post('/admin/emaitzakgorde/:idPartidua', adminonartua, authorize2, denboraldiak.partiduemaitzakgordeadmin);
+
+app.get('/emaitzaksartu/:idPartidua', authorizeArduradun, authorize2, denboraldiak.partiduemaitzaksartuadmin);
+app.post('/emaitzakgorde/:idPartidua', authorizeArduradun, authorize2, denboraldiak.partiduemaitzakgordeadmin);
+
+
+
+app.get('/partiduemaitzaktalde/:idTaldeak', authorize2, denboraldiak.partiduemaitzaktalde);
+app.get('/partiduemaitzaktalde/', authorize2, denboraldiak.partiduemaitzaktalde);
+
+app.get('/admin/partiduemaitzaktalde/:idTaldeak', authorize2, denboraldiak.partiduemaitzaktalde);
+app.get('/admin/partiduemaitzaktalde/', authorize2, denboraldiak.partiduemaitzaktalde);
+
 
 
 var server = http.createServer(app).listen(app.get('port'), function(){
