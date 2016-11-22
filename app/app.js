@@ -150,7 +150,15 @@ function authorize(req, res, next){
 }
 
 function authorize2(req, res, next){
-  req.session.idKirolElkarteak=14;
+  req.session.jardunaldia = jardunaldia;
+  req.session.idDenboraldia = idDenboraldia;
+  req.session.idKirolElkarteak = idKirolElkarteak;
+  req.session.atalak = atalak;
+
+  console.log("AUTHORIZE2: "+req.session.jardunaldia + "----" +  req.session.idDenboraldia + "------" + req.session.atalak + "----" + req.session.idKirolElkarteak);
+
+return next();
+  /*req.session.idKirolElkarteak=14;
  //req.session.atalak=[{"idAtalak":3,"izenaAtala":'GAUR EGUN',"zenbakiAtala":'1',"idElkarteakAtala":14}];  
 
   //if(req.session.idKirolElkarteak) return next();
@@ -166,6 +174,8 @@ function authorize2(req, res, next){
   var day = ('0' + today.getDate()).slice(-2);
   var month = ('0' + (today.getMonth() + 1)).slice(-2);
   var year = today.getFullYear();
+
+
 
   req.session.jardunaldia= year + '-' + month + '-' + day;
 
@@ -209,7 +219,7 @@ function authorize2(req, res, next){
 
                // connection.end({ timeout: 60000 });
 
-  });
+  });*/
 
 }
 
@@ -527,7 +537,7 @@ if (process.env.NODE_ENV != 'production'){
 var cliente = mysql.createConnection({
     host: 'localhost',
     user: 'root',
-    password : 'joanaagi',
+    password : 'root',
     port : 8889, //port mysql
     database:'kirolElkarteak'
 });
@@ -544,5 +554,51 @@ else{
               console.log("heroku2" );
 }
 
+ var idKirolElkarteak=14;
 
+  var today = new Date();
+  today.setHours(0,0,0,0);
+  while (today.getDay() != 0){
+    today.setDate(today.getDate()+1);
+  }
+  var day = ('0' + today.getDate()).slice(-2);
+  var month = ('0' + (today.getMonth() + 1)).slice(-2);
+  var year = today.getFullYear();
+  var idDenboraldia;
+  var atalak;
 
+  var jardunaldia = year + '-' + month + '-' + day;
+
+    cliente.query('SELECT idDenboraldia, deskribapenaDenb FROM denboraldiak where egoeraDenb=1 and idElkarteakDenb = ? order by deskribapenaDenb desc',[idKirolElkarteak],function(err,rowsdenb) {
+          
+        if(err)
+              console.log("Error Selecting : %s ",err );
+
+        //if (rowsdenb.length != 0){
+           idDenboraldia=rowsdenb[0].idDenboraldia;
+        //}
+
+        cliente.query('SELECT DISTINCT DATE_FORMAT(jardunaldiDataPartidu,"%Y-%m-%d") AS jardunaldiDataPartidu FROM partiduak where idElkarteakPartidu = ? and idDenboraldiaPartidu = ? order by jardunaldiDataPartidu desc',[idKirolElkarteak, idDenboraldia],function(err,rowsd) {
+          
+          if(err)
+           console.log("Error Selecting : %s ",err );
+          
+          if (rowsd.length !=0){
+            if (jardunaldia > rowsd[0].jardunaldiDataPartidu){
+              jardunaldia=rowsd[0].jardunaldiDataPartidu;
+            }
+          }
+
+           cliente.query('SELECT * FROM atalak where zenbakiAtala>0 AND idElkarteakAtala = ? order by zenbakiAtala asc',[idKirolElkarteak],function(err,rowsatal) {
+          
+              if(err)
+                console.log("Error Selecting : %s ",err );
+
+               atalak=rowsatal;  
+
+               console.log("JARDUNALDIA: "+jardunaldia + "----" +  idDenboraldia + "------" + atalak);
+
+           });
+        });
+
+      });
