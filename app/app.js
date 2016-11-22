@@ -600,7 +600,7 @@ else{
                atalak=rowsatal;  
 
                console.log("JARDUNALDIA: "+jardunaldia + "----" +  idDenboraldia + "------" + atalak);
-               cliente.end({timeout : 60000});
+               cliente.end();
 
            });
         });
