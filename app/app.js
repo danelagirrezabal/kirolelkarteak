@@ -253,8 +253,8 @@ function adminKirolElkarteaonartua(req, res, next){
 
 //Rutak
 
-//app.get('/', authorize2, kirolElkarteak.berriakikusi);
-app.get('/', authorize2, kirolElkarteak.edukiakikusi);
+app.get('/', authorize2, kirolElkarteak.indexikusi);
+//app.get('/', authorize2, kirolElkarteak.edukiakikusi);
 //app.get('/', kirolElkarteak.edukiakikusi);
 app.get('/taldeak',authorize2, taldeak.taldeakikusipartaide);
  
@@ -597,6 +597,7 @@ else{
                atalak=rowsatal;  
 
                console.log("JARDUNALDIA: "+jardunaldia + "----" +  idDenboraldia + "------" + atalak);
+               cliente.end();
 
            });
         });

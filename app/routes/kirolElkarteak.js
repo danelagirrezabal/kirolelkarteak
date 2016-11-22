@@ -542,6 +542,30 @@ exports.edukiakikusi = function(req, res){
            //res.render('edukiakikusi.handlebars',{title: "kirolElkarteak", jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, atalak: req.session.atalak, partaidea: req.session.partaidea});
 
 };
+
+exports.indexikusi = function(req, res){
+  var id = req.session.idKirolElkarteak;
+  var idAtalak = req.params.idAtalak;
+
+  if (idAtalak == null)
+    idAtalak=req.session.atalak[0].idAtalak;
+
+  //var atalak = []; //egunak
+  //var atala = {}; //eguna
+  var azpiAtalak = []; //lekuak
+  var azpiAtala = {}; //lekua
+  var edukiak = []; //partiduak
+  var j,t=0;
+  //var k = 0;
+  var vAtalak, vAzpiAtalak;
+ 
+  
+          res.render('edukiakikusi.handlebars',{title: "kirolElkarteak", jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, atalak: req.session.atalak, partaidea: req.session.partaidea, idPartaideak:req.session.idPartaideak, arduraduna:req.session.arduraduna});
+
+          //connection.end();
+     //res.render('edukiakikusi.handlebars',{title: "kirolElkarteak", jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, atalak: req.session.atalak, partaidea: req.session.partaidea});
+
+};
      
 
      //connection.query('SELECT * FROM (atalak LEFT JOIN azpiAtalak ON idAtalak=idAtalakAzpiAtala) LEFT JOIN edukiak ON idAzpiAtalak=idAzpiAtalakEdukia where idAtalak=idAtalakAzpiAtala and idAzpiAtalak=idAzpiAtalakEdukia and idElkarteakEdukia = ? order by zenbakiAtala asc, zenbakiAzpiAtala asc, zenbakiEdukia asc, dataEdukia desc',[id],function(err,rows) {
