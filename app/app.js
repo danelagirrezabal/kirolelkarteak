@@ -152,15 +152,15 @@ function authorize(req, res, next){
 }
 
 function authorize2(req, res, next){
-  req.session.jardunaldia = jardunaldia;
+  /*req.session.jardunaldia = jardunaldia;
   req.session.idDenboraldia = idDenboraldia;
   req.session.idKirolElkarteak = idKirolElkarteak;
   req.session.atalak = atalak;
 
   console.log("AUTHORIZE2: "+req.session.jardunaldia + "----" +  req.session.idDenboraldia + "------" + req.session.atalak + "----" + req.session.idKirolElkarteak);
 
-return next();
-  /*req.session.idKirolElkarteak=14;
+return next();*/
+  req.session.idKirolElkarteak=14;
  //req.session.atalak=[{"idAtalak":3,"izenaAtala":'GAUR EGUN',"zenbakiAtala":'1',"idElkarteakAtala":14}];  
 
   //if(req.session.idKirolElkarteak) return next();
@@ -221,7 +221,7 @@ return next();
 
                // connection.end({ timeout: 60000 });
 
-  });*/
+  });
 
 }
 
@@ -536,7 +536,7 @@ var server = http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
 });
 
-if (process.env.NODE_ENV != 'production'){  
+/*if (process.env.NODE_ENV != 'production'){  
 var cliente = mysql.createConnection({
     host: 'localhost',
     user: 'root',
@@ -605,4 +605,4 @@ else{
            });
         });
 
-      });
+      });*/
