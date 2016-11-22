@@ -6,41 +6,6 @@ var VALID_TEL_REGEX = /^[0-9-()+]{3,20}/;
   formidable = require('formidable');
   var bcrypt = require('bcrypt-nodejs');
   var md = require('marked');
-var http = require('http');
-var express = require('express');
-var app = express();
-var mysql = require('mysql');
-
-var server = http.createServer(app).listen(app.get('port'), function(){
-  console.log('Express server listening on port ' + app.get('port'));
-});
-
-if (process.env.NODE_ENV != 'production'){  
-var cliente = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password : 'root',
-    port : 8889, //port mysql
-    database:'kirolElkarteak'
-});
-            console.log("localhost2" );
-}
-else{
-  var cliente = mysql.createConnection({
-    host: 'us-cdbr-iron-east-04.cleardb.net',
-    user: 'b65e4830d842c6',
-    password : 'ff86419e',
-    //  port : 3306, //port mysql
-    database:'heroku_3a7c26fa617acae'
-});
-              console.log("heroku2" );
-}
-
-
-
-
-
-
 
 // make sure data directory exists
 //var dataDir = path.normalize(path.join(__dirname, '..', 'data'));
@@ -482,7 +447,7 @@ exports.edukiaksortu = function(req,res){
     });
 };
 
-/*exports.edukiakikusi = function(req, res){
+exports.edukiakikusi = function(req, res){
   var id = req.session.idKirolElkarteak;
   var idAtalak = req.params.idAtalak;
 
@@ -576,101 +541,10 @@ exports.edukiaksortu = function(req,res){
   });
            //res.render('edukiakikusi.handlebars',{title: "kirolElkarteak", jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, atalak: req.session.atalak, partaidea: req.session.partaidea});
 
-};*/
-
-
-exports.edukiakikusi = function(req, res){
-  var id = req.session.idKirolElkarteak;
-  var idAtalak = req.params.idAtalak;
-
-  if (idAtalak == null)
-    idAtalak=req.session.atalak[0].idAtalak;
-
-  //var atalak = []; //egunak
-  //var atala = {}; //eguna
-  var azpiAtalak = []; //lekuak
-  var azpiAtala = {}; //lekua
-  var edukiak = []; //partiduak
-  var j,t=0;
-  //var k = 0;
-  var vAtalak, vAzpiAtalak;
- 
-
-       
-     
-     cliente.query('SELECT * FROM edukiak, azpiAtalak where idElkarteakEdukia = ? and idAzpiAtalakEdukia = idAzpiAtalak and idAtalakAzpiAtala = ? order by zenbakiAzpiAtala asc, zenbakiEdukia asc,  dataEdukia desc',[id, idAtalak],function(err,rows)     {
-            
-        if(err)
-           console.log("Error Selecting : %s ",err );
-         
-     
-        cliente.query('SELECT * FROM elkarteak where idElkarteak = ? ',[id],function(err,rowst)     {
-          
-          if(err)
-           console.log("Error Selecting : %s ",err );
-          
-
-          //for (var i in rows){
-            //rows[i].testuaBerria=rows[i].testuaBerria.replace(/\r?\n/g, "<br>");
-
-          //}
-
-
-          for (var i in rows) {
-  
-          
-          if(vAzpiAtalak != rows[i].idAzpiAtalak){
-            if(vAzpiAtalak !=null){
-              azpiAtala.edukiak = edukiak;
-              azpiAtalak[t] = azpiAtala;
-              t++;
-            }
-            vAzpiAtalak = rows[i].idAzpiAtalak;
-            edukiak = []; 
-            j=0;
-          
-            azpiAtala = {
-                  idAzpiAtalak    : rows[i].idAzpiAtalak,
-                  izenaAzpiAtala : rows[i].izenaAzpiAtala
-               };
-               
-          }
-
-          var testuahtml = md(rows[i].testuaEdukia);
-          //console.log("HTML:   " + JSON.stringify(testuahtml));
-          edukiak[j] = {
-                  idEdukiak    : rows[i].idEdukiak,
-                  izenburuaEdukia : rows[i].izenburuaEdukia,
-                  testuaEdukia: rows[i].testuaEdukia,
-                  htmlEdukia : testuahtml
-               };
-          j++;
-       
-     }
-        if(vAzpiAtalak !=null){
-              azpiAtala.edukiak = edukiak;
-              azpiAtalak[t] = azpiAtala;
-              //atala.azpiAtalak = azpiAtalak;
-              //atalak[k] = atala;
-              //k++;
-            }
+};
 
 
 
-
-
-
-
-          //console.log("Rows:" +JSON.stringify(rows));
-          //connection.end();
-          res.render('edukiakikusi.handlebars',{title: "kirolElkarteak", azpiAtalak:azpiAtalak, data:rows, data2: rowst, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, atalak: req.session.atalak, partaidea: req.session.partaidea, idPartaideak:req.session.idPartaideak, arduraduna:req.session.arduraduna});
-
-          cliente.end({timeout:60000});
-        });  
-
-      });   
-
-}
 exports.indexikusi = function(req, res){
   var id = req.session.idKirolElkarteak;
   var idAtalak = req.params.idAtalak;
