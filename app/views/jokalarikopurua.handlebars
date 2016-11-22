@@ -11,18 +11,19 @@
         <div class="col-lg-5 col-sm-offset-1">
         <table class="table table-striped">
                 <tr>
-                    <th>Kategoria</th>
-                    <th>Talde kopurua</th>
+                    <th>Talde izena</th>
+                    <th>Maila</th>
                     <th>Jokalari kopurua</th>
                 </tr> 
                 {{#each taldeak}}
                    <tr>
+                    <td>{{izenaTalde}}</td> 
                     <td>{{izenaMaila}}</td> 
-                    <td align="center">{{taldeakguztira}}</td>  
                     <td align="center">{{jokalariakguztira}}</td>               
                    </tr>                           
                 {{/each}}  
                 <tr>
+                    <td></td>  
                     <td><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GUZTIRA</b></td> 
                     <td align="center"><b>{{taldetotala}}</b></td>                
                    </tr>               

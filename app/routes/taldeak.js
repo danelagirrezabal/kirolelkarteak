@@ -11,7 +11,7 @@ exports.taldeakbilatu = function(req, res){
   var idDenboraldia = req.session.idDenboraldia;
   req.getConnection(function(err,connection){
        
-     connection.query('SELECT * FROM taldeak, ekintzak, mailak, partaideak where idMailak=idMailaTalde and idArduradunTalde=idPartaideak and idEkintzakTalde = idEkintzak and idDenboraldiaEkintza= ? and idElkarteakTalde = ? order by noiztikEkintza desc',[idDenboraldia,id],function(err,rows) {
+     connection.query('SELECT * FROM taldeak, ekintzak, mailak, partaideak where idMailak=idMailaTalde and idArduradunTalde=idPartaideak and idEkintzakTalde = idEkintzak and idDenboraldiaEkintza= ? and idElkarteakTalde = ? order by zenbakiMaila desc',[idDenboraldia,id],function(err,rows) {
             
         if(err)
            console.log("Error Selecting : %s ",err );
@@ -230,6 +230,49 @@ exports.taldeakaldatu = function(req,res){
     
     });
 };
+
+
+/*exports.taldeakkopiatu = function(req, res){
+  var id = req.session.idKirolElkarteak;
+  var idDenboraldia = req.session.idDenboraldia;
+  var idDenboraldiNondik = 2;
+  req.getConnection(function(err,connection){
+       
+     connection.query('SELECT * FROM taldeak where idElkarteakMaila = ? order by zenbakiMaila asc',[id],function(err,rowsm) {
+            
+        if(err)
+           console.log("Error Selecting : %s ",err );
+         
+         //console.log("Berriak:" +JSON.stringify(rows));
+        
+        var data = {
+            
+            izenaTalde    : input.izenaTalde,
+            idMailaTalde   : input.idMailaTalde,
+            akronimoTalde : input.akronimoTalde,
+            arduradunEmailTalde : input.arduradunEmailTalde,
+            idArduradunTalde : input.idArduradunTalde,
+            urlSailkapenTalde: input.urlSailkapenTalde,
+            idEkintzakTalde : input.idEkintzakTalde,
+            idElkarteakTalde : id
+            //idDenboraldiaEkintza : idDenboraldia
+        };
+        
+  
+        var query = connection.query("INSERT INTO taldeak set ? ",data, function(err, rows)
+        {
+  
+          if (err)
+              console.log("Error inserting : %s ",err );
+         
+          res.redirect('/admin/taldeak');
+        });
+        
+       // console.log(query.sql); 
+    
+    });
+};*/
+
 
 //TALDEKIDEAK
 
@@ -680,55 +723,5 @@ exports.taldeargazkiaigo = function(req, res){
 
          
   });
-};
-
-
-
-
-
-////////////////////////////////////////////////// NERIA
-
-
-
-exports.add = function(req, res){
-  res.render('add_customer',{page_title:"Add Customers-Node.js"});
-};
-exports.edit = function(req, res){
-    
-  var id = req.params.id;
-    
-  req.getConnection(function(err,connection){
-       
-     connection.query('SELECT * FROM customer WHERE id = ?',[id],function(err,rows)
-        {
-            
-            if(err)
-                console.log("Error Selecting : %s ",err );
-     
-            res.render('edit_customer',{page_title:"Edit Customers - Node.js",data:rows});
-                           
-         });
-                 
-    }); 
-};
-
-
-exports.delete_customer = function(req,res){
-          
-     var id = req.params.id;
-    
-     req.getConnection(function (err, connection) {
-        
-        connection.query("DELETE FROM customer  WHERE id = ? ",[id], function(err, rows)
-        {
-            
-             if(err)
-                 console.log("Error deleting : %s ",err );
-            
-             res.redirect('/customers');
-             
-        });
-        
-     });
 };
 

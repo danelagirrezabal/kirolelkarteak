@@ -187,11 +187,11 @@ function authorize2(req, res, next){
           if(err)
            console.log("Error Selecting : %s ",err );
           
-          //if (rowsd.length !=0){
+          if (rowsd.length !=0){
             if (req.session.jardunaldia > rowsd[0].jardunaldiDataPartidu){
               req.session.jardunaldia=rowsd[0].jardunaldiDataPartidu;
             }
-          //}
+          }
 
            connection.query('SELECT * FROM atalak where zenbakiAtala>0 AND idElkarteakAtala = ? order by zenbakiAtala asc',[req.session.idKirolElkarteak],function(err,rowsatal) {
           
@@ -200,13 +200,15 @@ function authorize2(req, res, next){
 
                 req.session.atalak=rowsatal;  
 
-
             return next();
 
            });
         });
 
       });
+
+               // connection.end({ timeout: 60000 });
+
   });
 
 }
@@ -420,6 +422,8 @@ app.get('/admin/partiduakkargatu', adminonartua, denboraldiak.partiduakkargatu);
 app.post('/admin/partiduakkargatuegin', adminonartua, denboraldiak.partiduakkargatuegin);
 
 app.get('/admin/partiduordutegiak/:idDenboraldia/:jardunaldia',adminonartua,authorize2, denboraldiak.partiduordutegiak);
+app.get('/admin/partiduordutegiak/:idDenboraldia',adminonartua,authorize2, denboraldiak.partiduordutegiak);
+
 
 app.get('/partiduordutegiak/:idDenboraldia/:jardunaldia', authorize2, denboraldiak.partiduordutegiak);
 app.get('/partiduordutegiak/:idDenboraldia', authorize2, denboraldiak.partiduordutegiak);
@@ -440,6 +444,9 @@ app.get('/admin/taldeakezabatu/:idTaldeak', adminonartua, taldeak.taldeakezabatu
 app.get('/admin/taldeakeditatu/:idTaldeak', adminonartua, taldeak.taldeakeditatu);
 app.post('/admin/taldeakaldatu/:idTaldeak', adminonartua, taldeak.taldeakaldatu);
 
+//app.get('/admin/taldeakkopiatu/', adminonartua, taldeak.taldeakkopiatu);
+
+
 app.get('/admin/taldekideak/:idTaldeak', adminonartua, taldeak.taldekideakbilatu);
 app.get('/taldekideak/:idTaldeak', authorize2, taldeak.taldekideakbilatupartaideargazkiekin);
 app.post('/admin/taldekideaksortu/:idTaldeak', adminonartua, taldeak.taldekideaksortu);
@@ -459,6 +466,15 @@ app.get('/admin/taldeargazkia/:idTaldeak', adminonartua, function(req, res){
     res.render('taldeargazkia.handlebars', {title : 'KirolElkarteak-Talde argazkia', idTaldeak: req.params.idTaldeak, partaidea: req.session.partaidea});
 });
 app.post('/admin/taldeargazkiaigo/:idTaldeak', adminonartua, taldeak.taldeargazkiaigo);
+
+
+app.get('/admin/taldekopurua', adminonartua, kudeaketa.taldekopurua);
+app.get('/admin/jokalarikopurua', adminonartua, kudeaketa.jokalarikopurua);
+
+app.get('/admin/kudeaketa', adminonartua, kudeaketa.kalkuluak);
+
+
+
 
 app.get('/admin/partaidemotak', adminonartua, kirolElkarteak.partaidemotakbilatu);
 app.post('/admin/partaidemotaksortu', adminonartua, kirolElkarteak.partaidemotaksortu);
@@ -506,5 +522,27 @@ app.get('/admin/partiduemaitzaktalde/', authorize2, denboraldiak.partiduemaitzak
 var server = http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
 });
+
+if (process.env.NODE_ENV != 'production'){  
+var cliente = mysql.createConnection({
+    host: 'localhost',
+    user: 'root',
+    password : 'joanaagi',
+    port : 8889, //port mysql
+    database:'kirolElkarteak'
+});
+            console.log("localhost2" );
+}
+else{
+  var cliente = mysql.createConnection({
+    host: 'us-cdbr-iron-east-04.cleardb.net',
+    user: 'b65e4830d842c6',
+    password : 'ff86419e',
+    //  port : 3306, //port mysql
+    database:'heroku_3a7c26fa617acae'
+});
+              console.log("heroku2" );
+}
+
 
 

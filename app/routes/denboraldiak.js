@@ -9,7 +9,7 @@ exports.denboraldiakbilatu = function(req, res){
   var id = req.session.idKirolElkarteak;
   req.getConnection(function(err,connection){
        
-     connection.query('SELECT * FROM denboraldiak where idElkarteakDenb = ? order by noiztikDenb desc',[id],function(err,rows) {
+     connection.query('SELECT *, DATE_FORMAT(noiztikDenb,"%Y/%m/%d") AS noiztikDenb, DATE_FORMAT(noraDenb,"%Y/%m/%d") AS noraDenb FROM denboraldiak where idElkarteakDenb = ? order by noiztikDenb desc',[id],function(err,rows) {
             
         if(err)
            console.log("Error Selecting : %s ",err );
@@ -91,7 +91,7 @@ exports.denboraldiakeditatu = function(req, res){
     
   req.getConnection(function(err,connection){
        
-     connection.query('SELECT * FROM denboraldiak WHERE idElkarteakDenb = ? and idDenboraldia = ?',[id,idDenboraldia],function(err,rows)
+     connection.query('SELECT *, DATE_FORMAT(noiztikDenb,"%Y/%m/%d") AS noiztikDenb, DATE_FORMAT(noraDenb,"%Y/%m/%d") AS noraDenb FROM denboraldiak WHERE idElkarteakDenb = ? and idDenboraldia = ?',[id,idDenboraldia],function(err,rows)
         {
             
             if(err)
@@ -140,7 +140,7 @@ exports.ekintzakbilatu = function(req, res){
   var idDenboraldia = req.session.idDenboraldia;
   req.getConnection(function(err,connection){
        
-     connection.query('SELECT * FROM ekintzak where idDenboraldiaEkintza= ? and idElkarteakEkintza = ? order by noiztikEkintza desc',[idDenboraldia,id],function(err,rows) {
+     connection.query('SELECT *,DATE_FORMAT(noiztikEkintza,"%Y/%m/%d") AS noiztikEkintza, DATE_FORMAT(noraEkintza,"%Y/%m/%d") AS noraEkintza  FROM ekintzak where idDenboraldiaEkintza= ? and idElkarteakEkintza = ? order by noiztikEkintza desc',[idDenboraldia,id],function(err,rows) {
             
         if(err)
            console.log("Error Selecting : %s ",err );
@@ -227,7 +227,7 @@ exports.ekintzakeditatu = function(req, res){
     
   req.getConnection(function(err,connection){
        
-     connection.query('SELECT * FROM ekintzak WHERE idElkarteakEkintza = ? and idDenboraldiaEkintza = ? and idEkintzak= ?',[id,idDenboraldia,idEkintzak],function(err,rows)
+     connection.query('SELECT *,DATE_FORMAT(noiztikEkintza,"%Y/%m/%d") AS noiztikEkintza, DATE_FORMAT(noraEkintza,"%Y/%m/%d") AS noraEkintza FROM ekintzak WHERE idElkarteakEkintza = ? and idDenboraldiaEkintza = ? and idEkintzak= ?',[id,idDenboraldia,idEkintzak],function(err,rows)
         {
             
             if(err)

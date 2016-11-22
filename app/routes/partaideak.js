@@ -128,12 +128,24 @@ exports.ikusi = function(req, res){
            console.log("Error Selecting : %s ",err );
 
           for(var i in rows){
-                  if(rows[i].idBazkideak){
-                    rows[i].ezbazkidea = false;
-                  }
-                  else
-                    rows[i].ezbazkidea = true;
-                }
+              if(rows[i].idBazkideak){
+                rows[i].ezbazkidea = false;
+              }
+              else
+                rows[i].ezbazkidea = true;
+                
+              if(rows[i].balidatutaPart == 0){
+                rows[i].balidatuta = "EZ";
+              }else if (rows[i].balidatutaPart == 1){
+                rows[i].balidatuta = "BAI";
+                rows[i].balidatutaNegrita = true;
+              }else if (rows[i].balidatutaPart == "admin" ){
+                rows[i].balidatuta = "BAI - admin";
+                rows[i].balidatutaNegrita = true;
+
+              }
+
+          }
 
 
 
@@ -306,6 +318,8 @@ exports.sortu = function(req,res){
     
     var input = JSON.parse(JSON.stringify(req.body));
     res.locals.flash = null;
+   var generoa = [{izena: "Neska"}, {izena: "Mutila"}];
+
     var now= new Date();
 
     console.log("idKirolElkarteak:" + req.session.idKirolElkarteak);
@@ -358,18 +372,29 @@ exports.sortu = function(req,res){
   }
 
   req.getConnection(function (err, connection) {
-   /*connection.query('SELECT idmaila, mailaizena FROM maila where idtxapelm = ? ',[req.session.idtxapelketa],function(err,rowsm)     {
-      if(err)
-        console.log("Error Selecting : %s ",err ); 
 
-      for(var i in rowsm ){
-          if(req.body.kategoria == rowsm[i].idmaila){
-            mailaizena = rowsm[i].mailaizena;
-            rowsm[i].aukeratua = true;
+
+      connection.query('SELECT * FROM ordaintzekoErak where idElkarteakOrdaintzekoErak = ? order by idOrdaintzekoErak asc',[id],function(err,rowso) {
+            
+        if(err)
+           console.log("Error Selecting : %s ",err );
+
+         for(var i in rowso ){
+                  if(req.body.idOrdaintzekoEraPart == rowso[i].idOrdaintzekoErak){
+                    rowso[i].aukeratua = true;
+                  }
+                  else
+                    rowso[i].aukeratua = false;
           }
-          else
-            rowsm[i].aukeratua = false;
-      }*/
+
+          for(var i in generoa ){
+                  if(req.body.sexuaPart == generoa[i].izena){
+                    generoa[i].aukeratua = true;
+                  }
+                  else
+                    generoa[i].aukeratua = false;
+          }
+
  
       if(res.locals.flash != null){
 
@@ -391,11 +416,13 @@ exports.sortu = function(req,res){
             emailPart : req.body.emailPart,
             //idElkarteakPart : id,
             jaiotzeDataPart: req.body.jaiotzeDataPart,
-            //sexuaPart: req.body.sexuaPart,
+            sexuaPart: req.body.sexuaPart,
             //pasahitzaPart:   password_hash,  
-            //berezitasunakPart: req.body.berezitasunakPart,
+            berezitasunakPart: req.body.berezitasunakPart,
             idOrdaintzekoEraPart: req.body.idOrdaintzekoEraPart,
-            kontuZenbPart: req.body.kontuZenbPart                
+            kontuZenbPart: req.body.kontuZenbPart,
+            ordaintzekoErak : rowso,
+            generoa : generoa             
 
           } );
       }
@@ -427,11 +454,13 @@ exports.sortu = function(req,res){
             emailPart : req.body.emailPart,
             //idElkarteakPart : id,
             jaiotzeDataPart: req.body.jaiotzeDataPart,
-            //sexuaPart: req.body.sexuaPart,
+            sexuaPart: req.body.sexuaPart,
             //pasahitzaPart:   password_hash,  
-            //berezitasunakPart: req.body.berezitasunakPart,
+            berezitasunakPart: req.body.berezitasunakPart,
             idOrdaintzekoEraPart: req.body.idOrdaintzekoEraPart,
-            kontuZenbPart: req.body.kontuZenbPart                
+            kontuZenbPart: req.body.kontuZenbPart,
+            ordaintzekoErak : rowso,
+            generoa : generoa                  
 
           } );
         }
@@ -502,7 +531,8 @@ exports.sortu = function(req,res){
           
           res.render('partaideakeskerrak.handlebars', {title: "Mila esker!", partaideizena:data.izenaPart, elkarteizena:rowst[0].izenaElk, emailPart:data.emailPart, atalak: req.session.atalak, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia,idPartaideak:req.session.idPartaideak, arduraduna:req.session.arduraduna});
           });
-        }); 
+        });
+       }); 
       });
     });
   //});
@@ -511,18 +541,27 @@ exports.sortu = function(req,res){
 exports.partaideakgehitu = function(req, res){ //Datu basetik conboBox-ak betetzeko
   var id = req.session.idKirolElkarteak;
   var idDenboraldia = req.session.idDenboraldia;
+    var generoa = [{izena: "Neska"}, {izena: "Mutila"}];
+
   req.getConnection(function(err,connection){
        
      connection.query('SELECT * FROM ordaintzekoErak where idElkarteakOrdaintzekoErak = ? order by idOrdaintzekoErak asc',[id],function(err,rowso) {
             
-        if(err)
-           console.log("Error Selecting : %s ",err );
+              if(err)
+                console.log("Error Selecting : %s ",err );
+
+
+
+              //rows[0].generoa = generoa;
+
+            
 
          
          //console.log("Berriak:" +JSON.stringify(rows));
-      res.render('partaideakgehitu.handlebars', {title : 'KirolElkarteak-PartaideakGehitu', ordaintzekoErak: rowso, partaidea: req.session.partaidea});
+      res.render('partaideakgehitu.handlebars', {title : 'KirolElkarteak-PartaideakGehitu', generoa:generoa, ordaintzekoErak: rowso, partaidea: req.session.partaidea});
 
-      });  
+    
+    });
          
   });
 };
@@ -582,7 +621,7 @@ debugger;
       message: 'Emailak ez dira berdinak',
     };
   }
-  req.getConnection(function (err, connection) {
+req.getConnection(function (err, connection) {
 
 
 connection.query('SELECT * FROM ordaintzekoErak where idElkarteakOrdaintzekoErak = ? order by idOrdaintzekoErak asc',[id],function(err,rowso) {
@@ -605,6 +644,24 @@ connection.query('SELECT * FROM ordaintzekoErak where idElkarteakOrdaintzekoErak
                   else
                     generoa[i].aukeratua = false;
           }
+
+
+    connection.query('SELECT * FROM elkarteak,partaideak where idElkarteak = idElkarteakPart and idPartaideak = ? ',
+      [idPartaideak],function(err,rows)     {
+        if(err || rows.length == 0 || !(bcrypt.compareSync(req.body.pasahitzaPart, rows[0].pasahitzaPart))){
+
+          if(err)
+            console.log("Error Selecting : %s ",err );
+
+          if(req.xhr) return res.json({ error: 'Invalid password.' });
+             res.locals.flash = {
+             type: 'danger',
+             intro: 'Adi!',
+             message: 'Pasahitza ez da zuzena. Aldaketak egin ahal izateko zure erabiltzaileari dagokion pasahitza idatzi.',
+          };
+
+        };
+
 
       var data = [{
             izenaPart    : req.body.izenaPart,
@@ -683,6 +740,8 @@ connection.query('SELECT * FROM ordaintzekoErak where idElkarteakOrdaintzekoErak
          else
           res.redirect('/');
           
+        });
+
         });
     
     });

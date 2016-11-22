@@ -505,7 +505,7 @@ exports.edukiakikusi = function(req, res){
           }
 
           var testuahtml = md(rows[i].testuaEdukia);
-          console.log("HTML:   " + JSON.stringify(testuahtml));
+          //console.log("HTML:   " + JSON.stringify(testuahtml));
           edukiak[j] = {
                   idEdukiak    : rows[i].idEdukiak,
                   izenburuaEdukia : rows[i].izenburuaEdukia,
@@ -529,7 +529,7 @@ exports.edukiakikusi = function(req, res){
 
 
 
-          console.log("Rows:" +JSON.stringify(rows));
+          //console.log("Rows:" +JSON.stringify(rows));
           //connection.end();
           res.render('edukiakikusi.handlebars',{title: "kirolElkarteak", azpiAtalak:azpiAtalak, data:rows, data2: rowst, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, atalak: req.session.atalak, partaidea: req.session.partaidea, idPartaideak:req.session.idPartaideak, arduraduna:req.session.arduraduna});
 
@@ -569,10 +569,10 @@ exports.edukiakbilatu = function(req, res){
           if(err)
            console.log("Error Selecting : %s ",err );
          
-         console.log("Edukiak:" +JSON.stringify(rows));
+         //console.log("Edukiak:" +JSON.stringify(rows));
 
 
-         debugger;
+        // debugger;
 
 
 
@@ -631,7 +631,7 @@ exports.edukiakbilatu = function(req, res){
               k++;
             }
 
-console.log("Atalak:" +JSON.stringify(atalak));
+//console.log("Atalak:" +JSON.stringify(atalak));
 
           res.render('edukiak.handlebars',{title: "Edukiak", data:rows, data2: rowst, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, atalak: atalak, partaidea: req.session.partaidea, idPartaideak:req.session.idPartaideak, arduraduna:req.session.arduraduna});
         });                        

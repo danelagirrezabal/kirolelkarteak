@@ -10,25 +10,29 @@
         <div class="form-group">
             <label for="izenaPart" class="col-sm-2 control-label">Partaidearen izena</label>
             <div class="col-sm-4">
-                <input type="text" class="form-control" required id="izenaPart" autofocus name="izenaPart" value={{izenaPart}}>
+                <!--<input type="text" class="form-control" required id="izenaPart" autofocus name="izenaPart" value={{izenaPart}}>-->
+                <textarea name="izenaPart" rows="1" cols="40" class="form-control" required>{{izenaPart}}</textarea>
             </div>
         </div>
          <div class="form-group">
             <label for="abizena1Part" class="col-sm-2 control-label">1. abizena</label>
             <div class="col-sm-4">
-                <input type="text" class="form-control" required id="abizena1Part" name="abizena1Part" value={{abizena1Part}}>
+                <!--<input type="text" class="form-control" required id="abizena1Part" name="abizena1Part" value={{abizena1Part}}>-->
+                <textarea name="abizena1Part" rows="1" cols="40" class="form-control" required>{{abizena1Part}}</textarea>
             </div>
         </div>
         <div class="form-group">
             <label for="abizena2Part" class="col-sm-2 control-label">2. abizena</label>
             <div class="col-sm-4">
-                <input type="text" class="form-control" required id="abizena2Part" name="abizena2Part" value={{abizena2Part}}>
+                <!--<input type="text" class="form-control" required id="abizena2Part" name="abizena2Part" value={{abizena2Part}}>-->
+                <textarea name="abizena2Part" rows="1" cols="40" class="form-control" required>{{abizena2Part}}</textarea>
             </div>
         </div>
         <div class="form-group">
             <label for="nanPart" class="col-sm-2 control-label">NAN</label>
             <div class="col-sm-4">
-                <input type="text" class="form-control" required id="nanPart" name="nanPart" value={{nanPart}}>
+                <!--<input type="text" class="form-control" required id="nanPart" name="nanPart" value={{nanPart}}>-->
+                <textarea name="nanPart" rows="1" cols="40" class="form-control" required>{{nanPart}}</textarea>
             </div>
         </div>
         <div class="form-group">
@@ -46,7 +50,8 @@
         <div class="form-group">
             <label for="helbideaPart" class="col-sm-2 control-label">Helbidea</label>
             <div class="col-sm-4">
-                <input type="text" class="form-control" required id="helbideaPart" name="helbideaPart" value={{helbideaPart}}>
+                <!--<input type="text" class="form-control" required id="helbideaPart" name="helbideaPart" value={{helbideaPart}}>-->
+                <textarea name="helbideaPart" rows="1" cols="40" class="form-control" required>{{helbideaPart}}</textarea>
             </div>
         </div>
         <div class="form-group">
@@ -58,13 +63,15 @@
         <div class="form-group">
             <label for="herriaPart" class="col-sm-2 control-label">Herria</label>
             <div class="col-sm-4">
-                <input type="text" class="form-control" required id="herriaPart" name="herriaPart" value={{herriaPart}}>
+                <!--<input type="text" class="form-control" required id="herriaPart" name="herriaPart" value={{herriaPart}}>-->
+                <textarea name="herriaPart" rows="1" cols="40" class="form-control" required>{{herriaPart}}</textarea>
             </div>
         </div>
         <div class="form-group">
             <label for="telefonoaPart" class="col-sm-2 control-label">Telefonoa</label>
             <div class="col-sm-4">
-                <input type="text" class="form-control" required id="telefonoaPart" name="telefonoaPart" value={{telefonoaPart}}>
+                <!--<input type="text" class="form-control" required id="telefonoaPart" name="telefonoaPart" value={{telefonoaPart}}>-->
+                <textarea name="telefonoaPart" rows="1" cols="40" class="form-control" required>{{telefonoaPart}}</textarea>
             </div>
         </div>
         <div class="form-group">
@@ -82,7 +89,8 @@
         <div class="form-group">
             <label for="kontuZenbPart" class="col-sm-2 control-label">Kontu korronte zenbakia</label>
             <div class="col-sm-4">
-                <input type="text" class="form-control" required id="kontuZenbPart" name="kontuZenbPart" value={{kontuZenbPart}}>
+                <!--<input type="text" class="form-control" required id="kontuZenbPart" name="kontuZenbPart" value={{kontuZenbPart}}>-->
+                <textarea name="kontuZenbPart" rows="1" cols="40" class="form-control">{{kontuZenbPart}}</textarea>
             </div>
         </div>
          <div class="form-group">
@@ -91,7 +99,11 @@
             <select name="idOrdaintzekoEraPart" id="idOrdaintzekoEraPart">
                 <option value="">--Ordaintzeko era aukeratu--</option>
                 {{#each ordaintzekoErak}}
-                       <option value="{{idOrdaintzekoErak}}">{{deskribapenaOrdainEra}}</option>
+                    {{#if aukeratua}}
+                       <option value="{{idOrdaintzekoErak}}" selected>{{deskribapenaOrdainEra}}</option>
+                    {{else}}
+                        <option value="{{idOrdaintzekoErak}}">{{deskribapenaOrdainEra}}</option>
+                    {{/if}}
                 {{/each}}
             </select>
             </div>
@@ -100,9 +112,14 @@
             <label for="sexuaPart" class="col-sm-2 control-label">Generoa</label>
             <div class="col-sm-4">
                 <select name="sexuaPart" required id="sexuaPart">
-                    <option value="">--Aukeratu generoa--</option>
-                    <option value="Neska">Neska</option>
-                    <option value="Mutila">Mutila</option>
+                <option value="">--Generoa aukeratu--</option>
+                {{#each generoa}}
+                    {{#if aukeratua}}
+                       <option value="{{izena}}" selected>{{izena}}</option>
+                    {{else}}
+                       <option value="{{izena}}">{{izena}}</option>
+                    {{/if}}
+                {{/each}}
                 </select>
             </div>
         </div>
@@ -110,7 +127,8 @@
         <div class="form-group">
             <label for="berezitasunakPart" class="col-sm-2 control-label">Berezitasunak</label>
             <div class="col-sm-4">
-                <input type="text" class="form-control" id="berezitasunakPart" name="berezitasunakPart" placeholder="Nahi bada" value={{berezitasunakPart}}>
+                <!--<input type="text" class="form-control" id="berezitasunakPart" name="berezitasunakPart" placeholder="Nahi bada" value={{berezitasunakPart}}>-->
+                <textarea name="berezitasunakPart" placeholder="Nahi baldin bada" rows="1" cols="40" class="form-control">{{berezitasunakPart}}</textarea>
             </div>
         </div>
         <div class="form-group">

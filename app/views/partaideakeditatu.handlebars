@@ -120,7 +120,7 @@
             <label for="sexuaPart" class="col-sm-2 control-label">Generoa</label>
             <div class="col-sm-4">
                 <select name="sexuaPart" required id="sexuaPart">
-                    {{#each generoa}}
+                {{#each generoa}}
                     {{#if aukeratua}}
                        <option value="{{izena}}" selected>{{izena}}</option>
                     {{else}}
@@ -135,7 +135,7 @@
             <label for="berezitasunakPart" class="col-sm-2 control-label">Berezitasunak</label>
             <div class="col-sm-4">
                 <!--<input type="text" class="form-control" id="berezitasunakPart" name="berezitasunakPart" placeholder="Nahi bada" value={{berezitasunakPart}}>-->
-                <textarea name="berezitasunakPart" rows="1" cols="40" class="form-control">{{berezitasunakPart}}</textarea>
+                <textarea name="berezitasunakPart" placeholder="Nahi baldin bada" rows="1" cols="40" class="form-control">{{berezitasunakPart}}</textarea>
             </div>
         </div>
         {{#if ezadmin}}

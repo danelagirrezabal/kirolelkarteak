@@ -64,8 +64,73 @@ exports.sailkapenakaldatu = function(req,res){
 };
 
 
+exports.taldekopurua = function(req, res){
+  var id = req.session.idKirolElkarteak;
+  var idDenboraldia = req.session.idDenboraldia;
+  var totala = 0;
+  req.getConnection(function(err,connection){
+       
+     connection.query('SELECT *, count(*) as taldeakguztira FROM taldeak, mailak where idMailaTalde = idMailak and idElkarteakTalde = ? group by idMailak order by zenbakiMaila asc',[id],function(err,rows) {
+            
+        if(err)
+           console.log("Error Selecting : %s ",err );
 
 
+         for(var i in rows){
+          totala += rows[i].taldeakguztira;
+         }
+         
+         //console.log("Berriak:" +JSON.stringify(rows));
+      res.render('taldekopurua.handlebars', {title : 'KirolElkarteak-Taldeak gehitu', taldetotala: totala, taldeak:rows, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea: req.session.partaidea, partaidea: req.session.partaidea, atalak: req.session.atalak, idPartaideak:req.session.idPartaideak, arduraduna:req.session.arduraduna});
+   
+    });  
+         
+  });
+};
+
+exports.jokalarikopurua = function(req, res){
+  var id = req.session.idKirolElkarteak;
+  var idDenboraldia = req.session.idDenboraldia;
+  var totala = 0;
+  req.getConnection(function(err,connection){
+       
+     connection.query('SELECT *, count(*) as jokalariakguztira FROM taldeak, taldekideak, mailak where idMailak = idMailaTalde and idTaldeak = idTaldeakKide and idElkarteakTalde = ? group by izenaTalde order by idMailaTalde asc',[id],function(err,rows) {
+            
+        if(err)
+           console.log("Error Selecting : %s ",err );
+
+
+         for(var i in rows){
+          totala += rows[i].jokalariakguztira;
+         }
+         
+         //console.log("Berriak:" +JSON.stringify(rows));
+      res.render('jokalarikopurua.handlebars', {title : 'KirolElkarteak-Taldeak gehitu', taldetotala: totala, taldeak:rows, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea: req.session.partaidea, partaidea: req.session.partaidea, atalak: req.session.atalak, idPartaideak:req.session.idPartaideak, arduraduna:req.session.arduraduna});
+   
+    });  
+         
+  });
+};
+
+exports.kalkuluak = function(req, res){
+  var id = req.session.idtxapelketa;
+  req.getConnection(function (err, connection) {
+      if (err)
+              console.log("Error connection : %s ",err ); 
+      connection.query('SELECT idmaila, mailaizena FROM maila where idtxapelm = ? ',[id],function(err,rows)  {
+        if (err)
+                console.log("Error query : %s ",err ); 
+        console.log("mailak : " + JSON.stringify(rows)); 
+        res.render('kalkuluak.handlebars', {title : 'Txaparrotan-Kalkuluak egin', taldeizena: req.session.txapelketaizena, idtxapelketa: req.session.idtxapelketa, mailak : rows});
+      });   
+  });  
+};
+
+
+
+
+
+/////////////////////////////////////////////////////////////////////////////////
 
 exports.multzoakreset = function(req, res){
   var id = req.session.idtxapelketa;

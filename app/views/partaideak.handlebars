@@ -33,6 +33,7 @@
                     <th>Emaila</th>
                     <th>Telefonoa</th>
                     <th>Herria</th>
+                    <th>Balidatuta?</th>
                     <th></th>
                     <th></th>
 
@@ -45,6 +46,11 @@
                     <td>{{emailPart}}</td>
                     <td>{{telefonoaPart}}</td>
                     <td>{{herriaPart}}</td>
+                    {{#if balidatutaNegrita}}
+                    <td style="font-weight:bold" align="center">{{balidatuta}}</td>
+                    {{else}}
+                    <td align="center">{{balidatuta}}</td>
+                    {{/if}}
                     <td>
                     {{#if ezbazkidea}}
                         <a class="a-inside insert" href="../admin/bazkideaksortu/{{idPartaideak}}">Bazkide egin</a> 
