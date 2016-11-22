@@ -78,7 +78,7 @@ app.use(session({
 -------------------------------------------*/
 console.log("environment " + process.env.NODE_ENV);
 //if ('development' == app.get('env')) {
-if (process.env.NODE_ENV != 'production'){
+/*if (process.env.NODE_ENV != 'production'){
   app.use(
     
     connection(mysql,{
@@ -105,7 +105,7 @@ else{
     },'request')
  );
               console.log("herokuBerria" );
-}
+}*/
   
 
 // flash message middleware
