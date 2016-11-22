@@ -79,9 +79,8 @@ app.use(session({
 console.log("environment " + process.env.NODE_ENV);
 //if ('development' == app.get('env')) {
 if (process.env.NODE_ENV != 'production'){
-  app.use(
-    
-    connection(mysql,{
+
+  var connection = connection(mysql,{
         
         host: 'localhost',
         user: 'root',
@@ -89,13 +88,13 @@ if (process.env.NODE_ENV != 'production'){
         port : 8889, //port mysql
         database:'kirolElkarteak'
     },'request')
- );
+  app.use(connection);
               console.log("localhost1" );
 }
 else{
-  app.use(
-    
-    connection(mysql,{
+
+
+ var connection = connection(mysql,{
         
         host: 'us-cdbr-iron-east-04.cleardb.net',
         user: 'b65e4830d842c6',
@@ -103,7 +102,8 @@ else{
       //  port : 3306, //port mysql
         database:'heroku_3a7c26fa617acae'
     },'request')
- );
+
+  app.use(connection);
               console.log("herokuBerria" );
 }
   
@@ -598,7 +598,7 @@ else{
                atalak=rowsatal;  
 
                console.log("JARDUNALDIA: "+jardunaldia + "----" +  idDenboraldia + "------" + atalak);
-               //cliente.end({timeout : 60000});
+               cliente.end({timeout : 60000});
 
            });
         });
