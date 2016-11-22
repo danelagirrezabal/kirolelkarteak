@@ -78,7 +78,7 @@ app.use(session({
 -------------------------------------------*/
 console.log("environment " + process.env.NODE_ENV);
 //if ('development' == app.get('env')) {
-/*if (process.env.NODE_ENV != 'production'){
+if (process.env.NODE_ENV != 'production'){
   app.use(
     
     connection(mysql,{
@@ -105,7 +105,7 @@ else{
     },'request')
  );
               console.log("herokuBerria" );
-}*/
+}
   
 
 // flash message middleware
@@ -253,11 +253,12 @@ function adminKirolElkarteaonartua(req, res, next){
 
 //Rutak
 
-app.get('/', authorize2, kirolElkarteak.indexikusi);
-//app.get('/', authorize2, kirolElkarteak.edukiakikusi);
+
+app.get('/', authorize2, kirolElkarteak.edukiakikusi);
 //app.get('/', kirolElkarteak.edukiakikusi);
 app.get('/taldeak',authorize2, taldeak.taldeakikusipartaide);
  
+app.get('/index', authorize2, kirolElkarteak.indexikusi);
 
 app.get('/partaidemail/:emaila', partaideak.partaidemail);
 app.get('/partaideak',adminonartua, authorize2, partaideak.ikusi);
