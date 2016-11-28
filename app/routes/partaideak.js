@@ -810,17 +810,62 @@ exports.bazkideakikusi = function(req, res){
   var idDenboraldiaSesioa = idDenboraldia;
   req.getConnection(function(err,connection){
        
-     connection.query('SELECT * FROM bazkideak, partaideak, ordaintzekoErak WHERE idOrdaintzekoEraBazk=idOrdaintzekoErak and idPartaideakBazk=idPartaideak and idElkarteakBazkide=?',[id],function(err,rows)     {
+     connection.query('SELECT * FROM bazkideak, partaideak, ordaintzekoErak WHERE idOrdaintzekoEraBazk=idOrdaintzekoErak and idPartaideakBazk=idPartaideak and idElkarteakBazkide=? and idDenboraldiaBazk = ?',[id, idDenboraldia],function(err,rows)     {
             
         if(err)
            console.log("Error Selecting : %s ",err );
 
-         connection.query('SELECT * FROM denboraldiak where idElkarteakDenb = ? order by deskribapenaDenb desc',[id],function(err,rowsd) {
+         connection.query('SELECT idDenboraldia, deskribapenaDenb FROM denboraldiak where idElkarteakDenb = ? order by deskribapenaDenb desc',[id],function(err,rowsdenb) {
           
-          if(err)
-           console.log("Error Selecting : %s ",err );
+            if(err)
+              console.log("Error Selecting : %s ",err );
+
+            for(var i in rowsdenb ){
+                if(req.session.idDenboraldia == rowsdenb[i].idDenboraldia){
+                    rowsdenb[i].aukeratua = true;
+                  }
+                  else
+                    rowsdenb[i].aukeratua = false;
+            }
         
-        res.render('bazkideak.handlebars', {title : 'KirolElkarteak-Bazkideak', data:rows, denboraldiak:rowsd, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea: req.session.partaidea} );
+        res.render('bazkideak.handlebars', {title : 'KirolElkarteak-Bazkideak', data:rows, denboraldiak:rowsdenb, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea: req.session.partaidea} );
+        //res.render('partaideak.handlebars', {title : 'KirolElkarteak-Partaideak', data:rows, taldeizena: req.session.taldeizena} );               
+         });
+       
+    });
+
+  });
+  
+};
+
+exports.bazkideakikusidenboraldiarekin = function(req, res){
+
+  var id=req.session.idKirolElkarteak;
+  var idDenboraldia = req.params.idDenboraldia;
+  req.session.idDenboraldia = idDenboraldia;
+  //var idDenboraldia = req.session.idDenboraldia;
+  var idDenboraldiaSesioa = idDenboraldia;
+  req.getConnection(function(err,connection){
+       
+     connection.query('SELECT * FROM bazkideak, partaideak, ordaintzekoErak WHERE idOrdaintzekoEraBazk=idOrdaintzekoErak and idPartaideakBazk=idPartaideak and idElkarteakBazkide=? and idDenboraldiaBazk = ?',[id, idDenboraldia],function(err,rows)     {
+            
+        if(err)
+           console.log("Error Selecting : %s ",err );
+
+         connection.query('SELECT idDenboraldia, deskribapenaDenb FROM denboraldiak where idElkarteakDenb = ? order by deskribapenaDenb desc',[id],function(err,rowsdenb) {
+          
+            if(err)
+              console.log("Error Selecting : %s ",err );
+
+            for(var i in rowsdenb ){
+                if(req.session.idDenboraldia == rowsdenb[i].idDenboraldia){
+                    rowsdenb[i].aukeratua = true;
+                  }
+                  else
+                    rowsdenb[i].aukeratua = false;
+            }
+        
+        res.render('bazkideak.handlebars', {title : 'KirolElkarteak-Bazkideak', data:rows, denboraldiak:rowsdenb, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea: req.session.partaidea} );
         //res.render('partaideak.handlebars', {title : 'KirolElkarteak-Partaideak', data:rows, taldeizena: req.session.taldeizena} );               
          });
        

@@ -11,14 +11,65 @@ exports.taldeakbilatu = function(req, res){
   var idDenboraldia = req.session.idDenboraldia;
   req.getConnection(function(err,connection){
        
-     connection.query('SELECT * FROM taldeak, denboraldiak, mailak, partaideak where idMailak=idMailaTalde and idArduradunTalde=idPartaideak and idDenboraldiaTalde = idDenboraldia and idDenboraldiaTalde= ? and idElkarteakTalde = ? order by zenbakiMaila desc',[idDenboraldia,id],function(err,rows) {
+     connection.query('SELECT * FROM taldeak, denboraldiak, mailak, partaideak where idMailak=idMailaTalde and idArduradunTalde=idPartaideak and idDenboraldiaTalde = idDenboraldia and idDenboraldiaTalde= ? and idElkarteakTalde = ? order by zenbakiMaila desc, izenaTalde asc',[idDenboraldia,id],function(err,rows) {
             
         if(err)
            console.log("Error Selecting : %s ",err );
+
+
+         connection.query('SELECT idDenboraldia, deskribapenaDenb FROM denboraldiak where idElkarteakDenb = ? order by deskribapenaDenb desc',[id],function(err,rowsdenb) {
+          
+            if(err)
+              console.log("Error Selecting : %s ",err );
+
+            for(var i in rowsdenb ){
+                if(req.session.idDenboraldia == rowsdenb[i].idDenboraldia){
+                    rowsdenb[i].aukeratua = true;
+                  }
+                  else
+                    rowsdenb[i].aukeratua = false;
+            }
+
+
          
          //console.log("Berriak:" +JSON.stringify(rows));
-          res.render('taldeakadmin.handlebars',{title: "Taldeak", data:rows, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea: req.session.partaidea});                       
-      });   
+          res.render('taldeakadmin.handlebars',{title: "Taldeak", data:rows, denboraldiak: rowsdenb, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea: req.session.partaidea});                       
+      });
+        });   
+  });
+};
+
+exports.taldeakbilatudenboraldiarekin = function(req, res){
+  var id = req.session.idKirolElkarteak;
+  var idDenboraldia = req.params.idDenboraldia;
+  req.session.idDenboraldia = idDenboraldia;
+  req.getConnection(function(err,connection){
+       
+     connection.query('SELECT * FROM taldeak, denboraldiak, mailak, partaideak where idMailak=idMailaTalde and idArduradunTalde=idPartaideak and idDenboraldiaTalde = idDenboraldia and idDenboraldiaTalde= ? and idElkarteakTalde = ? order by zenbakiMaila desc, izenaTalde asc',[idDenboraldia,id],function(err,rows) {
+            
+        if(err)
+           console.log("Error Selecting : %s ",err );
+
+
+         connection.query('SELECT idDenboraldia, deskribapenaDenb FROM denboraldiak where idElkarteakDenb = ? order by deskribapenaDenb desc',[id],function(err,rowsdenb) {
+          
+            if(err)
+              console.log("Error Selecting : %s ",err );
+
+            for(var i in rowsdenb ){
+                if(req.session.idDenboraldia == rowsdenb[i].idDenboraldia){
+                    rowsdenb[i].aukeratua = true;
+                  }
+                  else
+                    rowsdenb[i].aukeratua = false;
+            }
+
+
+         
+         //console.log("Berriak:" +JSON.stringify(rows));
+          res.render('taldeakadmin.handlebars',{title: "Taldeak", data:rows, denboraldiak: rowsdenb, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea: req.session.partaidea});                       
+      });
+        });   
   });
 };
 
@@ -27,7 +78,7 @@ exports.taldeakikusipartaide = function(req, res){
   var idDenboraldia = req.session.idDenboraldia;
   req.getConnection(function(err,connection){
        
-     connection.query('SELECT * FROM taldeak, denboraldiak, mailak, partaideak where idMailak=idMailaTalde and idArduradunTalde=idPartaideak and idDenboraldiaTalde = idDenboraldia and idDenboraldiaTalde= ? and idElkarteakTalde = ? order by zenbakiMaila asc',[idDenboraldia,id],function(err,rows) {
+     connection.query('SELECT * FROM taldeak, denboraldiak, mailak, partaideak where idMailak=idMailaTalde and idArduradunTalde=idPartaideak and idDenboraldiaTalde = idDenboraldia and idDenboraldiaTalde= ? and idElkarteakTalde = ? order by zenbakiMaila, izenaTalde asc',[idDenboraldia,id],function(err,rows) {
             
         if(err)
            console.log("Error Selecting : %s ",err );
@@ -231,46 +282,82 @@ exports.taldeakaldatu = function(req,res){
 };
 
 
-/*exports.taldeakkopiatu = function(req, res){
+exports.taldeakkopiatusortu = function(req, res){
   var id = req.session.idKirolElkarteak;
   var idDenboraldia = req.session.idDenboraldia;
   var idDenboraldiNondik = 2;
   req.getConnection(function(err,connection){
+
+    connection.query('SELECT idDenboraldia, deskribapenaDenb FROM denboraldiak where idElkarteakDenb = ? order by deskribapenaDenb desc',[id],function(err,rowsdenb) {
+          
+            if(err)
+              console.log("Error Selecting : %s ",err );
+
+            for(var i in rowsdenb ){
+                if(req.session.idDenboraldia == rowsdenb[i].idDenboraldia){
+                    rowsdenb[i].aukeratua = true;
+                  }
+                  else
+                    rowsdenb[i].aukeratua = false;
+            }
+
+          res.render('taldeakkopiatu.handlebars', {page_title:"Taldeak kopiatu", denboraldiak:rowsdenb, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea: req.session.partaidea, partaidea: req.session.partaidea, atalak: req.session.atalak, idPartaideak:req.session.idPartaideak, arduraduna:req.session.arduraduna});
+
+          });
+  });
+};    
+
+exports.taldeakkopiatuegin = function(req, res){
+  var id = req.session.idKirolElkarteak;
+  var input = JSON.parse(JSON.stringify(req.body));
+  var idDenboraldia = req.session.idDenboraldia;
+  var idDenboraldiaNondik = input.idDenboraldiaNondik;
+  var idDenboraldiaNora = input.idDenboraldiaNora;
+
+   req.getConnection(function(err,connection){
+ 
        
-     connection.query('SELECT * FROM taldeak where idElkarteakMaila = ? order by zenbakiMaila asc',[id],function(err,rowsm) {
+     connection.query('SELECT * FROM taldeak where idElkarteakTalde = ? and idDenboraldiaTalde = ?',[id, idDenboraldiaNondik],function(err,rowstaldeak) {
             
         if(err)
            console.log("Error Selecting : %s ",err );
          
          //console.log("Berriak:" +JSON.stringify(rows));
         
+      for(var i in rowstaldeak ){
+
         var data = {
             
-            izenaTalde    : input.izenaTalde,
-            idMailaTalde   : input.idMailaTalde,
-            akronimoTalde : input.akronimoTalde,
-            arduradunEmailTalde : input.arduradunEmailTalde,
-            idArduradunTalde : input.idArduradunTalde,
-            urlSailkapenTalde: input.urlSailkapenTalde,
-            idEkintzakTalde : input.idEkintzakTalde,
+            izenaTalde    : rowstaldeak[i].izenaTalde,
+            idMailaTalde   : rowstaldeak[i].idMailaTalde,
+            akronimoTalde : rowstaldeak[i].akronimoTalde,
+            arduradunEmailTalde : rowstaldeak[i].arduradunEmailTalde,
+            idArduradunTalde : rowstaldeak[i].idArduradunTalde,
+            urlSailkapenTalde: rowstaldeak[i].urlSailkapenTalde,
+            idDenboraldiaTalde : idDenboraldiaNora,
             idElkarteakTalde : id
             //idDenboraldiaEkintza : idDenboraldia
         };
         
   
-        var query = connection.query("INSERT INTO taldeak set ? ",data, function(err, rows)
+        var query = connection.query("INSERT INTO taldeak set ?",[data], function(err, rows)
         {
   
           if (err)
               console.log("Error inserting : %s ",err );
-         
-          res.redirect('/admin/taldeak');
+
+          //res.redirect('/admin/taldeak');
         });
+
+      }
+      res.redirect('/admin/taldeak');
         
        // console.log(query.sql); 
     
     });
-};*/
+});
+
+};
 
 
 //TALDEKIDEAK

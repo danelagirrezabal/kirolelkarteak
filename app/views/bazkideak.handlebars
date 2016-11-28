@@ -2,40 +2,39 @@
 
 <div class="jumbotron">
         <h2>Bazkideak ikusi</h2>
-      </div>
+</div>
 
-     <div class="container">
+<div class="container">
+
+
   <a href="/partaideak" class="btn btn-primary btn-sm" role="button">Partaideak ikusi</a>
+  <!--<a href="/bazkideakgehitu" class="btn btn-primary btn-sm" role="button">Bazkidea gehitu</a>-->
+
+
 
 <div class="row marketing">
 
-        <div class="col-lg-8">
-          <div class="col-lg-2">
-          <h3 style="color:#0000FF"> Bazkideak </h3>
-          <form class="form-horizontal newsletterForm" role="form" action="/bazkideakgehitu" method="POST">
-        <input type="hidden" name="_csrf" value="{{_csrfToken}}">
-          </div>
-         <div class="form-group">
-            <div class="col-sm-offset-3"> 
-                <br/>
-            
-                  <button type="submit" class="btn btn-default">Banaka Gehitu</button>
-        
 
-            </div>
-        </div>
+        </br></br>
+
+
         <div class="form-group">
-            <label for="denboraldia" class="col-sm-2 control-label">Denboraldia:</label>
+            <label for="denboraldia" class="col-sm-2 control-label">Denboraldia aukeratu:</label>
             <div class="col-sm-4">
             <select name="denboraldia" id="denboraldia">
-                <option value="">--Aukeratu denboraldia--</option>
+                <!--<option value="">--Aukeratu denboraldia--</option>-->
                 {{#each denboraldiak}}
+                    {{#if aukeratua}}
+                       <option value="{{idDenboraldia}}" selected>{{deskribapenaDenb}}</option>
+                    {{else}}
                        <option value="{{idDenboraldia}}">{{deskribapenaDenb}}</option>
+                    {{/if}}
                 {{/each}}
-
             </select>
             </div>
+
         </div>
+        </br></br>
         </form> 
             <table class="table table-striped">
             <tr>
@@ -79,3 +78,30 @@
       </div>
       
 </div>
+
+
+
+{{#section 'jquery'}}
+<script>
+  $(document).ready(function(){   
+
+  var denboraldia = $('#denboraldia').val();     
+  
+    $('#denboraldia').change(function(){
+
+
+      var data = 'id=' + $('#denboraldia').val();
+
+        $(location).attr('href', '/admin/bazkideak/'+$('#denboraldia').val());
+     
+    });
+  });
+
+
+
+            
+</script> 
+
+
+        
+{{/section}}

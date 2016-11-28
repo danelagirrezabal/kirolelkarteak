@@ -1,0 +1,57 @@
+
+    {{> menuadmin}}                
+
+   <div class="jumbotron">
+        <h2>Taldeak kopiatu beste denboraldi batera</h2>
+  </div>
+
+
+      </br></br>
+
+    <div class="formContainer">
+    <form class="form-horizontal newsletterForm" role="form" action="/admin/taldeakkopiatuegin" method="POST">
+      <div class="form-group">
+            <label for="denboraldia" class="col-sm-4 control-label">Zein denboralditatik kopiatu:</label>
+            <div class="col-sm-4">
+            <select name="idDenboraldiaNondik" id="idDenboraldiaNondik">
+                <!--<option value="">--Aukeratu denboraldia--</option>-->
+                {{#each denboraldiak}}
+                    {{#if aukeratua}}
+                       <option value="{{idDenboraldia}}" selected>{{deskribapenaDenb}}</option>
+                    {{else}}
+                       <option value="{{idDenboraldia}}">{{deskribapenaDenb}}</option>
+                    {{/if}}
+                {{/each}}
+            </select>
+            </div>
+
+        </div>
+
+              </br></br>
+      <div class="form-group">
+            <label for="denboraldia" class="col-sm-4 control-label">Zein denboralditara kopiatu:</label>
+            <div class="col-sm-4">
+            <select name="idDenboraldiaNora" id="idDenboraldiaNora">
+                <!--<option value="">--Aukeratu denboraldia--</option>-->
+                {{#each denboraldiak}}
+                    {{#if aukeratua}}
+                       <option value="{{idDenboraldia}}" selected>{{deskribapenaDenb}}</option>
+                    {{else}}
+                       <option value="{{idDenboraldia}}">{{deskribapenaDenb}}</option>
+                    {{/if}}
+                {{/each}}
+            </select>
+            </div>
+
+        </div>
+
+        </br></br>
+       
+      <div class="form-group">
+            <div class="col-sm-offset-3 col-sm-4">
+                <button type="submit" class="btn btn-default">KOPIATU</button>
+            </div>
+        </div>
+    </form>
+
+    </div>
