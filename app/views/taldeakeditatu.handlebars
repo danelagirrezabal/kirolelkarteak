@@ -1,4 +1,4 @@
-{{> menu}}
+{{> menuadmin}}
 
       <div class="jumbotron">
         <h2>Taldeak editatu</h2>
@@ -66,14 +66,14 @@
             </div>
         </div>
         <div class="form-group">
-            <label for="idEkintzakTalde" class="col-sm-2 control-label">Ekintza</label>
+            <label for="idDenboraldiaTalde" class="col-sm-2 control-label">Denboraldia</label>
             <div class="col-sm-4">
-            <select name="idEkintzakTalde" id="idEkintzakTalde">
-                {{#each ekintzak}}
+            <select name="idDenboraldiaTalde" id="idDenboraldiaTalde">
+                {{#each denboraldiak}}
                     {{#if aukeratua}}
-                       <option value="{{idEkintzak}}" selected>{{motaEkintza}}</option>
+                       <option value="{{idDenboraldia}}" selected>{{deskribapenaDenb}}</option>
                     {{else}}
-                        <option value="{{idEkintzak}}">{{motaEkintza}}</option>
+                        <option value="{{idDenboraldia}}">{{deskribapenaDenb}}</option>
                     {{/if}}
                 {{/each}}
             </select>

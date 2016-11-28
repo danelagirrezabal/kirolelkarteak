@@ -11,7 +11,7 @@ exports.taldeakbilatu = function(req, res){
   var idDenboraldia = req.session.idDenboraldia;
   req.getConnection(function(err,connection){
        
-     connection.query('SELECT * FROM taldeak, ekintzak, mailak, partaideak where idMailak=idMailaTalde and idArduradunTalde=idPartaideak and idEkintzakTalde = idEkintzak and idDenboraldiaEkintza= ? and idElkarteakTalde = ? order by zenbakiMaila desc',[idDenboraldia,id],function(err,rows) {
+     connection.query('SELECT * FROM taldeak, denboraldiak, mailak, partaideak where idMailak=idMailaTalde and idArduradunTalde=idPartaideak and idDenboraldiaTalde = idDenboraldia and idDenboraldiaTalde= ? and idElkarteakTalde = ? order by zenbakiMaila desc',[idDenboraldia,id],function(err,rows) {
             
         if(err)
            console.log("Error Selecting : %s ",err );
@@ -27,7 +27,7 @@ exports.taldeakikusipartaide = function(req, res){
   var idDenboraldia = req.session.idDenboraldia;
   req.getConnection(function(err,connection){
        
-     connection.query('SELECT * FROM taldeak, ekintzak, mailak, partaideak where idMailak=idMailaTalde and idArduradunTalde=idPartaideak and idEkintzakTalde = idEkintzak and idDenboraldiaEkintza= ? and idElkarteakTalde = ? order by zenbakiMaila asc',[idDenboraldia,id],function(err,rows) {
+     connection.query('SELECT * FROM taldeak, denboraldiak, mailak, partaideak where idMailak=idMailaTalde and idArduradunTalde=idPartaideak and idDenboraldiaTalde = idDenboraldia and idDenboraldiaTalde= ? and idElkarteakTalde = ? order by zenbakiMaila asc',[idDenboraldia,id],function(err,rows) {
             
         if(err)
            console.log("Error Selecting : %s ",err );
@@ -52,12 +52,12 @@ exports.taldeakgehitu = function(req, res){
             if(err)
             console.log("Error Selecting : %s ",err );
 
-            connection.query('SELECT * FROM ekintzak where idElkarteakEkintza = ? and idDenboraldiaEkintza= ? order by idEkintzak asc',[id, idDenboraldia],function(err,rowse) {
+            connection.query('SELECT * FROM denboraldiak where idElkarteakDenb = ? order by idDenboraldia asc',[id],function(err,rowsd) {
                if(err)
                 console.log("Error Selecting : %s ",err );
          
          //console.log("Berriak:" +JSON.stringify(rows));
-      res.render('taldeaksortu.handlebars', {title : 'KirolElkarteak-Taldeak gehitu', mailak:rowsm, arduradunak:rowsp, ekintzak:rowse, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea: req.session.partaidea});
+      res.render('taldeaksortu.handlebars', {title : 'KirolElkarteak-Taldeak gehitu', mailak:rowsm, arduradunak:rowsp, denboraldiak:rowsd, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea: req.session.partaidea});
       }); 
       });  
           });  
@@ -86,7 +86,7 @@ exports.taldeaksortu = function(req,res){
             arduradunEmailTalde : input.arduradunEmailTalde,
             idArduradunTalde : input.idArduradunTalde,
             urlSailkapenTalde: input.urlSailkapenTalde,
-            idEkintzakTalde : input.idEkintzakTalde,
+            idDenboraldiaTalde : input.idDenboraldiaTalde,
             idElkarteakTalde : id
             //idDenboraldiaEkintza : idDenboraldia
         };
@@ -172,20 +172,19 @@ exports.taldeakeditatu = function(req, res){
 
                   rows[0].arduradunak = rowsp;
 
-                  connection.query('SELECT * FROM ekintzak where idElkarteakEkintza = ? and idDenboraldiaEkintza= ? order by idEkintzak asc',[id, idDenboraldia],function(err,rowse) {
+                  connection.query('SELECT * FROM denboraldiak where idElkarteakDenb = ? order by idDenboraldia asc',[id],function(err,rowse) {
                     if(err)
                       console.log("Error Selecting : %s ",err );
                     
                     for(var i in rowse ){
-                      if(rows[0].idEkintzakTalde == rowse[i].idEkintzak){
-                        motaEKintza = rowsm[i].motaEkitnza;
+                      if(rows[0].idDenboraldiaTalde == rowse[i].idDenboraldia){
                         rowse[i].aukeratua = true;
                       }
                       else
                         rowse[i].aukeratua = false;
                     } 
 
-                    rows[0].ekintzak = rowse;
+                    rows[0].denboraldiak = rowse;
 
             res.render('taldeakeditatu.handlebars', {page_title:"Taldeak aldatu",data:rows, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea: req.session.partaidea});
                            
@@ -215,7 +214,7 @@ exports.taldeakaldatu = function(req,res){
             arduradunEmailTalde : input.arduradunEmailTalde,
             idArduradunTalde : input.idArduradunTalde,
             urlSailkapenTalde: input.urlSailkapenTalde,
-            idEkintzakTalde : input.idEkintzakTalde,
+            idDenboraldiaTalde : input.idDenboraldiaTalde,
         };
         
         connection.query("UPDATE taldeak set ? WHERE idElkarteakTalde = ? and idTaldeak = ?",[data,id, idTaldeak], function(err, rows)
@@ -284,7 +283,7 @@ exports.taldekideakbilatu = function(req, res){
 
     connection.query('SELECT * FROM taldeak, mailak where idMailaTalde=idMailak and idTaldeak = ? and idElkarteakTalde = ?',[idTaldeak,id],function(err,rowst) {
        
-     connection.query('SELECT * FROM taldekideak, partaideMotak, taldeak, ekintzak, mailak, partaideak where idMotaKide=idPartaideMotak and idTaldeakKide=idTaldeak and idMailak=idMailaTalde and idPartaideakKide=idPartaideak and idEkintzakTalde = idEkintzak and idDenboraldiaEkintza= ? and idTaldeakKide = ? and idElkarteakTalde = ? order by noiztikEkintza desc',[idDenboraldia,idTaldeak,id],function(err,rows) {
+     connection.query('SELECT * FROM taldekideak, partaideMotak, taldeak, denboraldiak, mailak, partaideak where idMotaKide=idPartaideMotak and idTaldeakKide=idTaldeak and idMailak=idMailaTalde and idPartaideakKide=idPartaideak and idDenboraldiaTalde = idDenboraldia and idDenboraldia= ? and idTaldeakKide = ? and idElkarteakTalde = ? order by noiztikDenb desc',[idDenboraldia,idTaldeak,id],function(err,rows) {
             
         if(err)
            console.log("Error Selecting : %s ",err );
@@ -342,7 +341,7 @@ exports.taldekideakbilatupartaide = function(req, res){
 
     connection.query('SELECT * FROM taldeak, mailak where idMailaTalde=idMailak and idTaldeak = ? and idElkarteakTalde = ?',[idTaldeak,id],function(err,rowst) {
        
-     connection.query('SELECT * FROM taldekideak, partaideMotak, taldeak, ekintzak, mailak, partaideak where idMotaKide=idPartaideMotak and idTaldeakKide=idTaldeak and idMailak=idMailaTalde and idPartaideakKide=idPartaideak and idEkintzakTalde = idEkintzak and idDenboraldiaEkintza= ? and idTaldeakKide = ? and idElkarteakTalde = ? order by noiztikEkintza desc',[idDenboraldia,idTaldeak,id],function(err,rows) {
+     connection.query('SELECT * FROM taldekideak, partaideMotak, taldeak, denboraldiak, mailak, partaideak where idMotaKide=idPartaideMotak and idTaldeakKide=idTaldeak and idMailak=idMailaTalde and idPartaideakKide=idPartaideak and idDenboraldiaTalde = idDenboraldia and idDenboraldia= ? and idTaldeakKide = ? and idElkarteakTalde = ? order by noiztikDenb desc',[idDenboraldia,idTaldeak,id],function(err,rows) {
             
         if(err)
            console.log("Error Selecting : %s ",err );
@@ -366,7 +365,7 @@ exports.taldekideakbilatupartaideargazkiekin = function(req, res){
 
     connection.query('SELECT * FROM taldeak, mailak where idMailaTalde=idMailak and idTaldeak = ? and idElkarteakTalde = ?',[idTaldeak,id],function(err,rowst) {
        
-     connection.query('SELECT * FROM taldekideak, partaideMotak, taldeak, ekintzak, mailak, partaideak where idMotaKide=idPartaideMotak and idTaldeakKide=idTaldeak and idMailak=idMailaTalde and idPartaideakKide=idPartaideak and idEkintzakTalde = idEkintzak and idDenboraldiaEkintza= ? and idTaldeakKide = ? and idElkarteakTalde = ? order by noiztikEkintza desc',[idDenboraldia,idTaldeak,id],function(err,rows) {
+     connection.query('SELECT * FROM taldekideak, partaideMotak, taldeak, denboraldiak, mailak, partaideak where idMotaKide=idPartaideMotak and idTaldeakKide=idTaldeak and idMailak=idMailaTalde and idPartaideakKide=idPartaideak and idDenboraldiaTalde = idDenboraldia and idDenboraldia= ? and idTaldeakKide = ? and idElkarteakTalde = ? order by noiztikDenb desc',[idDenboraldia,idTaldeak,id],function(err,rows) {
             
         if(err)
            console.log("Error Selecting : %s ",err );

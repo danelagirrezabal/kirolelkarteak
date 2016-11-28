@@ -260,8 +260,6 @@ app.get('/', authorize2, kirolElkarteak.edukiakikusi);
 //app.get('/', kirolElkarteak.edukiakikusi);
 app.get('/taldeak',authorize2, taldeak.taldeakikusipartaide);
  
-app.get('/index', authorize2, kirolElkarteak.indexikusi);
-
 app.get('/partaidemail/:emaila', partaideak.partaidemail);
 app.get('/partaideak',adminonartua, authorize2, partaideak.ikusi);
 
