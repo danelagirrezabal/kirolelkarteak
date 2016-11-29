@@ -526,6 +526,7 @@ exports.taldekideakgehitu = function(req, res){
   var id = req.session.idKirolElkarteak;
   var idDenboraldia = req.session.idDenboraldia;
   var idTaldeak = req.params.idTaldeak;
+  var admin=(req.path.slice(0,18) == "/admin/taldekideak");
   req.getConnection(function(err,connection){
        
      connection.query('SELECT * FROM partaideMotak where idElkarteakPartaideMotak = ? order by idPartaideMotak asc',[id],function(err,rowsm) {
@@ -533,12 +534,12 @@ exports.taldekideakgehitu = function(req, res){
         if(err)
            console.log("Error Selecting : %s ",err );
 
-        connection.query('SELECT * FROM partaideak where idElkarteakPart = ? order by izenaPart asc',[id],function(err,rowsp) {
+        connection.query('SELECT * FROM partaideak where idElkarteakPart = ? and balidatutaPart != ? order by izenaPart asc',[id, "admin"],function(err,rowsp) {
             if(err)
             console.log("Error Selecting : %s ",err );
          
          //console.log("Berriak:" +JSON.stringify(rows));
-      res.render('taldekideaksortu.handlebars', {title : 'KirolElkarteak-Taldeak gehitu', motak:rowsm, partaideak:rowsp, idTaldeak:idTaldeak, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea: req.session.partaidea, partaidea: req.session.partaidea, atalak: req.session.atalak, idPartaideak:req.session.idPartaideak, arduraduna:req.session.arduraduna});
+      res.render('taldekideaksortu.handlebars', {title : 'KirolElkarteak-Taldeak gehitu', motak:rowsm, partaideak:rowsp, idTaldeak:idTaldeak, menuadmin:admin, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea: req.session.partaidea, partaidea: req.session.partaidea, atalak: req.session.atalak, idPartaideak:req.session.idPartaideak, arduraduna:req.session.arduraduna});
       }); 
       });  
          
@@ -623,6 +624,7 @@ exports.taldekideakeditatu = function(req, res){
   var idDenboraldia = req.session.idDenboraldia;
   var idTaldekideak = req.params.idTaldekideak;
   var baiez = [{ordainduKide:"Bai"}, {ordainduKide:"Ez"}];
+  var admin=(req.path.slice(0,18) == "/admin/taldekideak");
     
   req.getConnection(function(err,connection){
        
@@ -682,7 +684,7 @@ exports.taldekideakeditatu = function(req, res){
                   rows[0].arduraduna = req.session.arduraduna;
 
 
-                res.render('taldekideakeditatu.handlebars', {page_title:"Taldekideak aldatu",data:rows, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, atalak: req.session.atalak, partaidea: req.session.partaidea, idPartaideak:req.session.idPartaideak, arduraduna:req.session.arduraduna});
+                res.render('taldekideakeditatu.handlebars', {page_title:"Taldekideak aldatu",data:rows, menuadmin:admin, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, atalak: req.session.atalak, partaidea: req.session.partaidea, idPartaideak:req.session.idPartaideak, arduraduna:req.session.arduraduna});
                            
               
                   });

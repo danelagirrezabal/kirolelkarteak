@@ -447,6 +447,108 @@ exports.edukiaksortu = function(req,res){
     });
 };
 
+exports.edukiakosoriksortu = function(req,res){
+    var input = JSON.parse(JSON.stringify(req.body));
+    console.log("Bidali:" + input.bidali);
+    var id = req.session.idKirolElkarteak;
+    var now= new Date();
+
+    var hosta = req.hostname;
+    if (process.env.NODE_ENV != 'production'){ 
+          hosta += ":"+ (process.env.PORT || 3000);
+    }
+
+    req.getConnection(function (err, connection) {
+
+      connection.query('SELECT max(idAtalak) as idAtalHandiena FROM atalak WHERE idElkarteakAtala = ?',[id],function(err,rowsa)
+        {
+            
+            if(err)
+                console.log("Error Selecting : %s ",err );
+
+              console.log("Atala:   " + JSON.stringify(rowsa));
+
+
+        connection.query('SELECT max(idAzpiAtalak) as idAzpiAtalHandiena FROM azpiAtalak WHERE idElkarteakAzpiAtala = ?',[id],function(err,rowsaa)
+        {
+            
+            if(err)
+                console.log("Error Selecting : %s ",err );
+
+              console.log("AzpiAtala:   " + JSON.stringify(rowsaa));
+
+        
+        var dataedukia = {
+            
+            izenburuaEdukia    : input.izenburuaEdukia,
+            testuaEdukia   : input.testuaEdukia,
+            dataEdukia: now,
+            idElkarteakEdukia : id,
+            idAzpiAtalakEdukia: rowsaa[0].idAzpiAtalHandiena + 1, //Hemen aurreko azpiatalaren id jarri behar da!!!
+            zenbakiEdukia: 0
+        };
+
+        var dataatala = {
+            
+            izenaAtala    : input.izenaAtala,
+            idElkarteakAtala : id,
+            zenbakiAtala: 0
+        };
+
+        var dataazpiatala = {
+            
+            izenaAzpiAtala    : input.izenaAzpiAtala,
+            idElkarteakAzpiAtala : id,
+            idAtalakAzpiAtala: rowsa[0].idAtalakHandiena + 1, //Hemen aurreko atalaren id jarri behar da!!!
+            zenbakiAzpiAtala: 0
+        };
+        
+  
+        var query = connection.query("INSERT INTO atalak set ? ",dataatala, function(err, rows)
+        {
+  
+          if (err)
+              console.log("Error inserting : %s ",err );
+
+             var query = connection.query("INSERT INTO azpiAtalak set ? ",dataazpiatala, function(err, rows)
+             {
+  
+                if (err)
+                    console.log("Error inserting : %s ",err );
+
+                var query = connection.query("INSERT INTO edukiak set ? ",dataedukia, function(err, rows)
+                {
+  
+                  if (err)
+                    console.log("Error inserting : %s ",err );
+         
+  /*        if(input.bidali){
+              var query = connection.query('SELECT * FROM taldeak where idtxapeltalde = ?',[id],function(err,rows)
+              {
+                for (var i in rows){
+                  var to = rows[i].emailard;
+                  var subj = req.session.txapelketaizena+ "-n berria: "+input.izenburua;
+                  var body = "<h2>"+input.izenburua+"</h2>\n" + 
+                              "<p>"+ input.testua+ "</p> \n"+
+                              "<h3> Gehiago jakin nahi baduzu, sartu: http://"+hosta+"</h3>" ;
+                  emailService.send(to, subj, body);
+                }
+              });
+          }*/
+                  res.redirect('/admin/edukiak');
+                 });
+
+                });
+});
+            });
+
+        });
+        
+       // console.log(query.sql); 
+    
+    });
+};
+
 exports.edukiakikusi = function(req, res){
   var id = req.session.idKirolElkarteak;
   var idAtalak = req.params.idAtalak;

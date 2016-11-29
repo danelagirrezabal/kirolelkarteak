@@ -1,0 +1,63 @@
+{{> menuadmin}}
+
+<div class="jumbotron">
+        <h2>Edukia sortu</h2>
+      </div>
+<div class="formContainer">
+    <form class="form-horizontal newsletterForm" role="form" action="/admin/edukiakosoriksortu" method="POST">
+    <input type="hidden" name="_csrf" value="{{_csrfToken}}">
+
+        <div class="form-group">
+            <label for="izenaAtala" class="col-sm-2 control-label">Atalaren izena</label>
+            <div class="col-sm-6">
+                <textarea name="izenaAtala" rows="1" cols="80" class="form-control" required id="izenaAtala" value={{izenaAtala}}></textarea>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="izenaAzpiAtala" class="col-sm-2 control-label">Azpiatalaren izena</label>
+            <div class="col-sm-6">
+                <textarea name="izenaAzpiAtala" rows="1" cols="80" class="form-control" required id="izenaAzpiAtala" value={{izenaAzpiAtala}}></textarea>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="izenburuaEdukia" class="col-sm-2 control-label">Izenburua</label>
+            <div class="col-sm-6">
+                <!--<input type="text" class="form-control" required id="izenburuaEdukia" name="izenburuaEdukia" autofocus value={{izenburuaEdukia}} >-->
+                <textarea name="izenburuaEdukia" rows="1" cols="80" class="form-control" required id="izenburuaEdukia" value={{izenburuaEdukia}}></textarea>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="testuaEdukia" class="col-sm-2 control-label">Testua</label>
+            <div class="col-sm-8">
+                <textarea name="testuaEdukia" data-provide="markdown" rows="20" cols="220" class="form-control" required id="testuaEdukia" value={{testuaEdukia}}></textarea>
+              <!--  <input type="textarea" class="form-control" required id="testua" name="testua" value={{testuaEdukia}}> -->
+            </div>
+        </div> 
+
+        <!--<div class="form-group">
+          <label for="argazkia" class="col-sm-2 control-label">Argazkia</label>
+          <div class="col-sm-4">
+            <input type="file" class="form-control" accept="image/*"
+            id="argazkia" data-url="/upload" name="argazkia">
+          </div>
+        </div>
+
+        <div class="form-group">
+        <div class="checkbox col-sm-offset-3">
+              <label>
+                <input type="checkbox" name="bidali" id="bidali" value="true">
+                <strong>Bidali edukia postaz?</strong>
+              </label>
+            </div>
+         </div>
+         </div>-->        
+
+        <div class="form-group">
+            <div style="text-align: center;">
+                <button type="submit" class="btn btn-default">Gorde</button>
+            </div>
+        </div>
+    </form>
+</div>
+

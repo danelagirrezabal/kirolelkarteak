@@ -365,8 +365,12 @@ app.post('/admin/berriakaldatu/:idBerriak', adminonartua, kirolElkarteak.berriak
 
 app.get('/admin/edukiak', adminonartua, kirolElkarteak.edukiakbilatu);
 app.post('/admin/edukiaksortu/:idAzpiAtalak', adminonartua, kirolElkarteak.edukiaksortu);
+app.post('/admin/edukiakosoriksortu', adminonartua, kirolElkarteak.edukiakosoriksortu);
 app.post('/admin/edukiakgehitu/:idAzpiAtalak', adminonartua, function(req, res){
     res.render('edukiaksortu.handlebars', {title : 'KirolElkarteak-Edukiak gehitu', idAzpiAtalak:req.params.idAzpiAtalak, partaidea: req.session.partaidea});
+});
+app.post('/admin/edukiakgehituosorik', adminonartua, function(req, res){
+    res.render('edukiaksortuosorik.handlebars', {title : 'KirolElkarteak-Edukiak gehitu', idAzpiAtalak:req.params.idAzpiAtalak, partaidea: req.session.partaidea});
 });
 app.get('/admin/edukiakezabatu/:idEdukiak', adminonartua, kirolElkarteak.edukiakezabatu);
 app.get('/admin/edukiakeditatu/:idEdukiak', adminonartua, kirolElkarteak.edukiakeditatu);
@@ -414,9 +418,12 @@ app.get('/admin/denboraldiakeditatu/:idDenboraldia', adminonartua, denboraldiak.
 app.post('/admin/denboraldiakaldatu/:idDenboraldia', adminonartua, denboraldiak.denboraldiakaldatu);
 
 app.get('/admin/partiduak', adminonartua, denboraldiak.partiduakbilatu);
-app.get('/partiduak',authorize2, denboraldiak.partiduakbilatupartaide);
+app.get('/partiduak/:idDenboraldia',authorize2, denboraldiak.partiduakbilatupartaide);
+app.get('/partiduaktaldeka',authorize2, denboraldiak.partiduakbilatutaldekapartaide);
+app.get('/partiduaktaldeka/:idTaldeak',authorize2, denboraldiak.partiduakbilatutaldekapartaide);
 app.get('/admin/jardunaldikopartiduak/:jardunaldia', denboraldiak.jardunaldikopartiduakbilatu);
-app.get('/jardunaldikopartiduakpartaide/:jardunaldia',authorize2, denboraldiak.jardunaldikopartiduakbilatupartaide);
+//app.get('/jardunaldikopartiduakpartaide/:jardunaldia',authorize2, denboraldiak.jardunaldikopartiduakbilatupartaide);
+app.get('/partiduak/:idDenboraldia/:jardunaldia',authorize2, denboraldiak.jardunaldikopartiduakbilatupartaide);
 app.post('/admin/partiduaksortu', adminonartua, denboraldiak.partiduaksortu);
 app.get('/admin/partiduakgehitu', adminonartua, denboraldiak.partiduakgehitu);
 

@@ -6,12 +6,29 @@
       </br>
       {{#if arduraduna}}
       <a href="/partiduakgehitu/" class="btn btn-primary btn-bg" role="button">PARTIDUA GEHITU</a>
+      </br>
       {{/if}}
+       
+      </br>
+      <a href="/partiduaktaldeka/" class="btn btn-primary btn-bg" role="button">PARTIDUAK TALDEKA IKUSI</a>
+
        </br>
-
-
       </br></br>
        <div class="form-group">
+
+            <label for="denboraldia" class="col-sm-2 control-label">Denboraldia:</label>
+            <div class="col-sm-4">
+            <select name="denboraldia" id="denboraldia">
+                <!--<option value="">--Aukeratu denboraldia--</option>-->
+                {{#each denboraldiak}}
+                    {{#if aukeratua}}
+                       <option value="{{idDenboraldia}}" selected>{{deskribapenaDenb}}</option>
+                    {{else}}
+                       <option value="{{idDenboraldia}}">{{deskribapenaDenb}}</option>
+                    {{/if}}
+                {{/each}}
+            </select>
+            </div>
             <label for="jardunaldia" class="col-sm-2 control-label">Jardunaldia:</label>
             <div class="col-sm-4">
             <select name="jardunaldia" id="jardunaldia">
@@ -62,17 +79,33 @@
 
 {{#section 'jquery'}}
 <script>
-  $(document).ready(function(){        
+  $(document).ready(function(){  
+
+    var jardunaldia = $('#jardunaldia').val();
+    var denboraldia = $('#denboraldia').val();       
 
     $('#jardunaldia').change(function(){
 
-      var data = 'id=' + $('#jardunaldia').val();
+      if ($('#jardunaldia').val() =="")
+        alert("Aukeratu jardunaldia");
+      else {
 
-      //$.get('jardunaldikopartiduak/'+$('#jardunaldia').val());
-      //document.location.href= "jardunaldikopartiduakpartaide/" + $('#jardunaldia').val());
-      $(location).attr('href', '/jardunaldikopartiduakpartaide/'+$('#jardunaldia').val());
+        var data = 'id=' + $('#jardunaldia').val();
 
+        //$(location).attr('href', '/jardunaldikopartiduakpartaide/'+$('#jardunaldia').val());
+        $(location).attr('href', '/partiduak/'+$('#denboraldia').val()+'/'+$('#jardunaldia').val());
+      }
     });
+
+    $('#denboraldia').change(function(){
+
+        var data = 'id=' + $('#denboraldia').val();
+
+        $(location).attr('href', '/partiduak/'+$('#denboraldia').val()+'/'+$('#jardunaldia').val());
+     
+    });
+
+
   });
             
 </script> 

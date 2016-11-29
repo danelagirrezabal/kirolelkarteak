@@ -1,4 +1,8 @@
-{{> menu}}
+{{#if menuadmin}}
+    {{> menuadmin}}                
+{{else}}
+    {{> menu}}                  
+{{/if}}
 
       <div class="jumbotron">
         <h2>Taldeak editatu</h2>
@@ -20,7 +24,7 @@
         </br>
 
         <div class="form-group">
-            <label for="idPartaideakKide" class="col-sm-2 control-label">Jokalaria</label>
+            <label for="idPartaideakKide" class="col-sm-2 control-label">Partaidea</label>
             <div class="col-sm-4">
             <select name="idPartaideakKide" id="idPartaideakKide">
                 {{#each partaideak}}
