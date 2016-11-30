@@ -46,8 +46,13 @@
             {{#each data}}
                   <tr class="active">
                     <td>{{dataPartidu}}</td>
+                   {{#if jardunaldiaIkusgai}}  
                     <td>{{izenaLeku}}</td>  
                     <td>{{orduaPartidu}}</td>
+                   {{else}}
+                    <td></td>  
+                    <td></td>
+                   {{/if}} 
                     <td>{{izenaMaila}}</td> 
                     <td>{{txapelketaPartidu}}</td>  
                     <td>{{etxekoaPartidu}}</td>   

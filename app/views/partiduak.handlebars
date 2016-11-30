@@ -34,7 +34,11 @@
             <select name="jardunaldia" id="jardunaldia">
                 <option value="">--Aukeratu jardunaldia--</option>
                 {{#each jardunaldiak}}
+                    {{#if aukeratua}}
+                       <option value="{{jardunaldiDataPartidu}}" selected>{{jardunaldiDataPartidu}}</option>
+                    {{else}}
                        <option value="{{jardunaldiDataPartidu}}">{{jardunaldiDataPartidu}}</option>
+                    {{/if}}
                 {{/each}}
             </select>
             </div>
@@ -64,12 +68,14 @@
                     <td>{{txapelketaPartidu}}</td>  
                     <td>{{etxekoaPartidu}}</td>   
                     <td>{{kanpokoaPartidu}}</td> 
-                    <td>{{izenaLeku}} - {{herriaLeku}}</td>   
+                  {{#if jardunaldiaIkusgai}} 
+                    <td>{{izenaLeku}} - {{herriaLeku}}</td>  
                     <td>{{orduaPartidu}}</td> 
                     <td>{{bidaiOrduaPartidu}}</td>
                     <td>{{bidaiaNolaPartidu}}</td>
                     <td>{{bidaiEgunaPartidu}}</td>
                     <td>{{emaitzaPartidu}}</td> 
+                  {{/if}}
                 </tr>
             {{/each}}
           </table>

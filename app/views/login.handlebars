@@ -63,26 +63,3 @@
         
 {{/section}}
 
-<!-- SOCKET GABE
-<script src="/socket.io/socket.io.js"></script>
-<script src="https://code.jquery.com/jquery-1.11.1.js"></script> 
-    <script>
-      var socket = io();
-
-      $('#emailaard').change(function(){
-        alert ("socket"); 
-        socket.emit('taldeak', $('#emailaard').val());
-        return false;
-      });   
-
-      socket.on('taldeak', function(data){
-        var totTal = data.length;
-        sTaldeak.length = totTal;
-        for (var i = 0; i< totTal; i++){
-           sTaldeak.options[i] = new Option (data[i].taldeizena, data[i].idtaldeak)
-         };
-      });
-    </script>
--->
-
-

@@ -365,13 +365,18 @@ app.post('/admin/berriakaldatu/:idBerriak', adminonartua, kirolElkarteak.berriak
 
 app.get('/admin/edukiak', adminonartua, kirolElkarteak.edukiakbilatu);
 app.post('/admin/edukiaksortu/:idAzpiAtalak', adminonartua, kirolElkarteak.edukiaksortu);
-app.post('/admin/edukiakosoriksortu', adminonartua, kirolElkarteak.edukiakosoriksortu);
 app.post('/admin/edukiakgehitu/:idAzpiAtalak', adminonartua, function(req, res){
     res.render('edukiaksortu.handlebars', {title : 'KirolElkarteak-Edukiak gehitu', idAzpiAtalak:req.params.idAzpiAtalak, partaidea: req.session.partaidea});
 });
-app.post('/admin/edukiakgehituosorik', adminonartua, function(req, res){
-    res.render('edukiaksortuosorik.handlebars', {title : 'KirolElkarteak-Edukiak gehitu', idAzpiAtalak:req.params.idAzpiAtalak, partaidea: req.session.partaidea});
-});
+app.get('/admin/edukiakgehituosorik', adminonartua, kirolElkarteak.edukiakosorikgehitu);
+app.post('/admin/edukiakosoriksortu', adminonartua, kirolElkarteak.edukiakosoriksortu);
+app.get('/admin/azpiatalaklortu/:atala', adminonartua, kirolElkarteak.edukietarakoazpiatalaklortu);
+
+
+//app.post('/admin/edukiakgehituosorik', adminonartua, function(req, res){
+//    res.render('edukiaksortuosorik.handlebars', {title : 'KirolElkarteak-Edukiak gehitu', idAzpiAtalak:req.params.idAzpiAtalak, partaidea: req.session.partaidea});
+//});
+
 app.get('/admin/edukiakezabatu/:idEdukiak', adminonartua, kirolElkarteak.edukiakezabatu);
 app.get('/admin/edukiakeditatu/:idEdukiak', adminonartua, kirolElkarteak.edukiakeditatu);
 app.post('/admin/edukiakaldatu/:idEdukiak', adminonartua, kirolElkarteak.edukiakaldatu);
@@ -418,7 +423,7 @@ app.get('/admin/denboraldiakeditatu/:idDenboraldia', adminonartua, denboraldiak.
 app.post('/admin/denboraldiakaldatu/:idDenboraldia', adminonartua, denboraldiak.denboraldiakaldatu);
 
 app.get('/admin/partiduak', adminonartua, denboraldiak.partiduakbilatu);
-app.get('/partiduak/:idDenboraldia',authorize2, denboraldiak.partiduakbilatupartaide);
+//app.get('/partiduak/:idDenboraldia',authorize2, denboraldiak.partiduakbilatupartaide);
 app.get('/partiduaktaldeka',authorize2, denboraldiak.partiduakbilatutaldekapartaide);
 app.get('/partiduaktaldeka/:idTaldeak',authorize2, denboraldiak.partiduakbilatutaldekapartaide);
 app.get('/admin/jardunaldikopartiduak/:jardunaldia', denboraldiak.jardunaldikopartiduakbilatu);
@@ -443,6 +448,7 @@ app.post('/admin/partiduakkargatuegin', adminonartua, denboraldiak.partiduakkarg
 app.get('/admin/partiduordutegiak/:idDenboraldia/:jardunaldia',adminonartua,authorize2, denboraldiak.partiduordutegiak);
 app.get('/admin/partiduordutegiak/:idDenboraldia',adminonartua,authorize2, denboraldiak.partiduordutegiak);
 
+app.get('/admin/jardunaldiaikusgai/:jardunaldia',adminonartua,authorize2, denboraldiak.jardunaldiaikusgai);
 
 app.get('/partiduordutegiak/:idDenboraldia/:jardunaldia', authorize2, denboraldiak.partiduordutegiak);
 app.get('/partiduordutegiak/:idDenboraldia', authorize2, denboraldiak.partiduordutegiak);
