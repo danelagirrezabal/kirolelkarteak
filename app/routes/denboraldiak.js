@@ -845,7 +845,7 @@ console.log(req.path.slice(0,24));
                };
           j++;
        
-     }
+     } }
         if(vEgunak !=null){
               lekua.partiduak = partiduak;
               //lekua.lekuaKanpoan = lekuaKanpoan; //BERRIA
@@ -855,7 +855,7 @@ console.log(req.path.slice(0,24));
               k++;
             }
 
-      }
+      
 
         if (admin){
            req.session.admin = 1;
@@ -872,7 +872,7 @@ console.log(req.path.slice(0,24));
 
       
   
-        res.render('partiduordutegiak.handlebars', {title : 'KirolElkarteak-Partiduak', data2:egunak, jardunaldiak:rowsd, denboraldiak:rowsdenb, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea: req.session.partaidea, menuadmin:admin, atalak: req.session.atalak, idPartaideak:req.session.idPartaideak, arduraduna:req.session.arduraduna} );
+        res.render('partiduordutegiak.handlebars', {title : 'KirolElkarteak-Partiduak', jardunaldiaIkusgai:jardunaldiaIkusgai, data2:egunak, jardunaldiak:rowsd, denboraldiak:rowsdenb, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea: req.session.partaidea, menuadmin:admin, atalak: req.session.atalak, idPartaideak:req.session.idPartaideak, arduraduna:req.session.arduraduna} );
 
         });
      });   
