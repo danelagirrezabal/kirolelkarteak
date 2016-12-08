@@ -725,6 +725,7 @@ var vEgunak, vLekuak;
 var admin=(req.path.slice(0,24) == "/admin/partiduordutegiak");
 req.session.admin=0;
 var jardunaldiaIkusgai;
+var jardunaldiaIkusgaiH;
 console.log(jardunaldia);
 console.log(req.path.slice(0,24));
    req.getConnection(function(err,connection){
@@ -762,7 +763,7 @@ console.log(req.path.slice(0,24));
                 }
           
 
-          connection.query('SELECT idDenboraldia, deskribapenaDenb, jardunaldiaIkusgai FROM denboraldiak where idElkarteakDenb = ? order by deskribapenaDenb desc',[id],function(err,rowsdenb) {
+          connection.query('SELECT idDenboraldia, deskribapenaDenb, jardunaldiaIkusgai, DATE_FORMAT(jardunaldiaIkusgai,"%Y-%m-%d") AS jardunaldiaIkusgaiH FROM denboraldiak where idElkarteakDenb = ? order by deskribapenaDenb desc',[id],function(err,rowsdenb) {
           
             if(err)
               console.log("Error Selecting : %s ",err );
@@ -772,6 +773,7 @@ console.log(req.path.slice(0,24));
                     idDenboraldia = rowsdenb[i].idDenboraldia;
                     deskribapenaDenb = rowsdenb[i].deskribapenaDenb;
                     jardunaldiaIkusgai = rowsdenb[i].jardunaldiaIkusgai;
+                    jardunaldiaIkusgaiH = rowsdenb[i].jardunaldiaIkusgaiH;
                     rowsdenb[i].aukeratua = true;
                   }
                   else
@@ -872,7 +874,7 @@ console.log(req.path.slice(0,24));
 
       
   
-        res.render('partiduordutegiak.handlebars', {title : 'KirolElkarteak-Partiduak', jardunaldiaIkusgai:jardunaldiaIkusgai, data2:egunak, jardunaldiak:rowsd, denboraldiak:rowsdenb, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea: req.session.partaidea, menuadmin:admin, atalak: req.session.atalak, idPartaideak:req.session.idPartaideak, arduraduna:req.session.arduraduna} );
+        res.render('partiduordutegiak.handlebars', {title : 'KirolElkarteak-Partiduak', jardunaldiaIkusgaiH:jardunaldiaIkusgaiH, jardunaldiaIkusgai:jardunaldiaIkusgai, data2:egunak, jardunaldiak:rowsd, denboraldiak:rowsdenb, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea: req.session.partaidea, menuadmin:admin, atalak: req.session.atalak, idPartaideak:req.session.idPartaideak, arduraduna:req.session.arduraduna} );
 
         });
      });   
