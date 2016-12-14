@@ -622,7 +622,7 @@ exports.edukiakikusi = function(req, res){
   req.getConnection(function(err,connection){
        
      
-     connection.query('SELECT * FROM edukiak, azpiAtalak where idElkarteakEdukia = ? and idAzpiAtalakEdukia = idAzpiAtalak and idAtalakAzpiAtala = ? order by zenbakiAzpiAtala asc, zenbakiEdukia asc,  dataEdukia desc',[id, idAtalak],function(err,rows)     {
+     connection.query('SELECT * FROM edukiak, azpiAtalak where idElkarteakEdukia = ? and idAzpiAtalakEdukia = idAzpiAtalak and idAtalakAzpiAtala = ? and zenbakiAzpiAtala != ? order by zenbakiAzpiAtala asc, zenbakiEdukia asc,  dataEdukia desc',[id, idAtalak, 0],function(err,rows)     {
             
         if(err)
            console.log("Error Selecting : %s ",err );
