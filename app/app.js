@@ -282,6 +282,10 @@ app.post('/admin/bazkideakaldatu/:idBazkideak', adminonartua, partaideak.bazkide
 app.get('/login', authorize2, function(req, res){
     res.render('login.handlebars', {title : 'KirolElkarteak-Login',partaidea: req.session.partaidea});
 });
+
+app.get('/lopd', authorize2, function(req, res){
+    res.render('lopd.handlebars', {title : 'KirolElkarteak-lopd',});
+});
 app.post('/login', partaideak.login);
 app.get('/logout', function(req, res){
   console.log('Serving request for url [GET] ' + req.session.idtalde);
