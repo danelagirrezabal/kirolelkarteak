@@ -63,6 +63,68 @@ exports.denboraldiaksortu = function(req,res){
     });
 };
 
+exports.denboraldiakopiatu = function(req, res){
+  var id = req.session.idKirolElkarteak;
+  var idDenboraldia = req.session.idDenboraldia;
+  console.log("Denboraldia kopiatzeko:" + idDenboraldia);
+
+  req.getConnection(function(err,connection){
+       
+     connection.query('SELECT * FROM denboraldiak where idDenboraldia = ? ',[idDenboraldia],function(err,rows) {
+            
+        if(err)
+           console.log("Error Selecting : %s ",err );
+        if (rows.length != 0) {
+           var data = {
+            
+            noiztikDenb    : rows[0].noiztikDenb,
+            noraDenb   : rows[0].noraDenb,
+            deskribapenaDenb: "Denboraldi berria EGOKITU",
+            idElkarteakDenb : id,
+            egoeraDenb: rows[0].egoeraDenb
+           };
+       
+           var query = connection.query("INSERT INTO denboraldiak set ? ",data, function(err, rows)
+           {
+            if (err)
+              console.log("Error inserting : %s ",err );
+
+            var idDenboraldiaBerria = rows.insertId;
+//ADI
+            connection.query('SELECT * FROM taldeak where idDenboraldiaTalde = ?',[idDenboraldia],function(err,rowst)   {
+             if(err)
+              console.log("Error Selecting : %s ",err );
+             for (var i in rowst) { 
+/*             var datat = {
+               zelaiizena : rowst[i].zelaiizena,
+               zelaizki   : rowst[i].zelaizki,
+               idtxapelz    : idtxapelketa
+             };
+*/
+               var datat =  rowst[i];
+               datat.idDenboraldiaTalde = idDenboraldiaBerria;
+               datat.idTaldeak = null;
+               var query = connection.query("INSERT INTO taldeak set ? ",datat, function(err, rows)
+               {
+                if (err)
+                 console.log("Error inserting : %s ",err );
+               });
+             }
+            });
+           });          
+
+// ADI ---->  Taldekideak KOPIATU
+
+         }
+        else    
+          console.log("Denboraldia aukeratugabe");    
+
+        res.redirect('/admin/denboraldiak');
+
+        });
+     });
+};
+
 exports.denboraldiakezabatu = function(req,res){
           
      //var id = req.params.id;
@@ -380,15 +442,16 @@ exports.jardunaldikopartiduakbilatupartaide = function(req, res){
 
 exports.partiduakbilatu = function(req, res){
   var id = req.session.idKirolElkarteak;
+  var idDenboraldia = req.session.idDenboraldia;
   req.session.admin = 0;
   req.getConnection(function(err,connection){
        
-     connection.query('SELECT *,DATE_FORMAT(dataPartidu,"%Y/%m/%d") AS dataPartidu FROM partiduak, mailak, taldeak, lekuak where idLekuak=idLekuakPartidu and idTaldeakPartidu=idTaldeak and idMailak=idMailaTalde and idElkarteakPartidu = ? order by dataPartidu desc',[id],function(err,rows) {
+     connection.query('SELECT *,DATE_FORMAT(dataPartidu,"%Y/%m/%d") AS dataPartidu FROM partiduak, mailak, taldeak, lekuak where idLekuak=idLekuakPartidu and idTaldeakPartidu=idTaldeak and idMailak=idMailaTalde and idElkarteakPartidu = ? and idDenboraldiaPartidu = ? order by dataPartidu desc',[id, idDenboraldia],function(err,rows) {
             
         if(err)
            console.log("Error Selecting : %s ",err );
 
-        connection.query('SELECT DISTINCT DATE_FORMAT(jardunaldiDataPartidu,"%Y-%m-%d") AS jardunaldiDataPartidu FROM partiduak where idElkarteakPartidu = ? order by jardunaldiDataPartidu desc',[id],function(err,rowsd) {
+        connection.query('SELECT DISTINCT DATE_FORMAT(jardunaldiDataPartidu,"%Y-%m-%d") AS jardunaldiDataPartidu FROM partiduak where idElkarteakPartidu = ? and idDenboraldiaPartidu = ? order by jardunaldiDataPartidu desc',[id, idDenboraldia],function(err,rowsd) {
           
           if(err)
            console.log("Error Selecting : %s ",err );
@@ -915,7 +978,7 @@ exports.partiduakkargatu = function(req, res){
   var idDenboraldia = req.session.idDenboraldia;
   req.getConnection(function(err,connection){
        
-     connection.query('SELECT * FROM taldeak,mailak where idMailak=idMailaTalde and idElkarteakTalde = ? order by idMailaTalde asc',[id],function(err,rowst) {
+     connection.query('SELECT * FROM taldeak,mailak where idMailak=idMailaTalde and idElkarteakTalde = ? and idDenboraldiaTalde = ? order by idMailaTalde asc',[id,idDenboraldia],function(err,rowst) {
             
         if(err)
            console.log("Error Selecting : %s ",err );
@@ -936,7 +999,10 @@ exports.partiduakkargatuegin = function(req, res){
     var partiduak = input.partiduakCSV.split("\n"); //CSV-a zatitu lerroka (partiduka)
     var partidua = [];
     var idLekuak;
-    var kanpoPosizio;
+    var kanpoPosizio, etxePosizio, partiduanoiz, aOrdua, vEguna, vBukaera;
+//    var vEguna = new Date(); 
+//    var vBukaera = new Date();
+    var ordua = input.hasierakoordua;
 
     req.getConnection(function (err, connection) {
 
@@ -945,31 +1011,81 @@ exports.partiduakkargatuegin = function(req, res){
       if(err)
           console.log("Error Selecting : %s ",err );
       kanpoPosizio = rowsl.length-1;
+      etxePosizio = input.etxekoaknon;
+
+
+      var  aBukaera = input.bukaerakoordua.split(":");
+      var  vDenbora= input.partidudenbora * 60 * 1000;
+
       for (var i in partiduak){ //Partidu bakoitzeko datuak atera, ","-kin banatuta daudelako split erabiliz
           partidua = partiduak[i].split(",");
           console.log(partiduak[i]);
 
 
           if (partidua[1] == input.federazioTaldeIzena) //Federazioko taldearen izenean sartu duten datua berdina bada CSV-ko 2. zutabearekin (etxeko taldea), etxekoa dela adierazi
-            idLekuak = rowsl[0].idLekuak; //Etxeko taldearen lekua datu-baseko lehenengo dagoena izango da (zenbakiLeku aldagai txikiena duena)
+           {
+            idLekuak = rowsl[etxePosizio].idLekuak; //Etxeko taldearen lekua datu-baseko lehenengo dagoena izango da (zenbakiLeku aldagai txikiena duena)
+            if (input.etxekoaknon != 0) {
+                etxePosizio--;
+                if (etxePosizio < 0)
+                    etxePosizio = input.etxekoaknon;
+            }
+           }
           else
             idLekuak = rowsl[kanpoPosizio].idLekuak; //Kanpoko taldearen lekua datu-baseko azkena dagoena izango da (zenbakiLeku aldagaia handiena duena)
+//debugger;
+//          aOrdua = partidua[0].split("-");
+//          vEguna.setFullYear(aOrdua[0], aOrdua[1] - 1, aOrdua[2]); 
+          vEguna = new Date(partidua[0]);
 
-        
-        var data = {
-            
+          if (input.asteburuannoiz == 0)
+              partiduanoiz = partidua[0];
+          else
+          { 
+              vEguna.setDate(vEguna.getDate() - 1); // + input.asteburuannoiz
+              partiduanoiz = vEguna ;
+          }
+          console.log(partidua[0] + partiduanoiz + vEguna);
+          if (input.partidudenbora == 0)
+              vOrdua = input.hasierakoordua;
+          else
+          {  
+
+                  aOrdua = ordua.split(":");
+                  vEguna.setHours(aOrdua[0]);
+                  vEguna.setMinutes(aOrdua[1]);
+                  vEguna.setSeconds(aOrdua[2]);
+
+                  vOrdua = vEguna.getHours() +":"+vEguna.getMinutes()+":"+vEguna.getSeconds();
+
+                  vBukaera = vEguna;
+                  vBukaera.setHours(aBukaera[0]);
+                  vBukaera.setMinutes(aBukaera[1]);
+                  vBukaera.setSeconds(aBukaera[2]);
+                  console.log("vEguna: "+vEguna+ "-"+vBukaera);
+
+                  vEguna.setTime(vEguna.getTime() + vDenbora);
+
+
+                  if (vEguna.getTime() >= vBukaera.getTime())
+                      ordua = input.hasierakoordua;
+                  else
+                      ordua = vEguna.getHours() +":"+vEguna.getMinutes()+":"+vEguna.getSeconds();  
+          }
+
+          var data = {
             idElkarteakPartidu    : id,
             idDenboraldiaPartidu : idDenboraldia,
             idLekuakPartidu : idLekuak,
             idTaldeakPartidu : input.idTaldeakPartidu,
-            jardunaldiaPartidu : i + 1,
+            jardunaldiaPartidu : parseInt(i) + 1,
             jardunaldiDataPartidu: partidua[0],
             etxekoaPartidu : partidua[1],
             kanpokoaPartidu : partidua[3],
             txapelketaPartidu : input.txapelketa,
-            dataPartidu: partidua[0],
-
-        };
+            dataPartidu: partiduanoiz,               // partidua[0],
+            orduaPartidu: vOrdua  
+          };
         
   
         var query = connection.query("INSERT INTO partiduak set ? ",data, function(err, rows)

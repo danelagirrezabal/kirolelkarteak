@@ -32,6 +32,46 @@
                 <textarea name="txapelketa" rows="1" cols="40" class="form-control" required></textarea>
             </div>
         </div>
+
+        <div class="form-group">
+            <label for="hasierakoordua" class="col-sm-2 control-label">Hasierako ordua</label>
+            <div class="col-sm-4">
+                <input type="time" class="form-control" required id="hasierakoordua" name="hasierakoordua" value="00:00">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="bukaerakoordua" class="col-sm-2 control-label">Bukaerako ordua</label>
+            <div class="col-sm-4">
+                <input type="time" class="form-control" required id="bukaerakoordua" name="bukaerakoordua" value="00:00">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="partidudenbora" class="col-sm-2 control-label">Partiduen denbora</label>
+            <div class="col-sm-4">
+                <input type="number" class="form-control" required id="partidudenbora" name="partidudenbora" value="0">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="asteburuannoiz" class="col-sm-2 control-label">Asteburuan NOIZ</label>
+            <div class="col-sm-4">
+             <select id="asteburuannoiz" name="asteburuannoiz" >
+                <option value="">--Aukeratu NOIZ--</option>             
+                <option value="0">Igandean</option>
+                <option value="-1">Bezperan</option> 
+             </select>
+            </div>
+        </div>        
+        <div class="form-group">
+            <label for="etxekoaknon" class="col-sm-2 control-label">Etxekoak NON</label>
+            <div class="col-sm-4">
+             <select id="etxekoaknon" name="etxekoaknon" >
+                <option value="">--Aukeratu NON--</option>              
+                <option value="0">Kiroldegian</option>
+                <option value="1">Antotan-Kiroldegian</option> 
+             </select>
+            </div>
+        </div>
+
         <div class="form-group">
             <label for="partiduakCSV" class="col-sm-2 control-label">Partiduak csv formatuan</label>
             <div class="col-sm-8">

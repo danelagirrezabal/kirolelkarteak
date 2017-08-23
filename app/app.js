@@ -85,9 +85,9 @@ if (process.env.NODE_ENV != 'production'){
         
         host: 'localhost',
         user: 'root',
-        password : 'root',
-        port : 8889, //port mysql
-        database:'kirolElkarteak'
+        password : 'joanaagi',                    //root
+        port : 3306, //port mysql                   //8889 
+        database: 'heroku_3a7c26fa617acae'      //kirolElkarteak
     //},'request')
       },'pool')
  );
@@ -185,8 +185,8 @@ return next();*/
 
   req.getConnection(function(err,connection){
 
-    connection.query('SELECT idDenboraldia, deskribapenaDenb FROM denboraldiak where egoeraDenb=1 and idElkarteakDenb = ? order by deskribapenaDenb desc',[req.session.idKirolElkarteak],function(err,rowsdenb) {
-          
+//    connection.query('SELECT idDenboraldia, deskribapenaDenb FROM denboraldiak where egoeraDenb=1 and idElkarteakDenb = ? order by deskribapenaDenb desc',[req.session.idKirolElkarteak],function(err,rowsdenb) {
+    connection.query('SELECT idDenboraldia, deskribapenaDenb FROM denboraldiak where idElkarteakDenb = ? order by egoeraDenb desc, deskribapenaDenb desc',[req.session.idKirolElkarteak],function(err,rowsdenb) {          
         if(err)
               console.log("Error Selecting : %s ",err );
 
@@ -418,6 +418,7 @@ app.post('/admin/agiriakaldatu/:idAgiriak', adminonartua, kirolElkarteak.agiriak
 app.post('/admin/agiriakaldatufitxategi/:idAgiriak', adminonartua, kirolElkarteak.agiriakaldatufitxategi);
 
 app.get('/admin/denboraldiak', adminonartua, denboraldiak.denboraldiakbilatu);
+app.get('/admin/denboraldiakopiatu', adminonartua, denboraldiak.denboraldiakopiatu);
 app.post('/admin/denboraldiaksortu', adminonartua, denboraldiak.denboraldiaksortu);
 app.post('/admin/denboraldiakgehitu', adminonartua, function(req, res){
     res.render('denboraldiaksortu.handlebars', {title : 'KirolElkarteak-Denboraldiak gehitu', partaidea: req.session.partaidea});
