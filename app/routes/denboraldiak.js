@@ -1020,9 +1020,15 @@ exports.partiduakkargatuegin = function(req, res){
       for (var i in partiduak){ //Partidu bakoitzeko datuak atera, ","-kin banatuta daudelako split erabiliz
           partidua = partiduak[i].split(",");
           console.log(partiduak[i]);
+//debugger;
 
-
-          if (partidua[1] == input.federazioTaldeIzena) //Federazioko taldearen izenean sartu duten datua berdina bada CSV-ko 2. zutabearekin (etxeko taldea), etxekoa dela adierazi
+          if (partidua[3] == input.federazioTaldeIzena) //Federazioko taldearen izenean sartu duten datua berdina bada CSV-ko 4. zutabearekin (kanpoko taldea), kanpokoa dela adierazi
+           {
+            idLekuak = rowsl[kanpoPosizio].idLekuak; //Kanpoko taldearen lekua datu-baseko azkena dagoena izango da (zenbakiLeku aldagaia handiena duena)
+            partiduanoiz = partidua[0];
+            vOrdua = "00:00";
+           }
+          else 
            {
             idLekuak = rowsl[etxePosizio].idLekuak; //Etxeko taldearen lekua datu-baseko lehenengo dagoena izango da (zenbakiLeku aldagai txikiena duena)
             if (input.etxekoaknon != 0) {
@@ -1030,26 +1036,22 @@ exports.partiduakkargatuegin = function(req, res){
                 if (etxePosizio < 0)
                     etxePosizio = input.etxekoaknon;
             }
-           }
-          else
-            idLekuak = rowsl[kanpoPosizio].idLekuak; //Kanpoko taldearen lekua datu-baseko azkena dagoena izango da (zenbakiLeku aldagaia handiena duena)
-//debugger;
 //          aOrdua = partidua[0].split("-");
 //          vEguna.setFullYear(aOrdua[0], aOrdua[1] - 1, aOrdua[2]); 
-          vEguna = new Date(partidua[0]);
+            vEguna = new Date(partidua[0]);
 
-          if (input.asteburuannoiz == 0)
-              partiduanoiz = partidua[0];
-          else
-          { 
+            if (input.asteburuannoiz == 0)
+                partiduanoiz = partidua[0];
+            else
+            { 
               vEguna.setDate(vEguna.getDate() - 1); // + input.asteburuannoiz
               partiduanoiz = vEguna ;
-          }
-          console.log(partidua[0] + partiduanoiz + vEguna);
-          if (input.partidudenbora == 0)
-              vOrdua = input.hasierakoordua;
-          else
-          {  
+            }
+            console.log(partidua[0] + partiduanoiz + vEguna);
+            if (input.partidudenbora == 0)
+                vOrdua = input.hasierakoordua;
+            else
+            {  
 
                   aOrdua = ordua.split(":");
                   vEguna.setHours(aOrdua[0]);
@@ -1071,8 +1073,8 @@ exports.partiduakkargatuegin = function(req, res){
                       ordua = input.hasierakoordua;
                   else
                       ordua = vEguna.getHours() +":"+vEguna.getMinutes()+":"+vEguna.getSeconds();  
-          }
-
+            }
+           }
           var data = {
             idElkarteakPartidu    : id,
             idDenboraldiaPartidu : idDenboraldia,
