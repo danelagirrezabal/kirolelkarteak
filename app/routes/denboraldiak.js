@@ -1022,7 +1022,7 @@ exports.partiduakkargatuegin = function(req, res){
           console.log(partiduak[i]);
 //debugger;
 
-          if (partidua[3] == input.federazioTaldeIzena) //Federazioko taldearen izenean sartu duten datua berdina bada CSV-ko 4. zutabearekin (kanpoko taldea), kanpokoa dela adierazi
+          if (partidua[1] != input.federazioTaldeIzena) //Federazioko taldearen izenean sartu duten datua ezberdina bada CSV-ko 2. zutabearekin (etxeko taldea), kanpokoa dela adierazi
            {
             idLekuak = rowsl[kanpoPosizio].idLekuak; //Kanpoko taldearen lekua datu-baseko azkena dagoena izango da (zenbakiLeku aldagaia handiena duena)
             partiduanoiz = partidua[0];
