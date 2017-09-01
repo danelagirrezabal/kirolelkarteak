@@ -61,13 +61,13 @@
 
             <table class="table table-condensed">
                 <tr>
-                    
+                    <th>NON</th>
+                    <th>Irteera ordua</th>                                        
                     <th>Maila</th>
                     <th>Txapelketa</th>
                     <th>A ekipoa</th>
                     <th>B ekipoa</th>
                     <th>Ordua</th>
-                    <th>Irteera ordua</th>
                     <th>Bidaia nola</th>
                     <th>Bidai eguna</th>
                     <th>Emaitza</th>
@@ -75,14 +75,17 @@
                 </tr>          
 
               {{#each partiduak}}
+                  {{#if jauzi}}
+                    <br/>
+                  {{/if}}              
                   <tr class="active">
-                    
+                    <td>{{nonPartidu}}</td>
+                    <td>{{bidaiOrduaPartidu}}</td>                                        
                     <td>{{izenaMaila}}</td> 
                     <td>{{txapelketaPartidu}}</td>  
                     <td>{{etxekoaPartidu}}</td>   
                     <td>{{kanpokoaPartidu}}</td>   
                     <td>{{orduaPartidu}}</td> 
-                    <td>{{bidaiOrduaPartidu}}</td>
                     <td>{{bidaiaNolaPartidu}}</td>
                     <td>{{bidaiEgunaPartidu}}</td>
                     <td>{{emaitzaPartidu}}</td>
@@ -110,6 +113,9 @@
                 </tr>          
 
               {{#each partiduak}}
+                  {{#if jauzi}}
+                    <br/>
+                  {{/if}} 
                   <tr class="active">
                     
                     <td>{{izenaMaila}}</td> 

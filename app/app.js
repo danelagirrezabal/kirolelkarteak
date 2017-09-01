@@ -177,7 +177,7 @@ return next();*/
   var month = ('0' + (today.getMonth() + 1)).slice(-2);
   var year = today.getFullYear();
 
-
+//debugger;
 
   req.session.jardunaldia= year + '-' + month + '-' + day;
 
@@ -186,12 +186,21 @@ return next();*/
   req.getConnection(function(err,connection){
 
 //    connection.query('SELECT idDenboraldia, deskribapenaDenb FROM denboraldiak where egoeraDenb=1 and idElkarteakDenb = ? order by deskribapenaDenb desc',[req.session.idKirolElkarteak],function(err,rowsdenb) {
-    connection.query('SELECT idDenboraldia, deskribapenaDenb FROM denboraldiak where idElkarteakDenb = ? order by egoeraDenb desc, deskribapenaDenb desc',[req.session.idKirolElkarteak],function(err,rowsdenb) {          
+    connection.query('SELECT * FROM denboraldiak where idElkarteakDenb = ? order by egoeraDenb desc, deskribapenaDenb desc',[req.session.idKirolElkarteak],function(err,rowsdenb) {          
         if(err)
               console.log("Error Selecting : %s ",err );
 
         //if (rowsdenb.length != 0){
           req.session.idDenboraldia=rowsdenb[0].idDenboraldia;
+//          req.session.jardunaldia= '2017-09-09';
+//          if (rowsdenb[0].jardunaldiaIkusgai != null) 
+//        {
+              today = new Date(rowsdenb[0].jardunaldiaIkusgai);
+              day = ('0' + today.getDate()).slice(-2);
+              month = ('0' + (today.getMonth() + 1)).slice(-2);
+              year = today.getFullYear();
+              req.session.jardunaldia= year + '-' + month + '-' + day;
+//        } 
         //}
 
         connection.query('SELECT DISTINCT DATE_FORMAT(jardunaldiDataPartidu,"%Y-%m-%d") AS jardunaldiDataPartidu FROM partiduak where idElkarteakPartidu = ? and idDenboraldiaPartidu = ? order by jardunaldiDataPartidu desc',[req.session.idKirolElkarteak, req.session.idDenboraldia],function(err,rowsd) {
