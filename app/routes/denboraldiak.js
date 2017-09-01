@@ -805,7 +805,7 @@ console.log(req.path.slice(0,24));
        }
       
 //      connection.query('SELECT *,DATE_FORMAT(bidaiEgunaPartidu,"%Y/%m/%d") AS bidaiEgunaPartidu, DATE_FORMAT(dataPartidu,"%Y/%m/%d") AS dataPartidu FROM partiduak, mailak, taldeak, lekuak where idLekuak=idLekuakPartidu and idTaldeakPartidu=idTaldeak and idMailak=idMailaTalde and idElkarteakPartidu = ? and jardunaldiDataPartidu = ? and idDenboraldiaPartidu = ? order by dataPartidu, zenbakiLeku, zenbakiMaila ',[id, jardunaldia, idDenboraldia],function(err,rows) {
-      connection.query('SELECT *,DATE_FORMAT(bidaiEgunaPartidu,"%Y/%m/%d") AS bidaiEgunaPartidu, DATE_FORMAT(dataPartidu,"%Y/%m/%d") AS dataPartidu FROM partiduak, mailak, taldeak, lekuak where idLekuak=idLekuakPartidu and idTaldeakPartidu=idTaldeak and idMailak=idMailaTalde and idElkarteakPartidu = ? and jardunaldiDataPartidu = ? and idDenboraldiaPartidu = ? order by dataPartidu, zenbakiLeku, orduaPartidu ',[id, jardunaldia, idDenboraldia],function(err,rows) {
+      connection.query('SELECT *,DATE_FORMAT(bidaiEgunaPartidu,"%Y/%m/%d") AS bidaiEgunaPartidu, DATE_FORMAT(dataPartidu,"%Y/%m/%d") AS dataPartidu FROM partiduak, mailak, taldeak, lekuak where idLekuak=idLekuakPartidu and idTaldeakPartidu=idTaldeak and idMailak=idMailaTalde and idElkarteakPartidu = ? and jardunaldiDataPartidu = ? and idDenboraldiaPartidu = ? order by dataPartidu, zenbakiLeku, orduaPartidu, zenbakiMaila ',[id, jardunaldia, idDenboraldia],function(err,rows) {
 
         if(err)
            console.log("Error Selecting : %s ",err );
@@ -881,7 +881,9 @@ console.log(req.path.slice(0,24));
             partiduak = []; 
             j=0;
             if (rows[i].orduaPartidu < '14:00:00')
+              {
                goizez = 1;
+              } 
             else 
                goizez = 0;
             /////////////////////BERRIA/////////////////////
@@ -899,7 +901,7 @@ console.log(req.path.slice(0,24));
                };
                
           }
-          if (goizez = 1 && rows[i].orduaPartidu > '14:00:00')
+          if (goizez == 1 && rows[i].orduaPartidu > '14:00:00')
            { 
                jauzi = 1;
                goizez = 0;
