@@ -774,17 +774,17 @@ var jardunaldia = req.params.jardunaldia;
 var idDenboraldia = req.params.idDenboraldia;
 req.session.jardunaldia = jardunaldia;
 req.session.idDenboraldia = idDenboraldia;
-//var etxekokanpokoak = []; //mailak
-//var etxekokanpokoa = {}; //maila
+var etxekokanpokoak = []; //mailak
+var etxekokanpokoa = {}; //maila
 var egunak = []; //mailak
 var eguna = {}; //maila
 var lekuak = []; //multzoak
 var lekua = {}; //multzoa
 var partiduak = [];
 var lekuaKanpoan = false;
-var j,t, goizez, jauzi;
-var k = 0;
-var vEgunak, vLekuak;
+var j,t, goizez, jauzi, kanpoan;
+var k = 0, h = 0;
+var vHerriak, vEgunak, vLekuak;
 var admin=(req.path.slice(0,24) == "/admin/partiduordutegiak");
 req.session.admin=0;
 var jardunaldiaIkusgai;
@@ -803,9 +803,8 @@ console.log(req.path.slice(0,24));
          req.session.jardunaldia = rowsj[0];
          jardunaldia = req.session.jardunaldia;
        }
-      
-//      connection.query('SELECT *,DATE_FORMAT(bidaiEgunaPartidu,"%Y/%m/%d") AS bidaiEgunaPartidu, DATE_FORMAT(dataPartidu,"%Y/%m/%d") AS dataPartidu FROM partiduak, mailak, taldeak, lekuak where idLekuak=idLekuakPartidu and idTaldeakPartidu=idTaldeak and idMailak=idMailaTalde and idElkarteakPartidu = ? and jardunaldiDataPartidu = ? and idDenboraldiaPartidu = ? order by dataPartidu, zenbakiLeku, zenbakiMaila ',[id, jardunaldia, idDenboraldia],function(err,rows) {
-      connection.query('SELECT *,DATE_FORMAT(bidaiEgunaPartidu,"%Y/%m/%d") AS bidaiEgunaPartidu, DATE_FORMAT(dataPartidu,"%Y/%m/%d") AS dataPartidu FROM partiduak, mailak, taldeak, lekuak where idLekuak=idLekuakPartidu and idTaldeakPartidu=idTaldeak and idMailak=idMailaTalde and idElkarteakPartidu = ? and jardunaldiDataPartidu = ? and idDenboraldiaPartidu = ? order by dataPartidu, zenbakiLeku, orduaPartidu, zenbakiMaila ',[id, jardunaldia, idDenboraldia],function(err,rows) {
+//      connection.query('SELECT *,DATE_FORMAT(bidaiEgunaPartidu,"%Y/%m/%d") AS bidaiEgunaPartidu, DATE_FORMAT(dataPartidu,"%Y/%m/%d") AS dataPartidu FROM partiduak, mailak, taldeak, lekuak where idLekuak=idLekuakPartidu and idTaldeakPartidu=idTaldeak and idMailak=idMailaTalde and idElkarteakPartidu = ? and jardunaldiDataPartidu = ? and idDenboraldiaPartidu = ? order by dataPartidu, zenbakiLeku, orduaPartidu, zenbakiMaila ',[id, jardunaldia, idDenboraldia],function(err,rows) {      
+      connection.query('SELECT *,DATE_FORMAT(bidaiEgunaPartidu,"%Y/%m/%d") AS bidaiEgunaPartidu, DATE_FORMAT(dataPartidu,"%Y/%m/%d") AS dataPartidu FROM partiduak, mailak, taldeak, lekuak where idLekuak=idLekuakPartidu and idTaldeakPartidu=idTaldeak and idMailak=idMailaTalde and idElkarteakPartidu = ? and jardunaldiDataPartidu = ? and idDenboraldiaPartidu = ? order by herriaLeku, dataPartidu, zenbakiLeku, orduaPartidu, zenbakiMaila ',[id, jardunaldia, idDenboraldia],function(err,rows) {    
 
         if(err)
            console.log("Error Selecting : %s ",err );
@@ -847,7 +846,35 @@ console.log(req.path.slice(0,24));
         for (var i in rows) {
 
          if (admin || (!admin && rows[i].jardunaldiDataPartidu <= jardunaldiaIkusgai)){
+          if(vHerriak != rows[i].herriaLeku){
+            if(vHerriak !=null){
+              //console.log("vKategoria:" +vKategoria);
+              lekua.partiduak = partiduak;
+              lekuak[t] = lekua;
+              eguna.lekuak = lekuak;
+              egunak[k] = eguna;
+              etxekokanpokoa.egunak = egunak;
+              etxekokanpokoak[h] = etxekokanpokoa;
+              //console.log("Mailak:" +t + JSON.stringify(mailak[k]));
+              h++;
+            }
+            vHerriak = rows[i].herriaLeku;
+            vEgunak = null;
+            egunak = [];
+            vLekuak = null;
+            lekuak = []; 
+            k=0;
+            if (vHerriak == "Kanpoan")
+                kanpoan = 1;
+            else
+                kanpoan = 0;
 
+            etxekokanpokoa = {
+                  herriaLeku    : rows[i].herriaLeku,
+                  kanpoan  :  kanpoan
+               };
+               
+          }
   
           if(vEgunak != rows[i].dataPartidu){
             if(vEgunak !=null){
@@ -933,7 +960,8 @@ console.log(req.path.slice(0,24));
               lekuak[t] = lekua;
               eguna.lekuak = lekuak;
               egunak[k] = eguna;
-              k++;
+              etxekokanpokoa.egunak = egunak;
+              etxekokanpokoak[h] = etxekokanpokoa;
             }
 
       
@@ -953,7 +981,7 @@ console.log(req.path.slice(0,24));
 
       
   
-        res.render('partiduordutegiak.handlebars', {title : 'KirolElkarteak-Partiduak', jardunaldiaIkusgaiH:jardunaldiaIkusgaiH, jardunaldiaIkusgai:jardunaldiaIkusgai, data2:egunak, jardunaldiak:rowsd, denboraldiak:rowsdenb, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea: req.session.partaidea, menuadmin:admin, atalak: req.session.atalak, idPartaideak:req.session.idPartaideak, arduraduna:req.session.arduraduna} );
+        res.render('partiduordutegiak.handlebars', {title : 'KirolElkarteak-Partiduak', jardunaldiaIkusgaiH:jardunaldiaIkusgaiH, jardunaldiaIkusgai:jardunaldiaIkusgai, data2:etxekokanpokoak, jardunaldiak:rowsd, denboraldiak:rowsdenb, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea: req.session.partaidea, menuadmin:admin, atalak: req.session.atalak, idPartaideak:req.session.idPartaideak, arduraduna:req.session.arduraduna} );
 
         });
      });   
