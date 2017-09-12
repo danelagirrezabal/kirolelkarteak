@@ -890,7 +890,7 @@ console.log(req.path.slice(0,24));
             vLekuak = null;
             lekuak = []; 
             t=0;
-            var egunaTexto = ["Astelehena", "Asteartea", "Asteazkena", "Osteguna", "Ostirala", "Larunbata", "Igandea"];
+            var egunaTexto = ["Igandea","Astelehena", "Asteartea", "Asteazkena", "Osteguna", "Ostirala", "Larunbata"];
             var dt = new Date(rows[i].dataPartidu);
             eguna = {
                   dataPartidu    : rows[i].dataPartidu,
