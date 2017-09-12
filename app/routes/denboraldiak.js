@@ -942,7 +942,7 @@ console.log(req.path.slice(0,24));
           partiduak[j] = {
                   idPartiduak    : rows[i].idPartiduak,
                   izenaMaila: rows[i].izenaMaila,
-                  akronimoMaila: rows[i].akronimoMaila,
+                  akronimoTalde: rows[i].akronimoTalde,
                   etxekoaPartidu: rows[i].etxekoaPartidu,
                   kanpokoaPartidu    : rows[i].kanpokoaPartidu,
                   orduaPartidu    : rows[i].orduaPartidu,
