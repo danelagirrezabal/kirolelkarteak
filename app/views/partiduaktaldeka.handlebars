@@ -1,10 +1,10 @@
-{{#if admin}}
-  {{> menuadmin}}
+{{#if menuadmin}}
+    {{> menuadmin}}                
 {{else}}
-  {{> menu}}
+    {{> menu}}                  
 {{/if}}
 
-<input type="hidden" name="admin" id="admin" value="{{admin}}">
+<input type="hidden" name="admin" id="admin" value="{{menuadmin}}">
 
    <div class="jumbotron">
         <h2>Partiduak taldeka</h2>
@@ -80,7 +80,7 @@
         var data = 'id=' + $('#taldea').val();
         
         if ($('#admin').val()){
-          $(location).attr('href', '/admin/partiduemaitzaktalde/'+$('#taldea').val());
+          $(location).attr('href', '/admin/partiduaktaldeka/'+$('#taldea').val());
         }
         else{
           $(location).attr('href', '/partiduaktaldeka/'+$('#taldea').val());

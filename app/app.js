@@ -440,6 +440,8 @@ app.get('/admin/partiduak', adminonartua, denboraldiak.partiduakbilatu);
 //app.get('/partiduak/:idDenboraldia',authorize2, denboraldiak.partiduakbilatupartaide);
 app.get('/partiduaktaldeka',authorize2, denboraldiak.partiduakbilatutaldekapartaide);
 app.get('/partiduaktaldeka/:idTaldeak',authorize2, denboraldiak.partiduakbilatutaldekapartaide);
+app.get('/admin/partiduaktaldeka',adminonartua, denboraldiak.partiduakbilatutaldekapartaide);
+app.get('/admin/partiduaktaldeka/:idTaldeak',adminonartua, denboraldiak.partiduakbilatutaldekapartaide);
 app.get('/admin/jardunaldikopartiduak/:jardunaldia', denboraldiak.jardunaldikopartiduakbilatu);
 //app.get('/jardunaldikopartiduakpartaide/:jardunaldia',authorize2, denboraldiak.jardunaldikopartiduakbilatupartaide);
 app.get('/partiduak/:idDenboraldia/:jardunaldia',authorize2, denboraldiak.jardunaldikopartiduakbilatupartaide);

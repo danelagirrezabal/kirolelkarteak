@@ -339,8 +339,9 @@ exports.jardunaldikopartiduakbilatu = function(req, res){
   var jardunaldia = req.params.jardunaldia;
   console.log("Jardunaldia:" + jardunaldia);
   req.getConnection(function(err,connection){
-       
-     connection.query('SELECT *,DATE_FORMAT(dataPartidu,"%Y/%m/%d") AS dataPartidu FROM partiduak, mailak, taldeak, lekuak where idLekuak=idLekuakPartidu and idTaldeakPartidu=idTaldeak and idMailak=idMailaTalde and idElkarteakPartidu = ? and jardunaldiDataPartidu >= ? and jardunaldiDataPartidu <= ? order by dataPartidu desc',[id, jardunaldia, jardunaldia],function(err,rows) {
+//     connection.query('SELECT *,DATE_FORMAT(dataPartidu,"%Y/%m/%d") AS dataPartidu FROM partiduak, mailak, taldeak, lekuak where idLekuak=idLekuakPartidu and idTaldeakPartidu=idTaldeak and idMailak=idMailaTalde and idElkarteakPartidu = ? and jardunaldiDataPartidu >= ? and jardunaldiDataPartidu <= ? order by dataPartidu desc ',[id, jardunaldia, jardunaldia],function(err,rows) {
+      
+     connection.query('SELECT *,DATE_FORMAT(dataPartidu,"%Y/%m/%d") AS dataPartidu FROM partiduak, mailak, taldeak, lekuak where idLekuak=idLekuakPartidu and idTaldeakPartidu=idTaldeak and idMailak=idMailaTalde and idElkarteakPartidu = ? and jardunaldiDataPartidu >= ? and jardunaldiDataPartidu <= ? order by herriaLeku, dataPartidu, zenbakiLeku, orduaPartidu, zenbakiMaila',[id, jardunaldia, jardunaldia],function(err,rows) {
             
         if(err)
            console.log("Error Selecting : %s ",err );
@@ -525,7 +526,8 @@ exports.partiduakbilatupartaide = function(req, res){
 
 exports.partiduakbilatutaldekapartaide = function(req, res){
   var id = req.session.idKirolElkarteak;
-  req.session.admin = 0;
+  var admin=(req.path.slice(0,23) == "/admin/partiduaktaldeka");
+  req.session.admin = 0; 
   var idTaldeak = req.params.idTaldeak;
   var idDenboraldia = req.session.idDenboraldia;
 
@@ -569,8 +571,13 @@ exports.partiduakbilatutaldekapartaide = function(req, res){
                     rows[i].arduraduna = false;
                 
               }*/
-
-          res.render('partiduaktaldeka.handlebars',{title: "Partiduak", data:rows, taldeak:rowstalde, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, atalak: req.session.atalak, partaidea: req.session.partaidea, idPartaideak:req.session.idPartaideak, arduraduna:req.session.arduraduna});
+          if (admin){
+              req.session.admin = 1;
+          }       
+          else {
+              req.session.admin = 0;
+          }
+          res.render('partiduaktaldeka.handlebars',{title: "Partiduak", data:rows, taldeak:rowstalde, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, menuadmin:admin, atalak: req.session.atalak, partaidea: req.session.partaidea, idPartaideak:req.session.idPartaideak, arduraduna:req.session.arduraduna});
          
           });                   
       });   
