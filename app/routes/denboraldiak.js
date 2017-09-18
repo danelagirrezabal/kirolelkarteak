@@ -336,6 +336,7 @@ exports.ekintzakaldatu = function(req,res){
 
 exports.jardunaldikopartiduakbilatu = function(req, res){
   var id = req.session.idKirolElkarteak;
+  var idDenboraldia = req.session.idDenboraldia;
   var jardunaldia = req.params.jardunaldia;
   console.log("Jardunaldia:" + jardunaldia);
   req.getConnection(function(err,connection){
@@ -346,7 +347,7 @@ exports.jardunaldikopartiduakbilatu = function(req, res){
         if(err)
            console.log("Error Selecting : %s ",err );
 
-        connection.query('SELECT DISTINCT DATE_FORMAT(jardunaldiDataPartidu,"%Y-%m-%d") AS jardunaldiDataPartidu FROM partiduak where idElkarteakPartidu = ? order by jardunaldiDataPartidu desc',[id],function(err,rowsd) {
+        connection.query('SELECT DISTINCT DATE_FORMAT(jardunaldiDataPartidu,"%Y-%m-%d") AS jardunaldiDataPartidu FROM partiduak where idElkarteakPartidu = ? and idDenboraldiaPartidu = ? order by jardunaldiDataPartidu desc',[id, idDenboraldia],function(err,rowsd) {
           
           if(err)
            console.log("Error Selecting : %s ",err );
@@ -560,6 +561,7 @@ exports.partiduakbilatutaldekapartaide = function(req, res){
                 }else{
                     rows[i].jardunaldiaIkusgai = false;
                 }
+                rows[i].admin = admin;
               }
 
 
@@ -767,9 +769,12 @@ exports.partiduakaldatu = function(req,res){
          if (req.session.admin){ //Administratzaile moduan badago ordutegiak ikustean, editatu ondoren partidu ordutegira bidali
             res.redirect('/admin/partiduordutegiak/'+ req.session.idDenboraldia + '/' + req.session.jardunaldia);
          }
-         else //Partiduak ataletik editatzean partiduak, partiduak orrira bidali 
+         else
+           if (req.session.jardunaldia){ 
+            res.redirect('/admin/jardunaldikopartiduak/' + req.session.jardunaldia);
+           }
+           else //Partiduak ataletik editatzean partiduak, partiduak orrira bidali 
             res.redirect('/admin/partiduak');
-          
         });
     
     });
@@ -1099,7 +1104,7 @@ exports.partiduakkargatuegin = function(req, res){
                 partiduanoiz = partidua[0];
             else
             { 
-              vEguna.setDate(vEguna.getDate() - 1); // + input.asteburuannoiz
+              vEguna.setDate(vEguna.getDate() + 1); // + input.asteburuannoiz
               partiduanoiz = vEguna ;
             }
             console.log(partidua[0] + partiduanoiz + vEguna);
@@ -1161,6 +1166,7 @@ exports.partiduakkargatuegin = function(req, res){
 
 exports.emaitzakikusi = function(req, res){
   var id = req.session.idKirolElkarteak;
+  var idDenboraldia = req.session.idDenboraldia;
   req.session.admin = 0;
   req.getConnection(function(err,connection){
        
@@ -1169,7 +1175,7 @@ exports.emaitzakikusi = function(req, res){
         if(err)
            console.log("Error Selecting : %s ",err );
 
-        connection.query('SELECT DISTINCT DATE_FORMAT(jardunaldiDataPartidu,"%Y-%m-%d") AS jardunaldiDataPartidu FROM partiduak where idElkarteakPartidu = ? order by jardunaldiDataPartidu desc',[id],function(err,rowsd) {
+        connection.query('SELECT DISTINCT DATE_FORMAT(jardunaldiDataPartidu,"%Y-%m-%d") AS jardunaldiDataPartidu FROM partiduak where idElkarteakPartidu = ? and idDenboraldiaPartidu = ? order by jardunaldiDataPartidu desc',[id, idDenboraldia],function(err,rowsd) {
           
           if(err)
            console.log("Error Selecting : %s ",err );
@@ -1190,6 +1196,7 @@ exports.emaitzakikusi = function(req, res){
 
 exports.jardunaldikoemaitzakikusi = function(req, res){
   var id = req.session.idKirolElkarteak;
+  var idDenboraldia = req.session.idDenboraldia;
   var jardunaldia = req.params.jardunaldia;
   console.log("Jardunaldia:" + jardunaldia);
   req.getConnection(function(err,connection){
@@ -1199,7 +1206,7 @@ exports.jardunaldikoemaitzakikusi = function(req, res){
         if(err)
            console.log("Error Selecting : %s ",err );
 
-        connection.query('SELECT DISTINCT DATE_FORMAT(jardunaldiDataPartidu,"%Y-%m-%d") AS jardunaldiDataPartidu FROM partiduak where idElkarteakPartidu = ? order by jardunaldiDataPartidu desc',[id],function(err,rowsd) {
+        connection.query('SELECT DISTINCT DATE_FORMAT(jardunaldiDataPartidu,"%Y-%m-%d") AS jardunaldiDataPartidu FROM partiduak where idElkarteakPartidu = ? and idDenboraldiaPartidu = ? order by jardunaldiDataPartidu desc',[id, idDenboraldia],function(err,rowsd) {
           
           if(err)
            console.log("Error Selecting : %s ",err );

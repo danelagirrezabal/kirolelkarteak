@@ -1370,9 +1370,10 @@ exports.agiriakikusi = function(req, res){
 
 exports.agiriakbilatu = function(req, res){
   var id = req.session.idKirolElkarteak;
+  var idDenboraldia = req.session.idDenboraldia;  
   req.getConnection(function(err,connection){
        
-     connection.query('SELECT *, DATE_FORMAT(dataAgiria,"%Y/%m/%d") AS dataAgiria FROM agiriak where idElkarteakAgiria = ? order by publikoAgiria, dataAgiria desc',[id],function(err,rows) {
+     connection.query('SELECT *, DATE_FORMAT(dataAgiria,"%Y/%m/%d") AS dataAgiria FROM agiriak, elkarteak where idElkarteakAgiria = ? and idElkarteak = idElkarteakAgiria and idDenboraldiaAgiria = ? order by publikoAgiria, dataAgiria desc',[id, idDenboraldia],function(err,rows) {
             
         if(err)
            console.log("Error Selecting : %s ",err );
@@ -1397,10 +1398,11 @@ exports.agiriakbilatu = function(req, res){
 
 exports.agiriakbilatupartaide = function(req, res){
   var id = req.session.idKirolElkarteak;
+  var idDenboraldia = req.session.idDenboraldia;   
   var publikoa = 1;
   req.getConnection(function(err,connection){
        
-     connection.query('SELECT *, DATE_FORMAT(dataAgiria,"%Y/%m/%d") AS dataAgiria FROM agiriak, elkarteak where idElkarteakAgiria = ? and idElkarteak = idElkarteakAgiria and publikoAgiria = ? order by dataAgiria desc',[id, publikoa],function(err,rows) {
+     connection.query('SELECT *, DATE_FORMAT(dataAgiria,"%Y/%m/%d") AS dataAgiria FROM agiriak, elkarteak where idElkarteakAgiria = ? and idElkarteak = idElkarteakAgiria and publikoAgiria = ? and idDenboraldiaAgiria = ? order by dataAgiria desc',[id, publikoa, idDenboraldia],function(err,rows) {
             
         if(err)
            console.log("Error Selecting : %s ",err );
