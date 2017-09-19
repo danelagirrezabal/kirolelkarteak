@@ -577,7 +577,7 @@ exports.aldatu = function(req,res){
 
 debugger;
     //Errore kontrolak
-  if(!req.body.nanPart.match(VALID_DNI_REGEX)) {
+/*  if(!req.body.nanPart.match(VALID_DNI_REGEX)) {
     if(req.xhr) return res.json({ error: 'Invalid DNI' });
     res.locals.flash = {
       type: 'danger',
@@ -612,7 +612,7 @@ debugger;
       message: 'Pasahitzak ez dira berdinak',
     };
   }*/
-
+/*
   else if(req.body.emailPart != req.body.emailPart2) {
     if(req.xhr) return res.json({ error: 'Invalid mail' });
     res.locals.flash = {
@@ -621,10 +621,12 @@ debugger;
       message: 'Emailak ez dira berdinak',
     };
   }
-req.getConnection(function (err, connection) {
-
-
-connection.query('SELECT * FROM ordaintzekoErak where idElkarteakOrdaintzekoErak = ? order by idOrdaintzekoErak asc',[id],function(err,rowso) {
+ */ 
+//req.getConnection(function (err, connection) {
+req.getConnection(function(err,connection){
+        if(err)
+           console.log("Error Selecting : %s ",err );
+ connection.query('SELECT * FROM ordaintzekoErak where idElkarteakOrdaintzekoErak = ? order by idOrdaintzekoErak asc',[id],function(err,rowso) {
             
         if(err)
            console.log("Error Selecting : %s ",err );
@@ -742,13 +744,12 @@ connection.query('SELECT * FROM ordaintzekoErak where idElkarteakOrdaintzekoErak
           
         });
 
-        });
+      });
     
-    });
+    });  
+  });
+ };
 
-});
-
-};
 
 exports.balidatu = function(req,res){
     
