@@ -1142,7 +1142,7 @@ exports.partiduakkargatuegin = function(req, res){
             idLekuakPartidu : idLekuak,
             idTaldeakPartidu : input.idTaldeakPartidu,
             jardunaldiaPartidu : parseInt(i) + 1,
-            jardunaldiDataPartidu: partidua[0],
+            jardunaldiDataPartidu: partidua[4],      // partidua[0],
             etxekoaPartidu : partidua[1],
             kanpokoaPartidu : partidua[3],
             txapelketaPartidu : input.txapelketa,
