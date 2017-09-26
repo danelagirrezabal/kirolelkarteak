@@ -566,12 +566,11 @@ exports.partaideakgehitu = function(req, res){ //Datu basetik conboBox-ak betetz
   });
 };
 exports.aldatu = function(req,res){
-    
     var input = JSON.parse(JSON.stringify(req.body));
     //var id = req.params.id;
     var id = req.session.idKirolElkarteak;
     var idPartaideak = req.params.idPartaideak;
-    res.locals.flash = null;
+//    res.locals.flash = null;
    var admin = (req.path.slice(0,6) == "/admin");
   var generoa = [{izena: "Neska"}, {izena: "Mutila"}];
 
@@ -624,8 +623,8 @@ debugger;
  */ 
 //req.getConnection(function (err, connection) {
 req.getConnection(function(err,connection){
-        if(err)
-           console.log("Error Selecting : %s ",err );
+//        if(err)
+//           console.log("Error Selecting : %s ",err );
  connection.query('SELECT * FROM ordaintzekoErak where idElkarteakOrdaintzekoErak = ? order by idOrdaintzekoErak asc',[id],function(err,rowso) {
             
         if(err)

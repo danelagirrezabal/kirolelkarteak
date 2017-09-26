@@ -213,7 +213,7 @@ exports.aldatu = function(req,res){
           if (err)
               console.log("Error inserting : %s ",err );
          
-          res.redirect('/admin/berriak');
+          res.redirect('/kirolElkarteakeditatu');
           
         });
         

@@ -556,7 +556,7 @@ exports.partiduakbilatutaldekapartaide = function(req, res){
 
 
               for (var i in rows){
-                if (rows[i].jardunaldiDataPartidu <= rows[i].jardunaldiaIkusgai){
+                if (rows[i].jardunaldiDataPartidu <= rows[i].jardunaldiaIkusgai || admin){
                     rows[i].jardunaldiaIkusgai = true;
                 }else{
                     rows[i].jardunaldiaIkusgai = false;
@@ -1092,7 +1092,7 @@ exports.partiduakkargatuegin = function(req, res){
           else 
            {
             idLekuak = rowsl[etxePosizio].idLekuak; //Etxeko taldearen lekua datu-baseko lehenengo dagoena izango da (zenbakiLeku aldagai txikiena duena)
-            if (input.etxekoaknon != 0) {
+            if (input.etxekoaknon == 1) {
                 etxePosizio--;
                 if (etxePosizio < 0)
                     etxePosizio = input.etxekoaknon;
