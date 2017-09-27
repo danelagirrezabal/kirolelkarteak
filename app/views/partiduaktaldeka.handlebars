@@ -43,6 +43,7 @@
                     <th>B ekipoa</th>
                     <th>Emaitza</th>
                     <th>      </th>
+                    <th>      </th>
                 </tr>          
 
             {{#each data}}
@@ -63,7 +64,9 @@
                     <td>{{emaitzaPartidu}}</td> 
                     {{#if admin}}
                       <td><a class="a-inside edit" href="/admin/partiduakeditatu/{{idPartiduak}}">Aldatu</a></td>
+                      <td><a class="a-inside edit" href="/admin/partiduakezabatu/{{idPartiduak}}">Ezabatu</a></td>
                     {{/if}}
+
                 </tr>
             {{/each}}
           </table>
