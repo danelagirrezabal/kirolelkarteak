@@ -530,6 +530,7 @@ exports.partiduakbilatutaldekapartaide = function(req, res){
   var admin=(req.path.slice(0,23) == "/admin/partiduaktaldeka");
   req.session.admin = 0; 
   var idTaldeak = req.params.idTaldeak;
+  req.session.idTaldeak = idTaldeak;
   var idDenboraldia = req.session.idDenboraldia;
 
 
@@ -670,9 +671,12 @@ exports.partiduakezabatu = function(req,res){
             
              if(err)
                  console.log("Error deleting : %s ",err );
-            
-             res.redirect('/admin/partiduak');
-             
+
+             if (req.session.admin){
+                res.redirect('/admin/partiduaktaldeka/'+ req.session.idTaldeak);
+             }else{
+               res.redirect('/admin/partiduak');
+             }  
         });
         
      });
