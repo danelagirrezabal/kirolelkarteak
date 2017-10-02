@@ -342,7 +342,7 @@ exports.jardunaldikopartiduakbilatu = function(req, res){
   req.getConnection(function(err,connection){
 //     connection.query('SELECT *,DATE_FORMAT(dataPartidu,"%Y/%m/%d") AS dataPartidu FROM partiduak, mailak, taldeak, lekuak where idLekuak=idLekuakPartidu and idTaldeakPartidu=idTaldeak and idMailak=idMailaTalde and idElkarteakPartidu = ? and jardunaldiDataPartidu >= ? and jardunaldiDataPartidu <= ? order by dataPartidu desc ',[id, jardunaldia, jardunaldia],function(err,rows) {
       
-     connection.query('SELECT *,DATE_FORMAT(dataPartidu,"%Y/%m/%d") AS dataPartidu FROM partiduak, mailak, taldeak, lekuak where idLekuak=idLekuakPartidu and idTaldeakPartidu=idTaldeak and idMailak=idMailaTalde and idElkarteakPartidu = ? and jardunaldiDataPartidu >= ? and jardunaldiDataPartidu <= ? order by herriaLeku, dataPartidu, zenbakiLeku, orduaPartidu, zenbakiMaila',[id, jardunaldia, jardunaldia],function(err,rows) {
+     connection.query('SELECT *,DATE_FORMAT(dataPartidu,"%Y/%m/%d") AS dataPartidu FROM partiduak, mailak, taldeak, lekuak where idLekuak=idLekuakPartidu and idTaldeakPartidu=idTaldeak and idMailak=idMailaTalde and idElkarteakPartidu = ? and jardunaldiDataPartidu >= ? and jardunaldiDataPartidu <= ? order by herriaLeku, dataPartidu, zenbakiLeku, orduaPartidu, zenbakiMaila, izenaTalde asc',[id, jardunaldia, jardunaldia],function(err,rows) {
             
         if(err)
            console.log("Error Selecting : %s ",err );
@@ -389,7 +389,7 @@ exports.jardunaldikopartiduakbilatupartaide = function(req, res){
   var jardunaldiaIkusgai;
   req.getConnection(function(err,connection){
        
-     connection.query('SELECT *,DATE_FORMAT(dataPartidu,"%Y/%m/%d") AS dataPartidu FROM partiduak, mailak, taldeak, lekuak where idLekuak=idLekuakPartidu and idTaldeakPartidu=idTaldeak and idMailak=idMailaTalde and idElkarteakPartidu = ? and idDenboraldiaPartidu=? and jardunaldiDataPartidu >= ? and jardunaldiDataPartidu <= ? order by dataPartidu desc',[id,idDenboraldia, jardunaldia, jardunaldia],function(err,rows) {
+     connection.query('SELECT *,DATE_FORMAT(dataPartidu,"%Y/%m/%d") AS dataPartidu FROM partiduak, mailak, taldeak, lekuak where idLekuak=idLekuakPartidu and idTaldeakPartidu=idTaldeak and idMailak=idMailaTalde and idElkarteakPartidu = ? and idDenboraldiaPartidu=? and jardunaldiDataPartidu >= ? and jardunaldiDataPartidu <= ? order by zenbakiMaila, izenaTalde asc',[id,idDenboraldia, jardunaldia, jardunaldia],function(err,rows) {
             
         if(err)
            console.log("Error Selecting : %s ",err );
@@ -446,6 +446,7 @@ exports.partiduakbilatu = function(req, res){
   var id = req.session.idKirolElkarteak;
   var idDenboraldia = req.session.idDenboraldia;
   req.session.admin = 0;
+  req.session.idTaldeak = 0;
   req.getConnection(function(err,connection){
        
      connection.query('SELECT *,DATE_FORMAT(dataPartidu,"%Y/%m/%d") AS dataPartidu FROM partiduak, mailak, taldeak, lekuak where idLekuak=idLekuakPartidu and idTaldeakPartidu=idTaldeak and idMailak=idMailaTalde and idElkarteakPartidu = ? and idDenboraldiaPartidu = ? order by dataPartidu desc',[id, idDenboraldia],function(err,rows) {
@@ -467,6 +468,7 @@ exports.partiduakbilatu = function(req, res){
 exports.partiduakbilatupartaide = function(req, res){
   var id = req.session.idKirolElkarteak;
   req.session.admin = 0;
+  req.session.idTaldeak = 0;
   var idDenboraldia = req.params.idDenboraldia;
   req.session.idDenboraldia = idDenboraldia;
   var jardunaldiaIkusgai;
@@ -541,7 +543,7 @@ exports.partiduakbilatutaldekapartaide = function(req, res){
         if(err)
            console.log("Error Selecting : %s ",err );
 
-        connection.query('SELECT * FROM taldeak, mailak  where idMailak=idMailaTalde and idElkarteakTalde = ? and idDenboraldiaTalde = ? order by zenbakiMaila desc',[id, idDenboraldia],function(err,rowstalde) {
+        connection.query('SELECT * FROM taldeak, mailak  where idMailak=idMailaTalde and idElkarteakTalde = ? and idDenboraldiaTalde = ? order by zenbakiMaila desc, izenaTalde asc',[id, idDenboraldia],function(err,rowstalde) {
           
           if(err)
            console.log("Error Selecting : %s ",err );
@@ -770,16 +772,19 @@ exports.partiduakaldatu = function(req,res){
           if (err)
               console.log("Error Updating : %s ",err );
 
-
-         if (req.session.admin){ //Administratzaile moduan badago ordutegiak ikustean, editatu ondoren partidu ordutegira bidali
-            res.redirect('/admin/partiduordutegiak/'+ req.session.idDenboraldia + '/' + req.session.jardunaldia);
-         }
-         else
-           if (req.session.jardunaldia){ 
-            res.redirect('/admin/jardunaldikopartiduak/' + req.session.jardunaldia);
+          if (req.session.idTaldeak){
+                res.redirect('/admin/partiduaktaldeka/'+ req.session.idTaldeak);
+          }
+          else
+           if (req.session.admin){ //Administratzaile moduan badago ordutegiak ikustean, editatu ondoren partidu ordutegira bidali
+               res.redirect('/admin/partiduordutegiak/'+ req.session.idDenboraldia + '/' + req.session.jardunaldia);
            }
-           else //Partiduak ataletik editatzean partiduak, partiduak orrira bidali 
-            res.redirect('/admin/partiduak');
+           else
+            if (req.session.jardunaldia){ 
+                res.redirect('/admin/jardunaldikopartiduak/' + req.session.jardunaldia);
+            }
+            else //Partiduak ataletik editatzean partiduak, partiduak orrira bidali 
+                res.redirect('/admin/partiduak');
         });
     
     });
@@ -804,6 +809,7 @@ var k = 0, h = 0;
 var vHerriak, vEgunak, vLekuak;
 var admin=(req.path.slice(0,24) == "/admin/partiduordutegiak");
 req.session.admin=0;
+req.session.idTaldeak = 0;
 var jardunaldiaIkusgai;
 var jardunaldiaIkusgaiH;
 console.log(jardunaldia);
@@ -821,7 +827,7 @@ console.log(req.path.slice(0,24));
          jardunaldia = req.session.jardunaldia;
        }
 //      connection.query('SELECT *,DATE_FORMAT(bidaiEgunaPartidu,"%Y/%m/%d") AS bidaiEgunaPartidu, DATE_FORMAT(dataPartidu,"%Y/%m/%d") AS dataPartidu FROM partiduak, mailak, taldeak, lekuak where idLekuak=idLekuakPartidu and idTaldeakPartidu=idTaldeak and idMailak=idMailaTalde and idElkarteakPartidu = ? and jardunaldiDataPartidu = ? and idDenboraldiaPartidu = ? order by dataPartidu, zenbakiLeku, orduaPartidu, zenbakiMaila ',[id, jardunaldia, idDenboraldia],function(err,rows) {      
-      connection.query('SELECT *,DATE_FORMAT(bidaiEgunaPartidu,"%Y/%m/%d") AS bidaiEgunaPartidu, DATE_FORMAT(dataPartidu,"%Y/%m/%d") AS dataPartidu FROM partiduak, mailak, taldeak, lekuak where idLekuak=idLekuakPartidu and idTaldeakPartidu=idTaldeak and idMailak=idMailaTalde and idElkarteakPartidu = ? and jardunaldiDataPartidu = ? and idDenboraldiaPartidu = ? order by herriaLeku, dataPartidu, zenbakiLeku, bidaiOrduaPartidu, orduaPartidu, zenbakiMaila ',[id, jardunaldia, idDenboraldia],function(err,rows) {    
+      connection.query('SELECT *,DATE_FORMAT(bidaiEgunaPartidu,"%Y/%m/%d") AS bidaiEgunaPartidu, DATE_FORMAT(dataPartidu,"%Y/%m/%d") AS dataPartidu FROM partiduak, mailak, taldeak, lekuak where idLekuak=idLekuakPartidu and idTaldeakPartidu=idTaldeak and idMailak=idMailaTalde and idElkarteakPartidu = ? and jardunaldiDataPartidu = ? and idDenboraldiaPartidu = ? order by herriaLeku, dataPartidu, zenbakiLeku, bidaiOrduaPartidu, orduaPartidu, zenbakiMaila, izenaTalde asc ',[id, jardunaldia, idDenboraldia],function(err,rows) {    
 
         if(err)
            console.log("Error Selecting : %s ",err );
@@ -1207,7 +1213,7 @@ exports.jardunaldikoemaitzakikusi = function(req, res){
   console.log("Jardunaldia:" + jardunaldia);
   req.getConnection(function(err,connection){
        
-     connection.query('SELECT *,DATE_FORMAT(dataPartidu,"%Y/%m/%d") AS dataPartidu FROM partiduak, mailak, taldeak, lekuak where idLekuak=idLekuakPartidu and idTaldeakPartidu=idTaldeak and idMailak=idMailaTalde and idElkarteakPartidu = ? and jardunaldiDataPartidu >= ? and jardunaldiDataPartidu <= ? order by zenbakiMaila asc',[id, jardunaldia, jardunaldia],function(err,rows) {
+     connection.query('SELECT *,DATE_FORMAT(dataPartidu,"%Y/%m/%d") AS dataPartidu FROM partiduak, mailak, taldeak, lekuak where idLekuak=idLekuakPartidu and idTaldeakPartidu=idTaldeak and idMailak=idMailaTalde and idElkarteakPartidu = ? and jardunaldiDataPartidu >= ? and jardunaldiDataPartidu <= ? order by zenbakiMaila asc, izenaTalde asc',[id, jardunaldia, jardunaldia],function(err,rows) {
             
         if(err)
            console.log("Error Selecting : %s ",err );
@@ -1232,7 +1238,7 @@ exports.partiduemaitzak = function(req, res){
   console.log("Jardunaldia:" + jardunaldia);
   req.getConnection(function(err,connection){
        
-     connection.query('SELECT *,DATE_FORMAT(dataPartidu,"%Y/%m/%d") AS dataPartidu FROM partiduak, mailak, taldeak, lekuak where idLekuak=idLekuakPartidu and idTaldeakPartidu=idTaldeak and idMailak=idMailaTalde and idElkarteakPartidu = ? and idDenboraldiaPartidu = ? and jardunaldiDataPartidu >= ? and jardunaldiDataPartidu <= ? order by zenbakiMaila asc',[id, idDenboraldia, jardunaldia, jardunaldia],function(err,rows) {
+     connection.query('SELECT *,DATE_FORMAT(dataPartidu,"%Y/%m/%d") AS dataPartidu FROM partiduak, mailak, taldeak, lekuak where idLekuak=idLekuakPartidu and idTaldeakPartidu=idTaldeak and idMailak=idMailaTalde and idElkarteakPartidu = ? and idDenboraldiaPartidu = ? and jardunaldiDataPartidu >= ? and jardunaldiDataPartidu <= ? order by zenbakiMaila asc, izenaTalde asc',[id, idDenboraldia, jardunaldia, jardunaldia],function(err,rows) {
             
         if(err)
            console.log("Error Selecting : %s ",err );
@@ -1296,7 +1302,7 @@ exports.partiduemaitzaktalde = function(req, res){
         if(err)
            console.log("Error Selecting : %s ",err );
 
-        connection.query('SELECT * FROM taldeak, mailak  where idMailak=idMailaTalde and idElkarteakTalde = ? and idDenboraldiaTalde = ? order by zenbakiMaila desc',[id, idDenboraldia],function(err,rowstalde) {
+        connection.query('SELECT * FROM taldeak, mailak  where idMailak=idMailaTalde and idElkarteakTalde = ? and idDenboraldiaTalde = ? order by zenbakiMaila desc, izenaTalde asc',[id, idDenboraldia],function(err,rowstalde) {
           
           if(err)
            console.log("Error Selecting : %s ",err );
@@ -1339,7 +1345,7 @@ exports.partiduemaitzakadmin = function(req, res){
   console.log("Jardunaldia:" + jardunaldia);
   req.getConnection(function(err,connection){
        
-     connection.query('SELECT *,DATE_FORMAT(dataPartidu,"%Y/%m/%d") AS dataPartidu FROM partiduak, mailak, taldeak, lekuak where idLekuak=idLekuakPartidu and idTaldeakPartidu=idTaldeak and idMailak=idMailaTalde and idElkarteakPartidu = ? and idDenboraldiaPartidu = ? and jardunaldiDataPartidu >= ? and jardunaldiDataPartidu <= ? order by zenbakiMaila asc',[id, idDenboraldia, jardunaldia, jardunaldia],function(err,rows) {
+     connection.query('SELECT *,DATE_FORMAT(dataPartidu,"%Y/%m/%d") AS dataPartidu FROM partiduak, mailak, taldeak, lekuak where idLekuak=idLekuakPartidu and idTaldeakPartidu=idTaldeak and idMailak=idMailaTalde and idElkarteakPartidu = ? and idDenboraldiaPartidu = ? and jardunaldiDataPartidu >= ? and jardunaldiDataPartidu <= ? order by zenbakiMaila asc, izenaTalde asc',[id, idDenboraldia, jardunaldia, jardunaldia],function(err,rows) {
             
         if(err)
            console.log("Error Selecting : %s ",err );
