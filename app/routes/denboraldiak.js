@@ -1428,10 +1428,9 @@ exports.partiduemaitzakgordeadmin = function(req,res){
     var input = JSON.parse(JSON.stringify(req.body));
     var id = req.session.idKirolElkarteak;
     var idPartidua = req.params.idPartidua;
-    //console.log("skajfhñsaldjalsñkj");
 
-    
-    
+    //console.log("emaitzaPartidu : " + input.emaitzaPartidu);
+ 
     req.getConnection(function (err, connection) {
         
         var data = {

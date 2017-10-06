@@ -49,12 +49,13 @@
         <table class="table table-condensed">
             <tr>
                     <th>Maila</th>
-                    <th>Eguna</th>
-                    <th>Txapelketa</th>
+                <!--<th>Txapelketa</th>-->
                     <th>A ekipoa</th>
                     <th>B ekipoa</th>
+                    <th>Eguna</th>
                     <th>Lekua</th> 
                     <th>Ordua</th>
+                    <th>NON</th>
                     <th>Irteera ordua</th>
                     <th>Bidaia nola</th>
                     <th>Bidai eguna</th>
@@ -64,13 +65,14 @@
             {{#each data}}
                   <tr class="active">
                     <td>{{izenaMaila}} {{akronimoTalde}}</td>
-                    <td>{{dataPartidu}}</td> 
-                    <td>{{txapelketaPartidu}}</td>  
+                <!--<td>{{txapelketaPartidu}}</td>-->  
                     <td>{{etxekoaPartidu}}</td>   
                     <td>{{kanpokoaPartidu}}</td> 
+                    <td>{{dataPartidu}}</td> 
                   {{#if jardunaldiaIkusgai}} 
                     <td>{{izenaLeku}} - {{herriaLeku}}</td>  
                     <td>{{orduaPartidu}}</td> 
+                    <td>{{nonPartidu}}</td>
                     <td>{{bidaiOrduaPartidu}}</td>
                     <td>{{bidaiaNolaPartidu}}</td>
                     <td>{{bidaiEgunaPartidu}}</td>

@@ -55,15 +55,23 @@
             {{#each data}}
                   <tr class="active">
                     <td>{{dataPartidu}}</td>  
-                    <td>{{izenaMaila}}</td> 
+                    <td>{{izenaMaila}} {{akronimoTalde}}</td> 
                     <td>{{txapelketaPartidu}}</td>  
                     <td>{{etxekoaPartidu}}</td>   
                     <td>{{kanpokoaPartidu}}</td> 
-                    <td>{{emaitzaPartidu}}</td> 
                     {{#if arduraduna}}
-                      <td><a class="a-inside edit" href="/emaitzaksartu/{{idPartiduak}}">Emaitza sartu</a></td> 
-                    {{/if}}
+                      <!--<td><a class="a-inside edit" href="/emaitzaksartu/{{idPartiduak}}">Emaitza sartu</a></td>-->
+                      <form class=-->form-horizontal newsletterForm" role="form" action="/emaitzakgorde/{{idPartiduak}}" method="POST">
 
+                       <td><textarea name="emaitzaPartidu" rows="1" cols="5" class="form-control" required id="emaitzaPartidu" placeholder="0-0" value={{emaitzaPartidu}}>{{emaitzaPartidu}}</textarea></td>
+                       <td>
+                        <button type="submit" class="btn btn-default">Gorde</button>
+                       </td>
+                      </form>
+                    {{else}} 
+                      <td>{{emaitzaPartidu}}</td>
+                    {{/if}}
+         
                 </tr>
             {{/each}}
           </table>
