@@ -352,6 +352,10 @@ exports.jardunaldikopartiduakbilatu = function(req, res){
           if(err)
            console.log("Error Selecting : %s ",err );
 
+          for (var i in rows){
+                rows[i].egunaTexto = egunatextobihurtu(rows[i].dataPartidu);
+          }
+
           res.render('partiduakadmin.handlebars',{title: "Partiduak", data:rows, jardunaldiak:rowsd,jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea: req.session.partaidea});
         });                   
       });   
@@ -386,6 +390,7 @@ exports.jardunaldikopartiduakbilatupartaide = function(req, res){
   var idDenboraldia = req.params.idDenboraldia;
   req.session.jardunaldia = jardunaldia;
   req.session.idDenboraldia = idDenboraldia;
+  var admin=(req.path.slice(0,24) == "/admin/partiduakmailazka");
   var jardunaldiaIkusgai;
   req.getConnection(function(err,connection){
        
@@ -410,10 +415,10 @@ exports.jardunaldikopartiduakbilatupartaide = function(req, res){
 
             connection.query('SELECT idDenboraldia, deskribapenaDenb, jardunaldiaIkusgai FROM denboraldiak where idElkarteakDenb = ? order by deskribapenaDenb desc',[id],function(err,rowsdenb) {
           
-            if(err)
-              console.log("Error Selecting : %s ",err );
+             if(err)
+                console.log("Error Selecting : %s ",err );
 
-            for(var i in rowsdenb ){
+             for(var i in rowsdenb ){
                 if(req.session.idDenboraldia == rowsdenb[i].idDenboraldia){
                     idDenboraldia = rowsdenb[i].idDenboraldia;
                     deskribapenaDenb = rowsdenb[i].deskribapenaDenb;
@@ -422,12 +427,12 @@ exports.jardunaldikopartiduakbilatupartaide = function(req, res){
                   }
                   else
                     rowsdenb[i].aukeratua = false;
-                }
+              }
 
-
-                for (var i in rows){
+              for (var i in rows){
                 if (rows[i].jardunaldiDataPartidu <= jardunaldiaIkusgai){
                     rows[i].jardunaldiaIkusgai = true;
+                    rows[i].egunaTexto = egunatextobihurtu(rows[i].dataPartidu);
                 }else{
                     rows[i].jardunaldiaIkusgai = false;
                 }
@@ -435,7 +440,7 @@ exports.jardunaldikopartiduakbilatupartaide = function(req, res){
 
 
 
-          res.render('partiduak.handlebars',{title: "Partiduak", data:rows, denboraldiak:rowsdenb, jardunaldiak:rowsd,jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia,atalak: req.session.atalak, partaidea: req.session.partaidea, idPartaideak:req.session.idPartaideak, arduraduna:req.session.arduraduna});
+          res.render('partiduak.handlebars',{title: "Partiduak", data:rows, denboraldiak:rowsdenb, jardunaldiak:rowsd, menuadmin:admin, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia,atalak: req.session.atalak, partaidea: req.session.partaidea, idPartaideak:req.session.idPartaideak, arduraduna:req.session.arduraduna});
         });
           });                  
       });   
@@ -458,6 +463,10 @@ exports.partiduakbilatu = function(req, res){
           
           if(err)
            console.log("Error Selecting : %s ",err );
+
+          for (var i in rows){
+                rows[i].egunaTexto = egunatextobihurtu(rows[i].dataPartidu);
+          }
 
           res.render('partiduakadmin.handlebars',{title: "Partiduak", data:rows, jardunaldiak:rowsd,jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia,partaidea: req.session.partaidea});
         });                   
@@ -530,7 +539,7 @@ exports.partiduakbilatupartaide = function(req, res){
 exports.partiduakbilatutaldekapartaide = function(req, res){
   var id = req.session.idKirolElkarteak;
   var admin=(req.path.slice(0,23) == "/admin/partiduaktaldeka");
-  req.session.admin = 0; 
+  req.session.admin = 0;               
   var idTaldeak = req.params.idTaldeak;
   req.session.idTaldeak = idTaldeak;
   var idDenboraldia = req.session.idDenboraldia;
@@ -1016,6 +1025,12 @@ console.log(req.path.slice(0,24));
   });
 });
 };
+
+function egunatextobihurtu (eguna){
+  var egunaTexto = ["Igandea", "Astelehena", "Asteartea", "Asteazkena", "Osteguna", "Ostirala", "Larunbata"];
+  var dt = new Date(eguna); 
+  return egunaTexto[dt.getUTCDay()];
+}
 
 exports.jardunaldiaikusgai = function(req, res){
   var id = req.session.idKirolElkarteak;

@@ -1,4 +1,10 @@
-{{> menu}}
+{{#if menuadmin}}
+    {{> menuadmin}}                
+{{else}}
+    {{> menu}}                  
+{{/if}}
+
+<input type="hidden" name="admin" id="admin" value="{{menuadmin}}">
 
    <div class="jumbotron">
         <h2>Partiduak</h2>
@@ -10,8 +16,11 @@
       {{/if}}
        
       </br>
-      <a href="/partiduaktaldeka/" class="btn btn-primary btn-bg" role="button">PARTIDUAK TALDEKA IKUSI</a>
-
+      {{#if menuadmin}}
+          <a href="/admin/partiduaktaldeka/" class="btn btn-primary btn-bg" role="button">PARTIDUAK TALDEKA IKUSI</a>                
+      {{else}}
+          <a href="/partiduaktaldeka/" class="btn btn-primary btn-bg" role="button">PARTIDUAK TALDEKA IKUSI</a>                  
+      {{/if}}
        </br>
       </br></br>
        <div class="form-group">
@@ -68,15 +77,17 @@
                 <!--<td>{{txapelketaPartidu}}</td>-->  
                     <td>{{etxekoaPartidu}}</td>   
                     <td>{{kanpokoaPartidu}}</td> 
-                    <td>{{dataPartidu}}</td> 
-                  {{#if jardunaldiaIkusgai}} 
+                  {{#if jardunaldiaIkusgai}}
+                    <td>{{dataPartidu}} - {{egunaTexto}}</td> 
                     <td>{{izenaLeku}} - {{herriaLeku}}</td>  
                     <td>{{orduaPartidu}}</td> 
                     <td>{{nonPartidu}}</td>
                     <td>{{bidaiOrduaPartidu}}</td>
                     <td>{{bidaiaNolaPartidu}}</td>
                     <td>{{bidaiEgunaPartidu}}</td>
-                    <td>{{emaitzaPartidu}}</td> 
+                    <td>{{emaitzaPartidu}}</td>
+                  {{else}}
+                    <td>{{dataPartidu}}</td>   
                   {{/if}}
                 </tr>
             {{/each}}
@@ -101,7 +112,13 @@
         var data = 'id=' + $('#jardunaldia').val();
 
         //$(location).attr('href', '/jardunaldikopartiduakpartaide/'+$('#jardunaldia').val());
-        $(location).attr('href', '/partiduak/'+$('#denboraldia').val()+'/'+$('#jardunaldia').val());
+
+        if ($('#admin').val()){
+          $(location).attr('href', '/admin/partiduakmailazka/'+$('#denboraldia').val()+'/'+$('#jardunaldia').val());
+        }
+        else{
+          $(location).attr('href', '/partiduak/'+$('#denboraldia').val()+'/'+$('#jardunaldia').val());
+        }
       }
     });
 
@@ -109,8 +126,12 @@
 
         var data = 'id=' + $('#denboraldia').val();
 
-        $(location).attr('href', '/partiduak/'+$('#denboraldia').val()+'/'+$('#jardunaldia').val());
-     
+        if ($('#admin').val()){
+          $(location).attr('href', '/admin/partiduakmailazka/'+$('#denboraldia').val()+'/'+$('#jardunaldia').val());
+        }
+        else{
+          $(location).attr('href', '/partiduak/'+$('#denboraldia').val()+'/'+$('#jardunaldia').val());
+        }     
     });
 
 

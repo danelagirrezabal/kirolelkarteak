@@ -5,7 +5,8 @@
       </div>
       <a href="/admin/partiduakgehitu" class="btn btn-primary btn-sm" role="button">Partiduak gehitu</a>
       <a href="/admin/partiduakkargatu" class="btn btn-primary btn-sm" role="button">Partiduak kargatu</a>
-      <a href="/admin/partiduaktaldeka/" class="btn btn-primary btn-bg" role="button">PARTIDUAK TALDEKA IKUSI</a>
+      <a href="/admin/partiduaktaldeka/" class="btn btn-primary btn-bg" role="button">PARTIDUAK TALDEKA</a>
+      <a href="/admin/partiduakmailazka/{{idDenboraldia}}/{{jardunaldia}}" class="btn btn-primary btn-bg" role="button">PARTIDUAK MAILAZKA</a>
       </br></br>
        <div class="form-group">
             <label for="jardunaldia" class="col-sm-2 control-label">Jardunaldia:</label>
@@ -24,11 +25,11 @@
         <table class="table table-condensed">
             <tr>
                     <th>Maila</th>
-                    <th>Eguna</th>
                     <th>Txapelketa</th>
                     <th>A ekipoa</th>
                     <th>B ekipoa</th>
-                    <th>Lekua</th> 
+                    <th>Lekua</th>
+                    <th>Eguna</th> 
                     <th>Ordua</th>
                     <th>Irteera ordua</th>
                     <th>Bidaia nola</th>
@@ -39,11 +40,11 @@
             {{#each data}}
                   <tr class="active">
                     <td>{{izenaMaila}} {{akronimoTalde}}</td>
-                    <td>{{dataPartidu}}</td>  
                     <td>{{txapelketaPartidu}}</td>  
                     <td>{{etxekoaPartidu}}</td>   
                     <td>{{kanpokoaPartidu}}</td> 
-                    <td>{{izenaLeku}} - {{herriaLeku}}</td>   
+                    <td>{{izenaLeku}} - {{herriaLeku}}</td> 
+                    <td>{{dataPartidu}} - {{egunaTexto}}</td>  
                     <td>{{orduaPartidu}}</td> 
                     <td>{{bidaiOrduaPartidu}}</td>
                     <td>{{bidaiaNolaPartidu}}</td>

@@ -297,7 +297,7 @@ app.get('/lopd', authorize2, function(req, res){
 });
 app.post('/login', partaideak.login);
 app.get('/logout', function(req, res){
-  console.log('Serving request for url [GET] ' + req.session.idtalde);
+  console.log('Logout : ' + req.session.idtalde);
   req.session.idDenboraldia = undefined;
   req.session.partaidea = undefined;
   req.session.jardunaldia = undefined;
@@ -445,6 +445,7 @@ app.get('/admin/partiduaktaldeka/:idTaldeak',adminonartua, denboraldiak.partidua
 app.get('/admin/jardunaldikopartiduak/:jardunaldia', denboraldiak.jardunaldikopartiduakbilatu);
 //app.get('/jardunaldikopartiduakpartaide/:jardunaldia',authorize2, denboraldiak.jardunaldikopartiduakbilatupartaide);
 app.get('/partiduak/:idDenboraldia/:jardunaldia',authorize2, denboraldiak.jardunaldikopartiduakbilatupartaide);
+app.get('/admin/partiduakmailazka/:idDenboraldia/:jardunaldia',authorize2, denboraldiak.jardunaldikopartiduakbilatupartaide);
 app.post('/admin/partiduaksortu', adminonartua, denboraldiak.partiduaksortu);
 app.get('/admin/partiduakgehitu', adminonartua, denboraldiak.partiduakgehitu);
 

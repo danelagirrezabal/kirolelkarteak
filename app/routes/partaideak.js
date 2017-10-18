@@ -566,6 +566,237 @@ exports.partaideakgehitu = function(req, res){ //Datu basetik conboBox-ak betetz
   });
 };
 exports.aldatu = function(req,res){
+    
+//    var input = JSON.parse(JSON.stringify(req.body));
+    res.locals.flash = null;
+   var generoa = [{izena: "Neska"}, {izena: "Mutila"}];
+
+    var now= new Date();
+
+    console.log("idKirolElkarteak:" + req.session.idKirolElkarteak);
+    var id = req.session.idKirolElkarteak;
+
+    var input = JSON.parse(JSON.stringify(req.body));
+    //var id = req.params.id;
+    var id = req.session.idKirolElkarteak;
+    var idPartaideak = req.params.idPartaideak;
+//    res.locals.flash = null;
+   var admin = (req.path.slice(0,6) == "/admin");
+  var generoa = [{izena: "Neska"}, {izena: "Mutila"}];    
+
+    //Errore kontrolak
+    if(!req.body.nanPart.match(VALID_DNI_REGEX)) {
+    if(req.xhr) return res.json({ error: 'Invalid DNI' });
+    res.locals.flash = {   
+      type: 'danger',
+      intro: 'Adi!',
+      message: 'NANa ez da zuzena',
+    };
+  }
+
+    else if(!req.body.telefonoaPart.match(VALID_TEL_REGEX)) {
+    if(req.xhr) return res.json({ error: 'Invalid telefono' });
+    res.locals.flash = {
+      type: 'danger',
+      intro: 'Adi!',
+      message: 'Telefonoa ez da zuzena',
+    };
+  }
+
+  else if(!req.body.emailPart.match(VALID_EMAIL_REGEX)) {
+    if(req.xhr) return res.json({ error: 'Invalid mail' });
+    res.locals.flash = {
+      type: 'danger',
+      intro: 'Adi!',
+      message: 'Emaila ez da zuzena',
+    };
+  }
+
+  else if(req.body.pasahitzaPart != req.body.pasahitzaPart2) {
+    if(req.xhr) return res.json({ error: 'Invalid password' });
+    res.locals.flash = {
+      type: 'danger',
+      intro: 'Adi!',
+      message: 'Pasahitzak ez dira berdinak',
+    };
+  }
+
+  else if(req.body.emailPart != req.body.emailPart2) {
+    if(req.xhr) return res.json({ error: 'Invalid mail' });
+    res.locals.flash = {
+      type: 'danger',
+      intro: 'Adi!',
+      message: 'Emailak ez dira berdinak',
+    };
+  }
+
+  req.getConnection(function (err, connection) {
+
+
+      connection.query('SELECT * FROM ordaintzekoErak where idElkarteakOrdaintzekoErak = ? order by idOrdaintzekoErak asc',[id],function(err,rowso) {
+            
+        if(err)
+           console.log("Error Selecting : %s ",err );
+
+         for(var i in rowso ){
+                  if(req.body.idOrdaintzekoEraPart == rowso[i].idOrdaintzekoErak){
+                    rowso[i].aukeratua = true;
+                  }
+                  else
+                    rowso[i].aukeratua = false;
+          }
+
+          for(var i in generoa ){
+                  if(req.body.sexuaPart == generoa[i].izena){
+                    generoa[i].aukeratua = true;
+                  }
+                  else
+                    generoa[i].aukeratua = false;
+          }
+
+ 
+      if(res.locals.flash != null){
+
+        //Erroreak badaude "local.flash" aldagaian gordeak, itzuli balioak errorearekin
+         return res.render('partaideakgehitu.handlebars', {
+            title : 'Partaideak-Izen-ematea',
+             partaidea : req.session.partaidea,
+            idKirolElkarteak : req.session.idKirolElkarteak,
+
+            izenaPart    : req.body.izenaPart,
+            abizena1Part : req.body.abizena1Part,
+            abizena2Part : req.body.abizena2Part,
+            bazkideZenbPart: req.body.bazkideZenbPart,
+            helbideaPart: req.body.helbideaPart,
+            postaKodeaPart : req.body.postaKodeaPart,
+            nanPart : req.body.nanPart,
+            herriaPart : req.body.herriaPart,
+            telefonoaPart : req.body.telefonoaPart,
+            emailPart : req.body.emailPart,
+            //idElkarteakPart : id,
+            jaiotzeDataPart: req.body.jaiotzeDataPart,
+            sexuaPart: req.body.sexuaPart,
+            //pasahitzaPart:   password_hash,  
+            berezitasunakPart: req.body.berezitasunakPart,
+            idOrdaintzekoEraPart: req.body.idOrdaintzekoEraPart,
+            kontuZenbPart: req.body.kontuZenbPart,
+            ordaintzekoErak : rowso,
+            generoa : generoa             
+
+          } );
+      }
+
+      connection.query('SELECT * FROM partaideak where idElkarteakPart= ? and nanPart = ?',[req.session.idKirolElkarteak, req.body.nanPart],function(err,rows)  {
+            
+        if(err || rows.length != 0){
+           res.locals.flash = {
+            type: 'danger',
+            intro: 'Adi!',
+            message: 'NAN zenbaki horrekin partaide bat sortuta dago! Elkartearekin harremanetan jar zaitez.',
+           };
+
+           //NAN berdineko partaidea existitzen bada, errorea dago eta balioak itzuli formulategian
+          return res.render('partaideakgehitu.handlebars', {
+            title : 'Partaideak-Izen-ematea',
+            partaidea : req.session.partaidea,
+            idKirolElkarteak : req.session.idKirolElkarteak,
+
+            izenaPart    : req.body.izenaPart,
+            abizena1Part : req.body.abizena1Part,
+            abizena2Part : req.body.abizena2Part,
+            bazkideZenbPart: req.body.bazkideZenbPart,
+            helbideaPart: req.body.helbideaPart,
+            postaKodeaPart : req.body.postaKodeaPart,
+            nanPart : req.body.nanPart,
+            herriaPart : req.body.herriaPart,
+            telefonoaPart : req.body.telefonoaPart,
+            emailPart : req.body.emailPart,
+            //idElkarteakPart : id,
+            jaiotzeDataPart: req.body.jaiotzeDataPart,
+            sexuaPart: req.body.sexuaPart,
+            //pasahitzaPart:   password_hash,  
+            berezitasunakPart: req.body.berezitasunakPart,
+            idOrdaintzekoEraPart: req.body.idOrdaintzekoEraPart,
+            kontuZenbPart: req.body.kontuZenbPart,
+            ordaintzekoErak : rowso,
+            generoa : generoa                  
+
+          } );
+        }
+        connection.query('SELECT * FROM elkarteak where idElkarteak = ?',[req.session.idKirolElkarteak],function(err,rowst){          
+            
+            if(err)
+                console.log("Error inserting : %s ",err );
+        // Generate password hash
+            var salt = bcrypt.genSaltSync();
+            var password_hash = bcrypt.hashSync(input.pasahitzaPart, salt);
+            //var elkartea = rowst.izenaElk;
+            console.log("Hau da elkartea: "+rowst[0].idElkarteak);
+            console.log("Elkartea:" +JSON.stringify(rowst));
+            //console.log("Hau da elkarte id: "+req.session.idKirolElkarteak);
+
+          
+
+             var data = { //Partaidearen datuak
+              izenaPart    : input.izenaPart,
+              abizena1Part : input.abizena1Part,
+              abizena2Part : input.abizena2Part,
+              bazkideZenbPart: input.bazkideZenbPart,
+              helbideaPart: input.helbideaPart,
+              postaKodeaPart : input.postaKodeaPart,
+              nanPart : input.nanPart,
+              herriaPart : input.herriaPart,
+              telefonoaPart : input.telefonoaPart,
+              emailPart : input.emailPart,
+              idElkarteakPart : id,
+              jaiotzeDataPart: input.jaiotzeDataPart,
+              sexuaPart: input.sexuaPart,
+              pasahitzaPart:   password_hash,  
+              berezitasunakPart: input.berezitasunakPart,
+              idOrdaintzekoEraPart: input.idOrdaintzekoEraPart,
+              kontuZenbPart: input.kontuZenbPart,                  
+              balidatutaPart : "0"
+            };
+
+            var query = connection.query("INSERT INTO partaideak set ? ",data, function(err, rows)
+           {
+  
+            if (err)
+              console.log("Error inserting : %s ",err );
+
+        //Enkriptatu partaide zenbakia. Zenbaki hau aldatuz gero, partaidea balidatu ere aldatu!
+         var partaideZenbakia= rows.insertId * 3456789;
+         //var mailaizena;   
+         var to = input.emailPart;
+         var subj = "Ongi-etorri " + data.izenaPart +" "+ data.abizena1Part+ " " + data.abizena2Part;
+         var hosta = req.hostname;
+         if (process.env.NODE_ENV != 'production'){ 
+          hosta += ":"+ (process.env.PORT || 3000);
+         }
+         /*for(var i in rowsm ){
+          if(data.kategoria == rowsm[i].idmaila){
+            mailaizena = rowsm[i].mailaizena;
+          }
+         }*/
+
+         //Partaidea sortzeko bidaliko den mezua BALIDAZIO LINKAREKIN
+         var body = "<p>"+rowst[0].izenaElk+" elkartean partaidetza balidatu ahal izateko, </p>";
+         body += "<h3> klik egin: http://"+hosta+"/partaideakbalidatu/" + partaideZenbakia+ ". </h3>";
+         body += "<p> Ez bazaizu klikatzeko link moduan agertzen, kopiatu eta pegatu nabigatzailean. </p>";
+         body += "<p>Ondoren, login egin ziurtatzeko dena ongi dagoela.</p>";
+         body += "<p>Mila esker!</p>";
+          req.session.idPartaideak = rows.insertId;
+          emailService.send(to, subj, body);
+          
+          res.render('partaideakeskerrak.handlebars', {title: "Mila esker!", partaideizena:data.izenaPart, elkarteizena:rowst[0].izenaElk, emailPart:data.emailPart, atalak: req.session.atalak, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia,idPartaideak:req.session.idPartaideak, arduraduna:req.session.arduraduna});
+          });
+        });
+       }); 
+      });
+    });
+  //});
+};
+exports.aldatu2 = function(req,res){
     var input = JSON.parse(JSON.stringify(req.body));
     //var id = req.params.id;
     var id = req.session.idKirolElkarteak;
