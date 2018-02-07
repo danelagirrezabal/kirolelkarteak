@@ -410,7 +410,7 @@ app.post('/admin/atalakaldatu/:idAtalak', adminonartua, kirolElkarteak.atalakald
 app.get('/admin/azpiAtalak/:idAtalak', adminonartua, kirolElkarteak.azpiAtalakbilatu);
 app.post('/admin/azpiAtalaksortu/:idAtalak', adminonartua, kirolElkarteak.azpiAtalaksortu);
 app.post('/admin/azpiAtalakgehitu/:idAtalak', adminonartua, function(req, res){
-    res.render('azpiAtalaksortu.handlebars', {title : 'KirolElkarteak-AzpiAtalak gehitu', partaidea: req.session.partaidea, idAtalak: req.params.idAtalak});
+    res.render('azpiatalaksortu.handlebars', {title : 'KirolElkarteak-AzpiAtalak gehitu', partaidea: req.session.partaidea, idAtalak: req.params.idAtalak});
 });
 app.get('/admin/azpiAtalakezabatu/:idAzpiAtalak', adminonartua, kirolElkarteak.azpiAtalakezabatu);
 app.get('/admin/azpiAtalakeditatu/:idAzpiAtalak', adminonartua, kirolElkarteak.azpiAtalakeditatu);
