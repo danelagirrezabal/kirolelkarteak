@@ -1481,3 +1481,30 @@ exports.partiduemaitzakgordeadmin = function(req,res){
     });
 };
 
+exports.partiduemaitzabidali = function(req,res){
+    
+//    var idEnkript = req.params.id;
+    var emaitza = req.params.emaitza;
+
+    //ADI! partaideasortu-n aldatu balio hau aldatuz gero
+    var idPartidua = req.params.id / 3456789;
+    
+    req.getConnection(function (err, connection) {
+        
+        var data = {
+            
+            emaitzaPartidu : emaitza
+        };
+        
+        connection.query("UPDATE partiduak set ? WHERE idPartiduak = ? ",[data, idPartidua], function(err, rows)
+        {
+  
+          if (err)
+              console.log("Error Updating : %s ",err );
+         
+//          res.redirect('/login');
+          
+        });
+    
+    });
+};

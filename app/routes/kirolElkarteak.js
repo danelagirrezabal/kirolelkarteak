@@ -416,7 +416,7 @@ exports.edukiaksortu = function(req,res){
             dataEdukia: now,
             idElkarteakEdukia : id,
             idAzpiAtalakEdukia: idAzpiAtalak,
-            zenbakiEdukia: 0
+            zenbakiEdukia: input.zenbakiEdukia
         };
         
   
@@ -603,10 +603,10 @@ exports.edukietarakoazpiatalaklortu = function(req, res){
   }); 
 };
 
-exports.edukiakikusi = function(req, res){
+exports.edukiakhasiera = function(req, res){
   var id = req.session.idKirolElkarteak;
   var idAtalak = req.params.idAtalak;
-
+  var admin=(req.session.erabiltzaile == "admin");
   if (idAtalak == null)
     idAtalak=req.session.atalak[0].idAtalak;
 
@@ -622,7 +622,262 @@ exports.edukiakikusi = function(req, res){
   req.getConnection(function(err,connection){
        
      
-     connection.query('SELECT * FROM edukiak, azpiAtalak where idElkarteakEdukia = ? and idAzpiAtalakEdukia = idAzpiAtalak and idAtalakAzpiAtala = ? and zenbakiAzpiAtala != ? order by zenbakiAzpiAtala asc, zenbakiEdukia asc,  dataEdukia desc',[id, idAtalak, 0],function(err,rows)     {
+     connection.query('SELECT * FROM edukiak, azpiAtalak where idElkarteakEdukia = ? and idAzpiAtalakEdukia = idAzpiAtalak and zenbakiAzpiAtala != ? and zenbakiEdukia != ? order by zenbakiEdukia asc,  dataEdukia desc',[id, 0, 0],function(err,rows)     {
+            
+        if(err)
+           console.log("Error Selecting : %s ",err );
+         
+     
+        connection.query('SELECT * FROM elkarteak where idElkarteak = ? ',[id],function(err,rowst)     {
+          
+          if(err)
+           console.log("Error Selecting : %s ",err );
+          
+
+          //for (var i in rows){
+            //rows[i].testuaBerria=rows[i].testuaBerria.replace(/\r?\n/g, "<br>");
+
+          //}
+
+
+          for (var i in rows) {
+  
+          
+          if(vAzpiAtalak != rows[i].idAzpiAtalak){
+            if(vAzpiAtalak !=null){
+              azpiAtala.edukiak = edukiak;
+              azpiAtalak[t] = azpiAtala;
+              t++;
+            }
+            vAzpiAtalak = rows[i].idAzpiAtalak;
+            edukiak = []; 
+            j=0;
+          
+            azpiAtala = {
+                  idAzpiAtalak    : rows[i].idAzpiAtalak,
+                  izenaAzpiAtala : rows[i].izenaAzpiAtala
+               };
+               
+          }
+
+          var testuahtml = md(rows[i].testuaEdukia);
+
+          rows[i].htmlEdukia = testuahtml;
+
+          //console.log("HTML:   " + JSON.stringify(testuahtml));
+          edukiak[j] = {
+                  idEdukiak    : rows[i].idEdukiak,
+                  izenburuaEdukia : rows[i].izenburuaEdukia,
+                  testuaEdukia: rows[i].testuaEdukia,
+                  htmlEdukia : testuahtml
+               };
+          j++;
+       
+     }
+        if(vAzpiAtalak !=null){
+              azpiAtala.edukiak = edukiak;
+              azpiAtalak[t] = azpiAtala;
+              //atala.azpiAtalak = azpiAtalak;
+              //atalak[k] = atala;
+              //k++;
+            }
+
+
+          //console.log("Rows:" +JSON.stringify(rows));
+          //connection.end();
+
+//      if(req.session.erabiltzaile == "admin"){
+//          res.redirect('/kirolElkarteakeditatu');
+//      }else{
+          res.render('edukiakhasiera.handlebars',{title: "kirolElkarteak", azpiAtalak:azpiAtalak, data:rows, data2: rowst,menuadmin:admin, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, atalak: req.session.atalak, partaidea: req.session.partaidea, idPartaideak:req.session.idPartaideak, arduraduna:req.session.arduraduna});
+//      }
+
+
+          //connection.end();
+        });  
+
+      });   
+
+  });
+           //res.render('edukiakikusi.handlebars',{title: "kirolElkarteak", jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, atalak: req.session.atalak, partaidea: req.session.partaidea});
+
+};
+
+exports.atalakikusi = function(req, res){
+  var id = req.session.idKirolElkarteak;
+  var idAtalak = req.params.idAtalak;
+  var admin=(req.session.erabiltzaile == "admin");
+  if (idAtalak == null)
+    idAtalak=req.session.atalak[0].idAtalak;
+
+  //var atalak = []; //egunak
+  //var atala = {}; //eguna
+  var azpiAtalak = []; //lekuak
+  var azpiAtala = {}; //lekua
+  var edukiak = []; //partiduak
+  var j,t=0;
+  //var k = 0;
+  var vAtalak, vAzpiAtalak;
+
+   req.getConnection(function(err,connection){
+       
+      connection.query('SELECT * FROM edukiak, azpiAtalak where idElkarteakEdukia = ? and idAzpiAtalakEdukia = idAzpiAtalak and idAtalakAzpiAtala = ? and zenbakiAzpiAtala != ? and zenbakiEdukia != ? order by zenbakiAzpiAtala asc, zenbakiEdukia asc,  dataEdukia desc',[id, idAtalak, 0, 0],function(err,rows)     {
+            
+        if(err)
+           console.log("Error Selecting : %s ",err );
+         
+     
+        connection.query('SELECT * FROM elkarteak where idElkarteak = ? ',[id],function(err,rowst)     {
+          
+          if(err)
+           console.log("Error Selecting : %s ",err );
+          
+
+          for (var i in rows) {
+  
+          
+           if(vAzpiAtalak != rows[i].idAzpiAtalak){
+            if(vAzpiAtalak !=null){
+              azpiAtala.edukiak = edukiak;
+              azpiAtalak[t] = azpiAtala;
+              t++;
+            }
+            vAzpiAtalak = rows[i].idAzpiAtalak;
+            edukiak = []; 
+            j=0;
+          
+            azpiAtala = {
+                  idAzpiAtalak    : rows[i].idAzpiAtalak,
+                  izenaAzpiAtala : rows[i].izenaAzpiAtala
+               };
+           }
+
+           var testuahtml = md(rows[i].testuaEdukia);
+
+           edukiak[j] = {
+                  idEdukiak    : rows[i].idEdukiak,
+                  izenburuaEdukia : rows[i].izenburuaEdukia,
+                  testuaEdukia: rows[i].testuaEdukia,
+                  htmlEdukia : testuahtml
+               };
+           j++;
+          }
+          if(vAzpiAtalak !=null){
+              azpiAtala.edukiak = edukiak;
+              azpiAtalak[t] = azpiAtala;
+              //atala.azpiAtalak = azpiAtalak;
+              //atalak[k] = atala;
+              //k++;
+          }
+
+          res.render('edukiakikusi.handlebars',{title: "kirolElkarteak", azpiAtalak:azpiAtalak, data:rows, data2: rowst,menuadmin:admin, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, atalak: req.session.atalak, partaidea: req.session.partaidea, idPartaideak:req.session.idPartaideak, arduraduna:req.session.arduraduna});
+
+        });  
+
+      });   
+
+  });
+
+};
+
+exports.azpiatalakikusi = function(req, res){
+  var id = req.session.idKirolElkarteak;
+  var idAzpiAtalak = req.params.idAzpiAtalak;
+  var admin=(req.session.erabiltzaile == "admin");
+  //if (idAtalak == null)
+  //  idAtalak=req.session.atalak[0].idAtalak;
+
+  //var atalak = []; //egunak
+  //var atala = {}; //eguna
+  var azpiAtalak = []; //lekuak
+  var azpiAtala = {}; //lekua
+  var edukiak = []; //partiduak
+  var j,t=0;
+  //var k = 0;
+  var vAtalak, vAzpiAtalak;
+ 
+  req.getConnection(function(err,connection){
+       
+     
+     connection.query('SELECT * FROM edukiak, azpiAtalak where idElkarteakEdukia = ? and idAzpiAtalakEdukia = idAzpiAtalak and idAzpiAtalak = ? and zenbakiEdukia != ? order by zenbakiAzpiAtala asc, zenbakiEdukia asc,  dataEdukia desc',[id, idAzpiAtalak, 0],function(err,rows)     {
+            
+        if(err)
+           console.log("Error Selecting : %s ",err );
+         
+     
+        connection.query('SELECT * FROM elkarteak where idElkarteak = ? ',[id],function(err,rowst)     {
+          
+          if(err)
+           console.log("Error Selecting : %s ",err );
+          
+
+          for (var i in rows) {
+  
+          
+           if(vAzpiAtalak != rows[i].idAzpiAtalak){
+            if(vAzpiAtalak !=null){
+              azpiAtala.edukiak = edukiak;
+              azpiAtalak[t] = azpiAtala;
+              t++;
+            }
+            vAzpiAtalak = rows[i].idAzpiAtalak;
+            edukiak = []; 
+            j=0;
+          
+            azpiAtala = {
+                  idAzpiAtalak    : rows[i].idAzpiAtalak,
+                  izenaAzpiAtala : rows[i].izenaAzpiAtala
+               };
+           }
+
+           var testuahtml = md(rows[i].testuaEdukia);
+
+           edukiak[j] = {
+                  idEdukiak    : rows[i].idEdukiak,
+                  izenburuaEdukia : rows[i].izenburuaEdukia,
+                  testuaEdukia: rows[i].testuaEdukia,
+                  htmlEdukia : testuahtml
+               };
+           j++;
+          }
+          if(vAzpiAtalak !=null){
+              azpiAtala.edukiak = edukiak;
+              azpiAtalak[t] = azpiAtala;
+              //atala.azpiAtalak = azpiAtalak;
+              //atalak[k] = atala;
+              //k++;
+          }
+
+          res.render('edukiakikusi.handlebars',{title: "kirolElkarteak", azpiAtalak:azpiAtalak, data:rows, data2: rowst,menuadmin:admin, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, atalak: req.session.atalak, partaidea: req.session.partaidea, idPartaideak:req.session.idPartaideak, arduraduna:req.session.arduraduna});
+
+        });  
+
+      });   
+
+  });
+
+};
+
+exports.edukiakikusi = function(req, res){
+  var id = req.session.idKirolElkarteak;
+  var idEdukiak = req.params.idEdukiak;
+  var admin=(req.session.erabiltzaile == "admin");
+  //if (idAtalak == null)
+  //  idAtalak=req.session.atalak[0].idAtalak;
+
+  //var atalak = []; //egunak
+  //var atala = {}; //eguna
+  var azpiAtalak = []; //lekuak
+  var azpiAtala = {}; //lekua
+  var edukiak = []; //partiduak
+  var j,t=0;
+  //var k = 0;
+  var vAtalak, vAzpiAtalak;
+ 
+  req.getConnection(function(err,connection){
+       
+     
+     connection.query('SELECT * FROM edukiak, azpiAtalak where idElkarteakEdukia = ? and idAzpiAtalakEdukia = idAzpiAtalak and idEdukiak = ? and zenbakiEdukia != ? order by zenbakiAzpiAtala asc, zenbakiEdukia asc,  dataEdukia desc',[id, idEdukiak, 0],function(err,rows)     {
             
         if(err)
            console.log("Error Selecting : %s ",err );
@@ -683,12 +938,11 @@ exports.edukiakikusi = function(req, res){
           //console.log("Rows:" +JSON.stringify(rows));
           //connection.end();
 
-      if(req.session.erabiltzaile == "admin"){
-          res.redirect('/kirolElkarteakeditatu');
-      }else{
-          res.render('edukiakikusi.handlebars',{title: "kirolElkarteak", azpiAtalak:azpiAtalak, data:rows, data2: rowst, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, atalak: req.session.atalak, partaidea: req.session.partaidea, idPartaideak:req.session.idPartaideak, arduraduna:req.session.arduraduna});
-
-      }
+//      if(req.session.erabiltzaile == "admin"){
+//          res.redirect('/kirolElkarteakeditatu');
+//      }else{
+          res.render('edukiakikusi.handlebars',{title: "kirolElkarteak", azpiAtalak:azpiAtalak, data:rows, data2: rowst,menuadmin:admin, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, atalak: req.session.atalak, partaidea: req.session.partaidea, idPartaideak:req.session.idPartaideak, arduraduna:req.session.arduraduna});
+//      }
 
 
           //connection.end();
@@ -829,9 +1083,10 @@ exports.edukiakaldatu = function(req,res){
             
             izenburuaEdukia    : input.izenburuaEdukia,
             testuaEdukia   : input.testuaEdukia,
+            zenbakiEdukia: input.zenbakiEdukia,
             //dataBerria: now,
             idElkarteakEdukia : id
-            //zenbakiBerria: input.zenbakiBerria
+
             //argazkia
         };
         
@@ -921,7 +1176,7 @@ exports.atalaksortu = function(req,res){
     });
 };
 
-exports.atalakikusi = function(req, res){
+exports.atalakikusi2 = function(req, res){
   var id = req.session.idKirolElkarteak;
 
   req.getConnection(function(err,connection){

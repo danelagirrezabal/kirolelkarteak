@@ -265,7 +265,7 @@ function adminKirolElkarteaonartua(req, res, next){
 //Rutak
 
 
-app.get('/', authorize2, kirolElkarteak.edukiakikusi);
+app.get('/', authorize2, kirolElkarteak.edukiakhasiera);
 //app.get('/', kirolElkarteak.edukiakikusi);
 app.get('/taldeak',authorize2, taldeak.taldeakikusipartaide);
  
@@ -394,7 +394,9 @@ app.get('/admin/edukiakezabatu/:idEdukiak', adminonartua, kirolElkarteak.edukiak
 app.get('/admin/edukiakeditatu/:idEdukiak', adminonartua, kirolElkarteak.edukiakeditatu);
 app.post('/admin/edukiakaldatu/:idEdukiak', adminonartua, kirolElkarteak.edukiakaldatu);
 
-app.get('/edukiak/:idAtalak', authorize2, kirolElkarteak.edukiakikusi);
+app.get('/atalak/:idAtalak', authorize2, kirolElkarteak.atalakikusi);
+app.get('/azpiatalak/:idAzpiAtalak', authorize2, kirolElkarteak.azpiatalakikusi);
+app.get('/edukiak/:idEdukiak', authorize2, kirolElkarteak.edukiakikusi);
 
 app.get('/admin/atalak', adminonartua, kirolElkarteak.atalakbilatu);
 app.post('/admin/atalaksortu', adminonartua, kirolElkarteak.atalaksortu);
@@ -554,15 +556,13 @@ app.post('/admin/emaitzakgorde/:idPartidua', adminonartua, authorize2, denborald
 app.get('/emaitzaksartu/:idPartidua', authorizeArduradun, authorize2, denboraldiak.partiduemaitzaksartuadmin);
 app.post('/emaitzakgorde/:idPartidua', authorizeArduradun, authorize2, denboraldiak.partiduemaitzakgordeadmin);
 
-
+app.get('/emaitzabidali/:id/:emaitza', denboraldiak.partiduemaitzabidali);
 
 app.get('/partiduemaitzaktalde/:idTaldeak', authorize2, denboraldiak.partiduemaitzaktalde);
 app.get('/partiduemaitzaktalde/', authorize2, denboraldiak.partiduemaitzaktalde);
 
 app.get('/admin/partiduemaitzaktalde/:idTaldeak', authorize2, denboraldiak.partiduemaitzaktalde);
 app.get('/admin/partiduemaitzaktalde/', authorize2, denboraldiak.partiduemaitzaktalde);
-
-
 
 var server = http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
