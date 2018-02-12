@@ -772,7 +772,8 @@ exports.partiduakaldatu = function(req,res){
             bidaiOrduaPartidu: input.bidaiOrduaPartidu,
             bidaiaNolaPartidu: input.bidaiaNolaPartidu,
             bidaiEgunaPartidu: input.bidaiEgunaPartidu,
-            nonPartidu : input.nonPartidu
+            nonPartidu : input.nonPartidu,
+            bidaiKolorePartidu: input.bidaiKolorePartidu
         };
         
         connection.query("UPDATE partiduak set ? WHERE idElkarteakPartidu = ? and idPartiduak = ? ",[data,id,idPartiduak], function(err, rows)
@@ -985,7 +986,8 @@ console.log(req.path.slice(0,24));
                   emaitzaPartidu : rows[i].emaitzaPartidu,
                   nonPartidu: rows[i].nonPartidu,
                   admin: admin,
-                  jauzi : jauzi
+                  jauzi : jauzi,
+                  bidaiKolorePartidu : rows[i].bidaiKolorePartidu
                };
           j++;
        
@@ -1248,6 +1250,8 @@ exports.partiduemaitzak = function(req, res){
   var id = req.session.idKirolElkarteak;
   var jardunaldia = req.params.jardunaldia;
   var idDenboraldia = req.params.idDenboraldia;
+  var emaitzak=[];
+  var emaitzaPartidu;
   req.session.jardunaldia = jardunaldia;
   req.session.idDenboraldia = idDenboraldia;
   console.log("Jardunaldia:" + jardunaldia);
@@ -1293,7 +1297,34 @@ exports.partiduemaitzak = function(req, res){
                     rows[i].arduraduna = true;
                 else
                     rows[i].arduraduna = false;
-                
+                  debugger;
+                if (rows[i].emaitzaPartidu == "" || rows[i].emaitzaPartidu === null || rows[i].emaitzaPartidu === undefined)
+                     rows[i].kolore = "#000000";
+                else  
+                { 
+                 emaitzak = rows[i].emaitzaPartidu.split("-");
+                 if(rows[i].zenbakiLeku >= 9)    // Kanpoko partiduak
+                 {
+                  if(emaitzak[0] < emaitzak[1])
+                     rows[i].kolore = "#00F000";     // berde ilunez irabazitakoak
+                  else
+                   if(emaitzak[0] > emaitzak[1])     // gorriz   galdutakoak
+                     rows[i].kolore = "#FF0000";
+                   else
+                     rows[i].kolore = "#0000FF";     // urdinez   berdindutakoak
+                 }
+                 else                            // Etxeko partiduak
+                  {
+                  if(emaitzak[0] > emaitzak[1])
+                     rows[i].kolore = "#00F000";
+                  else
+                   if(emaitzak[0] < emaitzak[1])
+                     rows[i].kolore = "#FF0000";
+                   else
+                     rows[i].kolore = "#0000FF";  
+                  }  
+                }     
+            
               }
 
           res.render('emaitzak.handlebars',{title: "Emaitzak", data:rows, denboraldiak:rowsdenb, jardunaldiak:rowsd,jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, atalak: req.session.atalak, partaidea: req.session.partaidea, idPartaideak:req.session.idPartaideak, arduraduna:req.session.arduraduna});
@@ -1503,8 +1534,10 @@ exports.partiduemaitzabidali = function(req,res){
               console.log("Error Updating : %s ",err );
          
 //          res.redirect('/login');
-          
+
+          connection.end();
+
         });
-    
+//          connection.end();    
     });
 };
