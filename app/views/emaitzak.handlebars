@@ -3,15 +3,34 @@
    <div class="jumbotron">
         <h2>Emaitzak</h2>
       </div>
-      </br>
+<!--      </br>
       <a href="/partiduemaitzaktalde/" class="btn btn-primary btn-bg" role="button">EMAITZAK TALDEKA IKUSI</a>
 
        </br>
         </br></br>
+
        <div class="form-group">
 
-            <label for="denboraldia" class="col-sm-2 control-label">Denboraldia:</label>
+            <label for="taldea" class="col-sm-2 control-label">TALDEKA IKUSI:</label>
             <div class="col-sm-4">
+            <select name="taldea" id="taldea">
+                <option value="">-- Aukeratu taldea --</option>
+                {{#each taldeak}}
+                    {{#if aukeratua}}
+                       <option value="{{idTaldeak}}" selected>{{izenaTalde}} - {{izenaMaila}}</option>
+                    {{else}}
+                       <option value="{{idTaldeak}}">{{izenaTalde}} - {{izenaMaila}}</option>
+                    {{/if}}
+                {{/each}}
+            </select>
+            </div>
+           
+        </div>
+-->
+       <div class="form-group">
+
+            <label for="denboraldia" class="col-sm-1 control-label">Denboraldia:</label>
+            <div class="col-sm-2">
             <select name="denboraldia" id="denboraldia">
                 <!--<option value="">--Aukeratu denboraldia--</option>-->
                 {{#each denboraldiak}}
@@ -24,8 +43,8 @@
             </select>
             </div>
 
-            <label for="jardunaldia" class="col-sm-2 control-label">Jardunaldia:</label>
-            <div class="col-sm-4">
+            <label for="jardunaldia" class="col-sm-1 control-label">Jardunaldia:</label>
+            <div class="col-sm-2">
             <select name="jardunaldia" id="jardunaldia">
                 <option value="">--Aukeratu jardunaldia--</option>
                 {{#each jardunaldiak}}
@@ -37,6 +56,21 @@
                 {{/each}}
             </select>
             </div>
+
+            <label for="taldea" class="col-sm-1 control-label">TALDEKA :</label>
+            <div class="col-sm-2">
+            <select name="taldea" id="taldea">
+                <option value="">-- Aukeratu taldea --</option>
+                {{#each taldeak}}
+                    {{#if aukeratua}}
+                       <option value="{{idTaldeak}}" selected>{{izenaTalde}} - {{izenaMaila}}</option>
+                    {{else}}
+                       <option value="{{idTaldeak}}">{{izenaTalde}} - {{izenaMaila}}</option>
+                    {{/if}}
+                {{/each}}
+            </select>
+            </div>
+
         </div>
       </br></br>
       <div class="row marketing">
@@ -107,6 +141,21 @@
         $(location).attr('href', '/partiduemaitzak/'+$('#denboraldia').val()+'/'+$('#jardunaldia').val());
      
     });
+
+  var taldea = $('#taldea').val();  
+
+    $('#taldea').change(function(){
+
+        var data = 'id=' + $('#taldea').val();
+        
+        if ($('#admin').val()){
+          $(location).attr('href', '/admin/partiduemaitzaktalde/'+$('#taldea').val());
+        }
+        else{
+          $(location).attr('href', '/partiduemaitzaktalde/'+$('#taldea').val());
+        }
+     
+    });    
 });
             
 </script> 

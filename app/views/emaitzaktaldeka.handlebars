@@ -9,7 +9,7 @@
    <div class="jumbotron">
         <h2>Emaitzak taldeka</h2>
       </div>
-      </br></br>
+<!--      </br></br>                  -->
        <div class="form-group">
 
             <label for="taldea" class="col-sm-2 control-label">Taldea:</label>
@@ -42,18 +42,28 @@
                 </tr>          
 
             {{#each data}}
-                  <tr class="active">
+                  <tr class="active" style="color: {{kolore}}">
                     <td>{{dataPartidu}}</td>  
                     <td>{{izenaMaila}}</td> 
                     <td>{{txapelketaPartidu}}</td>  
                     <td>{{etxekoaPartidu}}</td>   
                     <td>{{kanpokoaPartidu}}</td> 
-                    <td>{{emaitzaPartidu}}</td> 
+ 
                     {{#if arduraduna}}
+                      <td>{{emaitzaPartidu}}</td>
                       <td><a class="a-inside edit" href="/emaitzaksartu/{{idPartiduak}}">Emaitza sartu</a></td> 
                     {{/if}}
+
                     {{#if adminis}}
-                      <td><a class="a-inside edit" href="/admin/emaitzaksartu/{{idPartiduak}}">Emaitza sartu</a></td> 
+<!--                      <td><a class="a-inside edit" href="/admin/emaitzaksartu/{{idPartiduak}}">Emaitza sartu</a></td>   -->
+                    <form class="form-horizontal newsletterForm" role="form" action="/admin/emaitzaktaldekagorde/{{idPartiduak}}" method="POST">
+
+                     <td><textarea name="emaitzaPartidu" rows="1" cols="5" class="form-control" required id="emaitzaPartidu" placeholder="0-0" value={{emaitzaPartidu}}>{{emaitzaPartidu}}</textarea></td>
+                     <td>
+                        <button type="submit" class="btn btn-default">Gorde</button>
+                     </td>
+                    </form>
+
                     {{/if}}
                 </tr>
             {{/each}}

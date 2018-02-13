@@ -552,6 +552,7 @@ app.get('/admin/partiduemaitzak/:idDenboraldia/:jardunaldia', adminonartua, auth
 
 app.get('/admin/emaitzaksartu/:idPartidua', adminonartua, authorize2, denboraldiak.partiduemaitzaksartuadmin);
 app.post('/admin/emaitzakgorde/:idPartidua', adminonartua, authorize2, denboraldiak.partiduemaitzakgordeadmin);
+app.post('/admin/emaitzaktaldekagorde/:idPartidua', adminonartua, authorize2, denboraldiak.partiduemaitzakgordeadmin);
 
 app.get('/emaitzaksartu/:idPartidua', authorizeArduradun, authorize2, denboraldiak.partiduemaitzaksartuadmin);
 app.post('/emaitzakgorde/:idPartidua', authorizeArduradun, authorize2, denboraldiak.partiduemaitzakgordeadmin);
