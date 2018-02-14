@@ -7,6 +7,20 @@ var VALID_TEL_REGEX = /^[0-9-()+]{3,20}/;
   var bcrypt = require('bcrypt-nodejs');
   var md = require('marked');
 
+  var credentials = require('../credentials.js');
+  var Twitter = require('twit');
+  var twitter = new Twitter(credentials.twitter);
+/*            
+              twitter.get('followers/list', { screen_name: 'zkeskubaloia' }, function (err, data, response) {
+                  if (err) {
+                        console.log(err);
+                  } else {
+                      data.users.forEach(function(user){
+                        console.log(user.screen_name);
+                      });
+                  }
+              }); 
+*/
 // make sure data directory exists
 //var dataDir = path.normalize(path.join(__dirname, '..', 'data'));
 var dataDir = path.normalize(path.join(__dirname, '../public', 'data'));
@@ -419,7 +433,6 @@ exports.edukiaksortu = function(req,res){
             zenbakiEdukia: input.zenbakiEdukia
         };
         
-  
         var query = connection.query("INSERT INTO edukiak set ? ",data, function(err, rows)
         {
   
@@ -439,6 +452,20 @@ exports.edukiaksortu = function(req,res){
                 }
               });
           }*/
+
+          if (input.bidali){
+            
+              var status = input.izenburuaEdukia + " - http://zarauzkoeskubaloia.herokuapp.com/";
+
+              twitter.post('statuses/update', { status: status }, function (err, data, response) {
+                  if (err) {
+                        console.log(err);
+                  } else {
+                        console.log(data.text + ' txiotu da');
+                  }
+              });
+          }
+
           res.redirect('/admin/edukiak');
         });
         
@@ -548,16 +575,27 @@ exports.edukiakosoriksortu = function(req,res){
             var query = connection.query("INSERT INTO edukiak set ? ",dataedukia, function(err, rows)
             {
   
-                  if (err)
+                if (err)
                     console.log("Error inserting : %s ",err );
 
+                if (input.bidali){
+            
+                 var status = input.izenburuaEdukia + " - http://zarauzkoeskubaloia.herokuapp.com/";
 
+                 twitter.post('statuses/update', { status: status }, function (err, data, response) {
+                   if (err) {
+                        console.log(err);
+                   } else {
+                        console.log(data.text + ' txiotu da');
+                   }
+                 });
+                }
         
 
 
                   res.redirect('/admin/edukiak');
 
-                });
+            });
         }
        // console.log(query.sql); 
     

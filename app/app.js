@@ -9,7 +9,8 @@ var formidable = require('formidable');
 
 var fs = require('fs');
 
-var credentials = require('./credentials.js');
+var credentials = require('./credentials.js');    // ADI    var
+
 global.emailService = require('./lib/email.js')(credentials);
 //global.funtzioak = require('./lib/funtzioak.js');
 
@@ -80,8 +81,10 @@ console.log("environment " + process.env.NODE_ENV);
 //if ('development' == app.get('env')) {
 if (process.env.NODE_ENV != 'production'){
   app.use(
-    
-    connection(mysql,{
+
+    connection(mysql, credentials.dbdevelop,'pool') 
+
+/*    connection(mysql,{
         
         host: 'localhost',
         user: 'root',
@@ -90,13 +93,16 @@ if (process.env.NODE_ENV != 'production'){
         database: 'heroku_3a7c26fa617acae'      //kirolElkarteak
     //},'request')
       },'pool')
+*/
  );
               console.log("localhost1" );
 }
 else{
   app.use(
+
+    connection(mysql, credentials.dbproduction,'pool') 
     
-    connection(mysql,{
+/*    connection(mysql,{
         
         host: 'us-cdbr-iron-east-04.cleardb.net',
         user: 'b65e4830d842c6',
@@ -105,6 +111,7 @@ else{
         database:'heroku_3a7c26fa617acae'
     //},'request')
     },'pool')
+*/
  );
               console.log("herokuBerria" );
 }
