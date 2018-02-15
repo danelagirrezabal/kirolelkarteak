@@ -266,6 +266,7 @@ exports.taldeakaldatu = function(req,res){
             idArduradunTalde : input.idArduradunTalde,
             urlSailkapenTalde: input.urlSailkapenTalde,
             idDenboraldiaTalde : input.idDenboraldiaTalde,
+            arbitraiaTalde : input.arbitraiaTalde
         };
         
         connection.query("UPDATE taldeak set ? WHERE idElkarteakTalde = ? and idTaldeak = ?",[data,id, idTaldeak], function(err, rows)

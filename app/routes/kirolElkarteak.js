@@ -2517,9 +2517,11 @@ exports.ordaintzekoerakezabatu = function(req,res){
 exports.mezuakbidali = function(req,res){
     
     var input = JSON.parse(JSON.stringify(req.body));
-    console.log("Bidali:" + input.bidali);
+    console.log("Bidali:" + req.session.jardunaldia);
     var id = req.session.idKirolElkarteak;
-    var taldeak2;
+    var idDenboraldia = req.session.idDenboraldia;
+    var jardunaldia = req.session.jardunaldia;
+    var taldeak2 , idEnkript;
 
     var hosta = req.hostname;
     if (process.env.NODE_ENV != 'production'){ 
@@ -2528,22 +2530,45 @@ exports.mezuakbidali = function(req,res){
 
     req.getConnection(function (err, connection) {
          
-        if(input.mezumota == "prest"){
+        if(input.mezumota == "emarbi"){
 
-            connection.query('SELECT * FROM taldeak,jokalariak where idtaldeak=idtaldej and idtxapeltalde = ? and balidatuta > 0 order by idtaldeak, idjokalari',[req.session.idKirolElkarteak],function(err,rows)     {
+            connection.query('SELECT *,DATE_FORMAT(dataPartidu,"%Y/%m/%d") AS dataPartidu FROM partiduak, mailak, taldeak where idTaldeakPartidu=idTaldeak and idMailak=idMailaTalde and idElkarteakPartidu = ? and jardunaldiDataPartidu = ? order by jardunaldiDataPartidu asc',[id, jardunaldia],function(err,rows) {
+            
               if(err)
-                console.log("Error Selecting : %s ",err );
-              var subj = req.session.txapelketaizena+ " txapelketa prest";
-              var body = "<h2> Txapelketa prest </h2>\n" + 
-                              "<p>"+ req.session.txapelketaizena+ "</p> \n"+
-                              "<h3> Partiduen ordutegia ikusi ahal izateko sartu: http://"+hosta+"</h3>" ;
-              taldeak2 = mezuaknori(input.bidali,subj,body,rows);
+               console.log("Error Selecting : %s ",err );
+              if(input.bidali){
+                  
+                  for (var i in rows){
+                    idEnkript = rows[i].idPartiduak * 3456789;
+                    var to = rows[i].arduradunEmailTalde;
+                    if (rows[i].arbitraiaTalde != 0)
+                     { 
+                      var subj = rows[i].dataPartidu+ "-ko emaitza eta arbitraia sartzeko: "+ rows[i].izenaTalde;
+                      var body = "<h2>"+rows[i].dataPartidu+"-ko emaitza eta arbitraia eguneratzeko:</h2>\n" + 
+                              "<p>"+ rows[i].etxekoaPartidu + " - " + rows[i].kanpokoaPartidu + "</p> \n"+
+                              "<p><h3>XX-YY ordezkatu emaitzagatik, eta ZZZ arbitraiagatik</h3></p> \n"+
+                              "<p><h3> eta klikatu: http://"+hosta+"/emaitzabidali/"+ idEnkript +"/XX-YY/ZZZ</h3>" ;
+                     }
+                    else
+                     {  
+                      var subj = rows[i].dataPartidu+ "-ko emaitza sartzeko: "+ rows[i].izenaTalde;
+                      var body = "<h2>"+rows[i].dataPartidu+"-ko emaitza eguneratzeko:</h2>\n" + 
+                              "<p>"+ rows[i].etxekoaPartidu + " - " + rows[i].kanpokoaPartidu + "</p> \n"+
+                              "<p><h3>XX-YY ordezkatu emaitzagatik</h3></p> \n"+
+                              "<p><h3> eta klikatu: http://"+hosta+"/emaitzabidali/"+ idEnkript +"/XX-YY</h3>" ;
+                     } 
+                      console.log(i + ". mezua1: " + to);
+                      emailService.send(to, subj, body);
+                  //setTimeout(function(){console.log(i + ". mezua1: " + to);},5000);
+//                      doDelay(1000);
+//                      console.log(i + ". mezua2: " + to);
 
-              console.log("Taldeak2: "+JSON.stringify(taldeak2));
+                  }
+              }
 
-              res.render('taldeakadmin.handlebars', {title : 'Txaparrotan-Mezuak', data2:taldeak2, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea: req.session.partaidea} );
+              res.render('taldeakadmin.handlebars', {title : 'KirolElkarteak-Mezuak', data:rows, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea: req.session.partaidea} );
        
-             });
+            });
         }
 
         else if(input.mezumota == "ordgabe"){
@@ -2671,3 +2696,50 @@ function preview(req,res){
   
               
 }
+
+exports.partiduemaitzaeguneratu = function(req,res){
+    
+//    var idEnkript = req.params.id;
+    var emaitza = req.params.emaitza;
+    var arbitraia = req.params.arbitraia;
+
+    //ADI! partaideasortu-n aldatu balio hau aldatuz gero
+    var idPartidua = req.params.id / 3456789;
+    
+    req.getConnection(function (err, connection) {
+        
+        var data = {
+            
+            emaitzaPartidu : emaitza,
+            arbitraiaPartidu : arbitraia
+        };
+        
+        connection.query("UPDATE partiduak set ? WHERE idPartiduak = ? ",[data, idPartidua], function(err, rows)
+        {
+  
+          if (err)
+              console.log("Error Updating : %s ",err );
+         
+//          res.redirect('/login');
+
+          if (input.bidali){
+            
+              var status = rows[i].etxekoaPartidu + " - " + rows[i].kanpokoaPartidu + " : " + emaitza + " - http://zarauzkoeskubaloia.herokuapp.com/";
+
+              twitter.post('statuses/update', { status: status }, function (err, data, response) {
+                  if (err) {
+                        console.log(err);
+                  } else {
+                        console.log(data.text + ' txiotu da');
+                  }
+              });
+          }
+
+          res.end();
+
+//          connection.release();
+
+        });
+//          connection.release();    
+    });
+};

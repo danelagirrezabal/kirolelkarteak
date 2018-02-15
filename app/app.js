@@ -525,10 +525,11 @@ app.post('/admin/taldeargazkiaigo/:idTaldeak', adminonartua, taldeak.taldeargazk
 app.get('/admin/taldekopurua', adminonartua, kudeaketa.taldekopurua);
 app.get('/admin/jokalarikopurua', adminonartua, kudeaketa.jokalarikopurua);
 
-app.get('/admin/kudeaketa', adminonartua, kudeaketa.kalkuluak);
+app.get('/admin/kudeaketa', adminonartua, kudeaketa.kudeaketamenu);
 
-
-
+app.post('/admin/mezuakbidali', adminonartua, kirolElkarteak.mezuakbidali);
+app.post('/admin/arbitraiak', adminonartua, kudeaketa.arbitraiak);
+app.post('/admin/partiduakreset', adminonartua, kudeaketa.partiduakreset);
 
 app.get('/admin/partaidemotak', adminonartua, kirolElkarteak.partaidemotakbilatu);
 app.post('/admin/partaidemotaksortu', adminonartua, kirolElkarteak.partaidemotaksortu);
@@ -565,6 +566,8 @@ app.get('/emaitzaksartu/:idPartidua', authorizeArduradun, authorize2, denboraldi
 app.post('/emaitzakgorde/:idPartidua', authorizeArduradun, authorize2, denboraldiak.partiduemaitzakgordeadmin);
 
 app.get('/emaitzabidali/:id/:emaitza', denboraldiak.partiduemaitzabidali);
+app.get('/emaitzabidali/:id/:emaitza/:arbitraia', denboraldiak.partiduemaitzabidali);
+app.get('/emaitzaeguneratu/:id/:emaitza', kirolElkarteak.partiduemaitzaeguneratu);
 
 app.get('/partiduemaitzaktalde/:idTaldeak', authorize2, denboraldiak.partiduemaitzaktalde);
 app.get('/partiduemaitzaktalde/', authorize2, denboraldiak.partiduemaitzaktalde);

@@ -1,0 +1,38 @@
+{{> menuadmin}}
+ <div class="jumbotron">
+        <h2>Arbitraiak</h2>
+ </div>
+      <a href="/admin/taldeak" class="btn btn-primary btn-sm" role="button">Taldeak ikusi</a>
+      <a href="/admin/jokalarikopurua" class="btn btn-primary btn-sm" role="button">Jokalari kopurua ikusi</a>      
+      </br></br></br>
+      
+      <div class="row marketing">
+        <div class="col-lg-5 col-sm-offset-1">
+        <table class="table table-striped">
+                <tr>
+                    <th>Taldea</th>
+                    <th>Maila</th>
+                    <th>Arduraduna</th>
+                    <th>Jasotako dirua</th>
+                    <th>Ordaindutako arbitraiak</th>
+                </tr> 
+                {{#each taldeak}}
+                   <tr style="color: {{kolore}}">
+                    <td>{{izenaTalde}}</td> 
+                    <td>{{akronimoMaila}} - {{akronimoTalde}}</td>                  
+                    <td>{{arduradunEmailTalde}}</td> 
+                    <td align="center">{{arbitraiaTalde}}</td>  
+                    <td align="center">{{arbitraiaguztira}}</td>               
+                   </tr>                           
+                {{/each}}  
+                <tr>
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                    <td>&nbsp;&nbsp;&nbsp;</td>
+                    <td><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GUZTIRA</b></td> 
+                    <td align="center"><b>{{jasotakoatotala}}</b></td>
+                    <td align="center"><b>{{arbitraiatotala}}</b></td>                
+                   </tr>               
+          </table>
+        </div>
+        
+      </div>

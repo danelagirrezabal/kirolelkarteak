@@ -773,7 +773,8 @@ exports.partiduakaldatu = function(req,res){
             bidaiaNolaPartidu: input.bidaiaNolaPartidu,
             bidaiEgunaPartidu: input.bidaiEgunaPartidu,
             nonPartidu : input.nonPartidu,
-            bidaiKolorePartidu: input.bidaiKolorePartidu
+            bidaiKolorePartidu: input.bidaiKolorePartidu,
+            arbitraiaPartidu : input.arbitraiaPartidu
         };
         
         connection.query("UPDATE partiduak set ? WHERE idElkarteakPartidu = ? and idPartiduak = ? ",[data,id,idPartiduak], function(err, rows)
@@ -1601,6 +1602,7 @@ exports.partiduemaitzabidali = function(req,res){
     
 //    var idEnkript = req.params.id;
     var emaitza = req.params.emaitza;
+    var arbitraia = req.params.arbitraia;
 
     //ADI! partaideasortu-n aldatu balio hau aldatuz gero
     var idPartidua = req.params.id / 3456789;
@@ -1609,7 +1611,8 @@ exports.partiduemaitzabidali = function(req,res){
         
         var data = {
             
-            emaitzaPartidu : emaitza
+            emaitzaPartidu : emaitza,
+            arbitraiaPartidu : arbitraia
         };
         
         connection.query("UPDATE partiduak set ? WHERE idPartiduak = ? ",[data, idPartidua], function(err, rows)
@@ -1620,9 +1623,13 @@ exports.partiduemaitzabidali = function(req,res){
          
 //          res.redirect('/login');
 
-          connection.end();
+//          res.status(200).end();
+
+          res.end();
+
+//          connection.release();
 
         });
-//          connection.end();    
+//          connection.release();    
     });
 };
