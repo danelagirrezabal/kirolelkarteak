@@ -429,6 +429,20 @@ exports.jardunaldikopartiduakbilatupartaide = function(req, res){
                     rowsdenb[i].aukeratua = false;
               }
 
+             connection.query('SELECT * FROM taldeak, mailak  where idMailak=idMailaTalde and idElkarteakTalde = ? and idDenboraldiaTalde = ? order by zenbakiMaila desc, izenaTalde asc',[id, idDenboraldia],function(err,rowstalde) {
+          
+              if(err)
+                 console.log("Error Selecting : %s ",err );
+
+/*              for(var i in rowstalde ){
+                if(idTaldeak == rowstalde[i].idTaldeak){
+                    idTaldeak = rowstalde[i].idTaldeak;
+                    rowstalde[i].aukeratua = true;
+                  }
+                  else
+                    rowstalde[i].aukeratua = false;
+                }
+*/
               for (var i in rows){
                 if (rows[i].jardunaldiDataPartidu <= jardunaldiaIkusgai){
                     rows[i].jardunaldiaIkusgai = true;
@@ -440,8 +454,9 @@ exports.jardunaldikopartiduakbilatupartaide = function(req, res){
 
 
 
-          res.render('partiduak.handlebars',{title: "Partiduak", data:rows, denboraldiak:rowsdenb, jardunaldiak:rowsd, menuadmin:admin, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia,atalak: req.session.atalak, partaidea: req.session.partaidea, idPartaideak:req.session.idPartaideak, arduraduna:req.session.arduraduna});
+          res.render('partiduak.handlebars',{title: "Partiduak", data:rows, denboraldiak:rowsdenb, jardunaldiak:rowsd, taldeak:rowstalde, menuadmin:admin, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia,atalak: req.session.atalak, partaidea: req.session.partaidea, idPartaideak:req.session.idPartaideak, arduraduna:req.session.arduraduna});
         });
+             });
           });                  
       });   
   });
@@ -574,8 +589,35 @@ exports.partiduakbilatutaldekapartaide = function(req, res){
                     rows[i].jardunaldiaIkusgai = false;
                 }
                 rows[i].admin = admin;
-              }
 
+                if (rows[i].emaitzaPartidu == "" || rows[i].emaitzaPartidu === null || rows[i].emaitzaPartidu === undefined)
+                     rows[i].kolore = "#000000";
+                else  
+                { 
+                 emaitzak = rows[i].emaitzaPartidu.split("-").map(Number);
+                 if(rows[i].zenbakiLeku >= 9)    // Kanpoko partiduak
+                 {
+                  if(emaitzak[0] < emaitzak[1])
+                     rows[i].kolore = "#00F000";     // berde ilunez irabazitakoak
+                  else
+                   if(emaitzak[0] > emaitzak[1])     // gorriz   galdutakoak
+                     rows[i].kolore = "#FF0000";
+                   else
+                     rows[i].kolore = "#0000FF";     // urdinez   berdindutakoak
+                 }
+                 else                            // Etxeko partiduak
+                  {
+                  if(emaitzak[0] > emaitzak[1])
+                     rows[i].kolore = "#00F000";
+                  else
+                   if(emaitzak[0] < emaitzak[1])
+                     rows[i].kolore = "#FF0000";
+                   else
+                     rows[i].kolore = "#0000FF";  
+                  }  
+                }     
+
+              }
 
                /* for(var i in rows ){
                   rows[i].adminis = admin;
@@ -819,10 +861,12 @@ var j,t, goizez, jauzi, kanpoan;
 var k = 0, h = 0;
 var vHerriak, vEgunak, vLekuak;
 var admin=(req.path.slice(0,24) == "/admin/partiduordutegiak");
+var gipuzkoa=(req.path.slice(0,26) == "/admin/partiduordutegiakgf");
+var busa=(req.path.slice(0,27) == "/admin/partiduordutegiakbus");
 req.session.admin=0;
 req.session.idTaldeak = 0;
-var jardunaldiaIkusgai;
-var jardunaldiaIkusgaiH;
+var jardunaldiaIkusgai, jardunaldiaIkusgaiH;
+var admingfbus, autobusez;
 console.log(jardunaldia);
 console.log(req.path.slice(0,24));
    req.getConnection(function(err,connection){
@@ -880,6 +924,11 @@ console.log(req.path.slice(0,24));
         for (var i in rows) {
 
          if (admin || (!admin && rows[i].jardunaldiDataPartidu <= jardunaldiaIkusgai)){
+          if (rows[i].bidaiaNolaPartidu == null)
+             autobusez = ""
+          else 
+             autobusez = rows[i].bidaiaNolaPartidu.slice(0,7);
+         if ((gipuzkoa && rows[i].federazioaTalde == 0 && rows[i].zenbakiLeku < 8) || (busa && autobusez == "AUTOBUS") || ( !gipuzkoa && !busa)){
           if(vHerriak != rows[i].herriaLeku){
             if(vHerriak !=null){
               //console.log("vKategoria:" +vKategoria);
@@ -924,11 +973,10 @@ console.log(req.path.slice(0,24));
             vLekuak = null;
             lekuak = []; 
             t=0;
-            var egunaTexto = ["Igandea", "Astelehena", "Asteartea", "Asteazkena", "Osteguna", "Ostirala", "Larunbata"];
-            var dt = new Date(rows[i].dataPartidu);
+
             eguna = {
                   dataPartidu    : rows[i].dataPartidu,
-                  egunaTexto   : egunaTexto[dt.getUTCDay()]
+                  egunaTexto   : egunatextobihurtu(rows[i].dataPartidu)
                  // egunIzena : egunIzena
                };
                
@@ -972,6 +1020,10 @@ console.log(req.path.slice(0,24));
            } 
           else 
                jauzi = 0;
+          if (admin && !gipuzkoa && !busa)
+               admingfbus = admin;
+          else 
+               admingfbus = 0;
 
           partiduak[j] = {
                   idPartiduak    : rows[i].idPartiduak,
@@ -986,13 +1038,13 @@ console.log(req.path.slice(0,24));
                   bidaiEgunaPartidu: rows[i].bidaiEgunaPartidu,
                   emaitzaPartidu : rows[i].emaitzaPartidu,
                   nonPartidu: rows[i].nonPartidu,
-                  admin: admin,
+                  admin: admingfbus,
                   jauzi : jauzi,
                   bidaiKolorePartidu : rows[i].bidaiKolorePartidu
                };
           j++;
        
-     } }
+     } } }
         if(vEgunak !=null){
               lekua.partiduak = partiduak;
               //lekua.lekuaKanpoan = lekuaKanpoan; //BERRIA
@@ -1316,7 +1368,7 @@ exports.partiduemaitzak = function(req, res){
                      rows[i].kolore = "#000000";
                 else  
                 { 
-                 emaitzak = rows[i].emaitzaPartidu.split("-");
+                 emaitzak = rows[i].emaitzaPartidu.split("-").map(Number);
                  if(rows[i].zenbakiLeku >= 9)    // Kanpoko partiduak
                  {
                   if(emaitzak[0] < emaitzak[1])
@@ -1388,7 +1440,7 @@ exports.partiduemaitzaktalde = function(req, res){
                      rows[i].kolore = "#000000";
                 else  
                 { 
-                 emaitzak = rows[i].emaitzaPartidu.split("-");
+                 emaitzak = rows[i].emaitzaPartidu.split("-").map(Number);
                  if(rows[i].zenbakiLeku >= 9)    // Kanpoko partiduak
                  {
                   if(emaitzak[0] < emaitzak[1])
@@ -1488,7 +1540,7 @@ exports.partiduemaitzakadmin = function(req, res){
                      rows[i].kolore = "#000000";
                 else  
                 { 
-                 emaitzak = rows[i].emaitzaPartidu.split("-");
+                 emaitzak = rows[i].emaitzaPartidu.split("-").map(Number);
                  if(rows[i].zenbakiLeku >= 9)    // Kanpoko partiduak
                  {
                   if(emaitzak[0] < emaitzak[1])
@@ -1595,41 +1647,5 @@ exports.partiduemaitzakgordeadmin = function(req,res){
            });
         });
     
-    });
-};
-
-exports.partiduemaitzabidali = function(req,res){
-    
-//    var idEnkript = req.params.id;
-    var emaitza = req.params.emaitza;
-    var arbitraia = req.params.arbitraia;
-
-    //ADI! partaideasortu-n aldatu balio hau aldatuz gero
-    var idPartidua = req.params.id / 3456789;
-    
-    req.getConnection(function (err, connection) {
-        
-        var data = {
-            
-            emaitzaPartidu : emaitza,
-            arbitraiaPartidu : arbitraia
-        };
-        
-        connection.query("UPDATE partiduak set ? WHERE idPartiduak = ? ",[data, idPartidua], function(err, rows)
-        {
-  
-          if (err)
-              console.log("Error Updating : %s ",err );
-         
-//          res.redirect('/login');
-
-//          res.status(200).end();
-
-          res.end();
-
-//          connection.release();
-
-        });
-//          connection.release();    
     });
 };

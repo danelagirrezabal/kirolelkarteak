@@ -2532,7 +2532,7 @@ exports.mezuakbidali = function(req,res){
          
         if(input.mezumota == "emarbi"){
 
-            connection.query('SELECT *,DATE_FORMAT(dataPartidu,"%Y/%m/%d") AS dataPartidu FROM partiduak, mailak, taldeak where idTaldeakPartidu=idTaldeak and idMailak=idMailaTalde and idElkarteakPartidu = ? and jardunaldiDataPartidu = ? order by jardunaldiDataPartidu asc',[id, jardunaldia],function(err,rows) {
+            connection.query('SELECT *,DATE_FORMAT(dataPartidu,"%Y/%m/%d") AS dataPartidu FROM partiduak, mailak, taldeak, taldeak, lekuak where idLekuak=idLekuakPartidu and idTaldeakPartidu=idTaldeak and idTaldeakPartidu=idTaldeak and idMailak=idMailaTalde and idElkarteakPartidu = ? and jardunaldiDataPartidu = ? order by jardunaldiDataPartidu asc',[id, jardunaldia],function(err,rows) {
             
               if(err)
                console.log("Error Selecting : %s ",err );
@@ -2540,30 +2540,45 @@ exports.mezuakbidali = function(req,res){
                   
                   for (var i in rows){
                     idEnkript = rows[i].idPartiduak * 3456789;
+                    var egunaTexto = ["Igandea", "Astelehena", "Asteartea", "Asteazkena", "Osteguna", "Ostirala", "Larunbata"];
+                    var dt = new Date(rows[i].dataPartidu);
+                    var eguna = egunaTexto[dt.getUTCDay()];
                     var to = rows[i].arduradunEmailTalde;
+                    var body = "<h2>"+ eguna +"n, "+ rows[i].orduaPartidu +"n, "+ rows[i].izenaTalde+ " partidua "+ rows[i].izenaLeku + "</h2>\n" + 
+                               "<p>"+ rows[i].etxekoaPartidu + " - " + rows[i].kanpokoaPartidu + "</p> \n";
+                    if (rows[i].zenbakiLeku >= 9)    // KANPOAN
+                     {
+                       body += "<p> Irteera: "+rows[i].bidaiOrduaPartidu+" - "+rows[i].bidaiaNolaPartidu+" - "+rows[i].nonPartidu+
+                               " - "+rows[i].bidaiEgunaPartidu+"</p>\n";
+                     } 
+                    body += "<p> Ikusi ordutegia: http://zarauzkoeskubaloia.herokuapp.com eta aukeratu Partiduen Ordutegia</p>\n";   
                     if (rows[i].arbitraiaTalde != 0)
                      { 
                       var subj = rows[i].dataPartidu+ "-ko emaitza eta arbitraia sartzeko: "+ rows[i].izenaTalde;
-                      var body = "<h2>"+rows[i].dataPartidu+"-ko emaitza eta arbitraia eguneratzeko:</h2>\n" + 
-                              "<p>"+ rows[i].etxekoaPartidu + " - " + rows[i].kanpokoaPartidu + "</p> \n"+
-                              "<p><h3>XX-YY ordezkatu emaitzagatik, eta ZZZ arbitraiagatik</h3></p> \n"+
-                              "<p><h3> eta klikatu: http://"+hosta+"/emaitzabidali/"+ idEnkript +"/XX-YY/ZZZ</h3>" ;
+                      body += "<h2>Emaitza eta arbitraia eguneratzeko:</h2>\n" +
+                              "<p><h3>kopiatu beheko linka eta itsatsi nabigatzailean</h3></p> \n"+
+                              "<p><h3>XX-YY ordezkatu emaitzagatik, ordezkatu ZZ.ZZ arbitraiagatik eta klikatu</h3></p> \n"+
+//                              "<p><h3> eta klikatu: http://"+hosta+"/emaitzabidali/"+ idEnkript +"/XX-YY/ZZZ</h3>" ;
+                              "<p><h3>http://zarauzkoeskubaloia.herokuapp.com/emaitzabidali/"+ idEnkript +"/XX-YY/ZZ.ZZ</h3></p>" ;
                      }
-                    else
+                    else 
                      {  
                       var subj = rows[i].dataPartidu+ "-ko emaitza sartzeko: "+ rows[i].izenaTalde;
-                      var body = "<h2>"+rows[i].dataPartidu+"-ko emaitza eguneratzeko:</h2>\n" + 
-                              "<p>"+ rows[i].etxekoaPartidu + " - " + rows[i].kanpokoaPartidu + "</p> \n"+
-                              "<p><h3>XX-YY ordezkatu emaitzagatik</h3></p> \n"+
-                              "<p><h3> eta klikatu: http://"+hosta+"/emaitzabidali/"+ idEnkript +"/XX-YY</h3>" ;
-                     } 
+                      body += "<h2>Emaitza eguneratzeko:</h2>\n" +
+                              "<p><h3>kopiatu beheko linka eta itsatsi nabigatzailean</h3></p> \n"+
+                              "<p><h3>XX-YY ordezkatu emaitzagatik eta klikatu</h3></p> \n"+
+//                              "<p><h3> eta klikatu: http://"+hosta+"/emaitzabidali/"+ idEnkript +"/XX-YY</h3>" ;
+                              "<p><h3>http://zarauzkoeskubaloia.herokuapp.com/emaitzabidali/"+ idEnkript +"/XX-YY</h3></p>" ;
+                     }
+//                     if (rows[i].arbitraiaTalde != 0)
+//                      { 
                       console.log(i + ". mezua1: " + to);
                       emailService.send(to, subj, body);
-                  //setTimeout(function(){console.log(i + ". mezua1: " + to);},5000);
-//                      doDelay(1000);
-//                      console.log(i + ". mezua2: " + to);
+//                      }
 
                   }
+                  to = "zarauzkoeskubaloia@gmail.com";   // ADI kirolelkarteko emaila
+                  emailService.send(to, subj, body); 
               }
 
               res.render('taldeakadmin.handlebars', {title : 'KirolElkarteak-Mezuak', data:rows, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea: req.session.partaidea} );
@@ -2707,22 +2722,48 @@ exports.partiduemaitzaeguneratu = function(req,res){
     var idPartidua = req.params.id / 3456789;
     
     req.getConnection(function (err, connection) {
-        
-        var data = {
+    
+      connection.query('SELECT *,DATE_FORMAT(dataPartidu,"%Y/%m/%d") AS dataPartidu FROM partiduak, mailak, taldeak where idTaldeakPartidu=idTaldeak and idMailak=idMailaTalde and idElkarteakPartidu = ? and idPartiduak = ?',[id, idPartidua],function(err,rows) {
+            
+       if(err)
+           console.log("Error Selecting : %s ",err );
+
+       if (rows.length != 0){
+
+         var data = {
             
             emaitzaPartidu : emaitza,
             arbitraiaPartidu : arbitraia
-        };
+         };
         
-        connection.query("UPDATE partiduak set ? WHERE idPartiduak = ? ",[data, idPartidua], function(err, rows)
-        {
-  
+         connection.query("UPDATE partiduak set ? WHERE idPartiduak = ? ",[data, idPartidua], function(err, rowsu)
+          {
+   
           if (err)
               console.log("Error Updating : %s ",err );
          
 //          res.redirect('/login');
 
-          if (input.bidali){
+          var to = rows[i].arduradunEmailTalde;
+          var body = "<h2>"+ rows[i].etxekoaPartidu + " - " + rows[i].kanpokoaPartidu + "</p> \n" +
+                     "<h2>Emaitza : "+ emaitza +"</h2>\n";
+          if (arbitraia != 0)
+            { 
+              var subj = rows[i].dataPartidu+ "-ko emaitza :"+ emaitza +" eta arbitraia : "+ arbitraia;
+                  body += "<h2>Arbitraia : "+ arbitraia+ "</h2>\n";
+            }
+          else 
+            {  
+              var subj = rows[i].dataPartidu+ "-ko emaitza : "+ emaitza;
+            }
+          body += "<p><h3> Ikusi emaitzak: http://zarauzkoeskubaloia.herokuapp.com eta aukeratu Emaitzak</h3></p>\n";
+
+          body += "<p><h2> eskerrik asko! hAR eta EMan harreman</h2></p>\n";
+
+          console.log("mezua to: " + to);
+          emailService.send(to, subj, body);
+
+          if (rows[i].federazioaTalde !=  0){
             
               var status = rows[i].etxekoaPartidu + " - " + rows[i].kanpokoaPartidu + " : " + emaitza + " - http://zarauzkoeskubaloia.herokuapp.com/";
 
@@ -2733,13 +2774,15 @@ exports.partiduemaitzaeguneratu = function(req,res){
                         console.log(data.text + ' txiotu da');
                   }
               });
-          }
+           }
 
-          res.end();
+           res.end();
 
 //          connection.release();
 
-        });
+         });
+       }
+      });
 //          connection.release();    
     });
 };

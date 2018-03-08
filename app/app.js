@@ -473,6 +473,8 @@ app.post('/admin/partiduakkargatuegin', adminonartua, denboraldiak.partiduakkarg
 
 app.get('/admin/partiduordutegiak/:idDenboraldia/:jardunaldia',adminonartua,authorize2, denboraldiak.partiduordutegiak);
 app.get('/admin/partiduordutegiak/:idDenboraldia',adminonartua,authorize2, denboraldiak.partiduordutegiak);
+app.get('/admin/partiduordutegiakgf/:idDenboraldia/:jardunaldia',adminonartua,authorize2, denboraldiak.partiduordutegiak);
+app.get('/admin/partiduordutegiakbus/:idDenboraldia/:jardunaldia',adminonartua,authorize2, denboraldiak.partiduordutegiak);
 
 app.get('/admin/jardunaldiaikusgai/:jardunaldia',adminonartua,authorize2, denboraldiak.jardunaldiaikusgai);
 
@@ -565,9 +567,8 @@ app.post('/admin/emaitzaktaldekagorde/:idPartidua', adminonartua, authorize2, de
 app.get('/emaitzaksartu/:idPartidua', authorizeArduradun, authorize2, denboraldiak.partiduemaitzaksartuadmin);
 app.post('/emaitzakgorde/:idPartidua', authorizeArduradun, authorize2, denboraldiak.partiduemaitzakgordeadmin);
 
-app.get('/emaitzabidali/:id/:emaitza', denboraldiak.partiduemaitzabidali);
-app.get('/emaitzabidali/:id/:emaitza/:arbitraia', denboraldiak.partiduemaitzabidali);
-app.get('/emaitzaeguneratu/:id/:emaitza', kirolElkarteak.partiduemaitzaeguneratu);
+app.get('/emaitzabidali/:id/:emaitza', kirolElkarteak.partiduemaitzaeguneratu);
+app.get('/emaitzabidali/:id/:emaitza/:arbitraia', kirolElkarteak.partiduemaitzaeguneratu);
 
 app.get('/partiduemaitzaktalde/:idTaldeak', authorize2, denboraldiak.partiduemaitzaktalde);
 app.get('/partiduemaitzaktalde/', authorize2, denboraldiak.partiduemaitzaktalde);

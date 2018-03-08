@@ -137,6 +137,7 @@ exports.taldeaksortu = function(req,res){
             arduradunEmailTalde : input.arduradunEmailTalde,
             idArduradunTalde : input.idArduradunTalde,
             urlSailkapenTalde: input.urlSailkapenTalde,
+            federazioaTalde : input.federazioaTalde,
             idDenboraldiaTalde : input.idDenboraldiaTalde,
             idElkarteakTalde : id
             //idDenboraldiaEkintza : idDenboraldia
@@ -265,6 +266,7 @@ exports.taldeakaldatu = function(req,res){
             arduradunEmailTalde : input.arduradunEmailTalde,
             idArduradunTalde : input.idArduradunTalde,
             urlSailkapenTalde: input.urlSailkapenTalde,
+            federazioaTalde : input.federazioaTalde,
             idDenboraldiaTalde : input.idDenboraldiaTalde,
             arbitraiaTalde : input.arbitraiaTalde
         };

@@ -42,12 +42,13 @@
                     <th>A ekipoa</th>
                     <th>B ekipoa</th>
                     <th>Emaitza</th>
+                    <th>Arbitraia</th>
                     <th>      </th>
                     <th>      </th>
                 </tr>          
 
             {{#each data}}
-                  <tr class="active">
+                  <tr class="active" style="color: {{kolore}}">
                     <td>{{dataPartidu}}</td>
                     <td>{{jardunaldiaPartidu}}</td>
                    {{#if jardunaldiaIkusgai}}  
@@ -62,6 +63,7 @@
                     <td>{{etxekoaPartidu}}</td>   
                     <td>{{kanpokoaPartidu}}</td> 
                     <td>{{emaitzaPartidu}}</td> 
+                    <td>{{arbitraiaPartidu}}</td>
                     {{#if admin}}
                       <td><a class="a-inside edit" href="/admin/partiduakeditatu/{{idPartiduak}}">Aldatu</a></td>
                       <td><a class="a-inside edit" href="/admin/partiduakezabatu/{{idPartiduak}}">Ezabatu</a></td>
