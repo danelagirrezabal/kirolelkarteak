@@ -2532,7 +2532,7 @@ exports.mezuakbidali = function(req,res){
          
         if(input.mezumota == "emarbi"){
 
-            connection.query('SELECT *,DATE_FORMAT(dataPartidu,"%Y/%m/%d") AS dataPartidu FROM partiduak, mailak, taldeak, taldeak, lekuak where idLekuak=idLekuakPartidu and idTaldeakPartidu=idTaldeak and idTaldeakPartidu=idTaldeak and idMailak=idMailaTalde and idElkarteakPartidu = ? and jardunaldiDataPartidu = ? order by jardunaldiDataPartidu asc',[id, jardunaldia],function(err,rows) {
+            connection.query('SELECT *,DATE_FORMAT(dataPartidu,"%Y/%m/%d") AS dataPartidu FROM partiduak, mailak, taldeak, lekuak where idLekuak=idLekuakPartidu and idTaldeakPartidu=idTaldeak and idTaldeakPartidu=idTaldeak and idMailak=idMailaTalde and idElkarteakPartidu = ? and jardunaldiDataPartidu = ? order by jardunaldiDataPartidu asc',[id, jardunaldia],function(err,rows) {
             
               if(err)
                console.log("Error Selecting : %s ",err );
