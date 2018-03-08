@@ -2760,7 +2760,7 @@ exports.partiduemaitzaeguneratu = function(req,res){
 
           body += "<p><h2> eskerrik asko! hAR eta EMan harreman</h2></p>\n";
 
-          console.log("mezua to: " + to + " - "  +rows[i].izenaTalde));
+          console.log("mezua to: " + to + " - "  +rows[i].izenaTalde);
           emailService.send(to, subj, body);
 
           if (rows[i].federazioaTalde !=  0){
