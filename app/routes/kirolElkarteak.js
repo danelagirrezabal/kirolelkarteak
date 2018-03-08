@@ -2572,7 +2572,7 @@ exports.mezuakbidali = function(req,res){
                      }
 //                     if (rows[i].arbitraiaTalde != 0)
 //                      { 
-                      console.log(i + ". mezua1: " + to);
+                      console.log(i + ". mezua1: " + to + " - "  +rows[i].izenaTalde);
                       emailService.send(to, subj, body);
 //                      }
 
@@ -2723,7 +2723,7 @@ exports.partiduemaitzaeguneratu = function(req,res){
     
     req.getConnection(function (err, connection) {
     
-      connection.query('SELECT *,DATE_FORMAT(dataPartidu,"%Y/%m/%d") AS dataPartidu FROM partiduak, mailak, taldeak where idTaldeakPartidu=idTaldeak and idMailak=idMailaTalde and idElkarteakPartidu = ? and idPartiduak = ?',[id, idPartidua],function(err,rows) {
+      connection.query('SELECT *,DATE_FORMAT(dataPartidu,"%Y/%m/%d") AS dataPartidu FROM partiduak, mailak, taldeak where idTaldeakPartidu=idTaldeak and idMailak=idMailaTalde and idPartiduak = ?',[idPartidua],function(err,rows) {
             
        if(err)
            console.log("Error Selecting : %s ",err );
@@ -2760,7 +2760,7 @@ exports.partiduemaitzaeguneratu = function(req,res){
 
           body += "<p><h2> eskerrik asko! hAR eta EMan harreman</h2></p>\n";
 
-          console.log("mezua to: " + to);
+          console.log("mezua to: " + to + " - "  +rows[i].izenaTalde));
           emailService.send(to, subj, body);
 
           if (rows[i].federazioaTalde !=  0){
