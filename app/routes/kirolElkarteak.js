@@ -2727,8 +2727,8 @@ exports.partiduemaitzaeguneratu = function(req,res){
             
        if(err)
            console.log("Error Selecting : %s ",err );
-
-       if (rows.length != 0){
+       console.log("mezua to: " + rows[0].arduradunEmailTalde + " - "  +rows[0].izenaTalde+ " - "  + emaitza + " - "  + arbitraia);
+       if (rows.length != 0 && emaitza != "XX-YY"){
 
          var data = {
             
@@ -2744,34 +2744,34 @@ exports.partiduemaitzaeguneratu = function(req,res){
          
 //          res.redirect('/login');
 
-          var to = rows[i].arduradunEmailTalde;
-          var body = "<h2>"+ rows[i].etxekoaPartidu + " - " + rows[i].kanpokoaPartidu + "</p> \n" +
+          var to = rows[0].arduradunEmailTalde;
+          var body = "<h2>"+ rows[0].etxekoaPartidu + " - " + rows[0].kanpokoaPartidu + "</p> \n" +
                      "<h2>Emaitza : "+ emaitza +"</h2>\n";
           if (arbitraia != 0)
             { 
-              var subj = rows[i].dataPartidu+ "-ko emaitza :"+ emaitza +" eta arbitraia : "+ arbitraia;
+              var subj = rows[0].dataPartidu+ "-ko emaitza :"+ emaitza +" eta arbitraia : "+ arbitraia;
                   body += "<h2>Arbitraia : "+ arbitraia+ "</h2>\n";
             }
           else 
             {  
-              var subj = rows[i].dataPartidu+ "-ko emaitza : "+ emaitza;
+              var subj = rows[0].dataPartidu+ "-ko emaitza : "+ emaitza;
             }
           body += "<p><h3> Ikusi emaitzak: http://zarauzkoeskubaloia.herokuapp.com eta aukeratu Emaitzak</h3></p>\n";
 
           body += "<p><h2> eskerrik asko! hAR eta EMan harreman</h2></p>\n";
 
-          console.log("mezua to: " + to + " - "  +rows[i].izenaTalde);
+          console.log("mezua to: " + to + " - "  +rows[0].izenaTalde);
           emailService.send(to, subj, body);
 
-          if (rows[i].federazioaTalde !=  0){
+          if (rows[0].federazioaTalde !=  0){
             
-              var status = rows[i].etxekoaPartidu + " - " + rows[i].kanpokoaPartidu + " : " + emaitza + " - http://zarauzkoeskubaloia.herokuapp.com/";
+              var status = rows[0].etxekoaPartidu + " - " + rows[0].kanpokoaPartidu + " : " + emaitza + " - http://zarauzkoeskubaloia.herokuapp.com/";
 
               twitter.post('statuses/update', { status: status }, function (err, data, response) {
                   if (err) {
                         console.log(err);
                   } else {
-                        console.log(data.text + ' txiotu da');
+                        console.log(rows[0].izenaTalde + " - "+data.text + ' txiotu da');
                   }
               });
            }
