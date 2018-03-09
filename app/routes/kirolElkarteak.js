@@ -2527,18 +2527,25 @@ exports.mezuakbidali = function(req,res){
     if (process.env.NODE_ENV != 'production'){ 
           hosta += ":"+ (process.env.PORT || 3000);
     }
-
+    var nora = 0, zenbat = 10;
+    if (!req.session.nondik){ 
+          req.session.nondik = 0;
+    }
+    var nondik = req.session.nondik;
+debugger;      
+console.log("nondik: "+ nondik );
     req.getConnection(function (err, connection) {
          
         if(input.mezumota == "emarbi"){
 
-            connection.query('SELECT *,DATE_FORMAT(dataPartidu,"%Y/%m/%d") AS dataPartidu FROM partiduak, mailak, taldeak, lekuak where idLekuak=idLekuakPartidu and idTaldeakPartidu=idTaldeak and idTaldeakPartidu=idTaldeak and idMailak=idMailaTalde and idElkarteakPartidu = ? and jardunaldiDataPartidu = ? order by jardunaldiDataPartidu asc',[id, jardunaldia],function(err,rows) {
+            connection.query('SELECT *,DATE_FORMAT(dataPartidu,"%Y/%m/%d") AS dataPartidu FROM partiduak, mailak, taldeak, lekuak where federazioaTalde != 9 and idLekuak=idLekuakPartidu and idTaldeakPartidu=idTaldeak and idTaldeakPartidu=idTaldeak and idMailak=idMailaTalde and idElkarteakPartidu = ? and jardunaldiDataPartidu = ? order by idPartiduak asc',[id, jardunaldia],function(err,rows) {
             
               if(err)
                console.log("Error Selecting : %s ",err );
-              if(input.bidali){
                   
-                  for (var i in rows){
+              for (var i in rows){
+                  if(i >= nondik && nora < zenbat){
+//                    if (to != rows[i].emailard){
                     idEnkript = rows[i].idPartiduak * 3456789;
                     var egunaTexto = ["Igandea", "Astelehena", "Asteartea", "Asteazkena", "Osteguna", "Ostirala", "Larunbata"];
                     var dt = new Date(rows[i].dataPartidu);
@@ -2573,15 +2580,31 @@ exports.mezuakbidali = function(req,res){
 //                     if (rows[i].arbitraiaTalde != 0)
 //                      { 
                       console.log(i + ". mezua1: " + to + " - "  +rows[i].izenaTalde);
-                      emailService.send(to, subj, body);
+//                      if(input.bidali){
+                         emailService.send(to, subj, body);
+//                      }   
+                      nora++;
+                      if(i == rows.length - 1){
+                          nora = zenbat;
+                      }
 //                      }
-
                   }
-                  to = "zarauzkoeskubaloia@gmail.com";   // ADI kirolelkarteko emaila
-                  emailService.send(to, subj, body); 
+                  if(nora == zenbat || (i == rows.length - 1 && (nondik >= rows.length - zenbat))){
+                     nora++;
+                     req.session.nondik = parseInt(i) + 1;
+                     console.log("nondik: "+ rows.length + "-" + req.session.nondik);
+                  }
               }
+              if(i == rows.length - 1 && (nondik >= rows.length - zenbat)){
+                  to = "zarauzkoeskubaloia@gmail.com";                     // ADI kirolelkarteko emaila
+                  subj = rows[i].dataPartidu+ "-ko emaitza eta arbitraiak sartzeko emailak bidalita ";
+                  emailService.send(to, subj, body);
+                  res.render('taldeakadmin.handlebars', {title : 'KirolElkarteak-Mezuak', data:rows, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea: req.session.partaidea} );
+              } 
+              else
+                  res.redirect('/admin/kudeaketa');  
 
-              res.render('taldeakadmin.handlebars', {title : 'KirolElkarteak-Mezuak', data:rows, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea: req.session.partaidea} );
+//              res.render ('taldeakadmin.handlebars', {title : 'KirolElkarteak-Mezuak', data:rows, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea: req.session.partaidea} );
        
             });
         }
@@ -2628,6 +2651,58 @@ exports.mezuakbidali = function(req,res){
         
      });   
 };
+
+function emailakbidali(i, nondik, nora, zenbat, to, subj, body){
+
+ if(i >= nondik && nora < zenbat){
+   nora++;
+   emailService.send(to, subj, body);
+
+   console.log("emaila: "+ i + "-" + to );
+   if(i == rows.length - 1){
+        nora = zenbat;
+   }
+ }
+ if(nora == zenbat || (i == rows.length - 1 && (nondik >= rows.length - zenbat))){
+    nora++;
+    req.session.nondik = parseInt(i) + 1;
+    console.log("nondik: "+ rows.length + "-" + req.session.nondik);
+ }
+}
+
+function mezuaktaldeari(req, bidali,subj,body,rows){
+var to;
+var nondik = 0, nora = 0;
+var zenbat = 10;
+
+    if (!req.session.nondik){ 
+          req.session.nondik = 0;
+    }
+    nondik = req.session.nondik;
+debugger;      
+console.log("nondik: "+ nondik + "-nora " + nora + "-zenbat " + zenbat);
+        for (var i in rows) { 
+          if(i >= nondik && nora < zenbat){
+            if (to != rows[i].emailard){
+              to = rows[i].emailard;
+              nora++;
+              if (bidali){
+                  emailService.send(to, subj, body);
+              }
+              console.log("emaila: "+ i + "-" + to + " - taldea: "+ i + "-" + rows[i].taldeizena);
+              if(i == rows.length - 1){
+                  nora = zenbat;
+              }
+            }
+          }
+          if(nora == zenbat || (i == rows.length - 1 && (nondik >= rows.length - zenbat))){
+              nora++;
+              req.session.nondik = parseInt(i) + 1;
+              console.log("nondik: "+ rows.length + "-" + req.session.nondik);
+          }
+        }
+        return rows;
+}
 
 function mezuaknori(bidali,subj,body,rows){
  console.log("Funtzioan sartuta:" +subj);
