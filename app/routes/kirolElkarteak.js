@@ -2788,7 +2788,7 @@ function preview(req,res){
 }
 
 exports.partiduemaitzaeguneratu = function(req,res){
-    
+    var admin = (req.path.slice(0,6) == "/admin");
 //    var idEnkript = req.params.id;
     var emaitza = req.params.emaitza;
     var arbitraia = req.params.arbitraia;
@@ -2798,27 +2798,25 @@ exports.partiduemaitzaeguneratu = function(req,res){
     
     req.getConnection(function (err, connection) {
     
-      connection.query('SELECT *,DATE_FORMAT(dataPartidu,"%Y/%m/%d") AS dataPartidu FROM partiduak, mailak, taldeak where idTaldeakPartidu=idTaldeak and idMailak=idMailaTalde and idPartiduak = ?',[idPartidua],function(err,rows) {
+      connection.query('SELECT *,DATE_FORMAT(dataPartidu,"%Y/%m/%d") AS dataPartidu FROM partiduak, mailak, taldeak, denboraldiak where idDenboraldiaPartidu=idDenboraldia and idTaldeakPartidu=idTaldeak and idMailak=idMailaTalde and idPartiduak = ?',[idPartidua],function(err,rows) {
             
        if(err)
            console.log("Error Selecting : %s ",err );
        console.log("mezua to: " + rows[0].arduradunEmailTalde + " - "  +rows[0].izenaTalde+ " - "  + emaitza + " - "  + arbitraia);
-       if (rows.length != 0 && emaitza != "XX-YY"){
-
-         var data = {
-            
-            emaitzaPartidu : emaitza,
-            arbitraiaPartidu : arbitraia
-         };
-        
+       if (rows.length != 0 && emaitza != "XX-YY" && ((rows[0].jardunaldiDataPartidu = rows[0].jardunaldiaIkusgai) || admin)){
+         var data = {};
+         if (arbitraia)
+             data.arbitraiaPartidu = arbitraia; 
+         if (emaitza) 
+             data.emaitzaPartidu = emaitza; 
+           
          connection.query("UPDATE partiduak set ? WHERE idPartiduak = ? ",[data, idPartidua], function(err, rowsu)
           {
    
           if (err)
               console.log("Error Updating : %s ",err );
          
-//          res.redirect('/login');
-
+/*
           var to = rows[0].arduradunEmailTalde;
           var body = "<h2>"+ rows[0].etxekoaPartidu + " - " + rows[0].kanpokoaPartidu + "</p> \n" +
                      "<h2>Emaitza : "+ emaitza +"</h2>\n";
@@ -2837,10 +2835,10 @@ exports.partiduemaitzaeguneratu = function(req,res){
 
           console.log("mezua to: " + to + " - "  +rows[0].izenaTalde);
           emailService.send(to, subj, body);
-
+*/
           if (rows[0].federazioaTalde !=  0){
             
-              var status = rows[0].etxekoaPartidu + " - " + rows[0].kanpokoaPartidu + " : " + emaitza + " - http://zarauzkoeskubaloia.herokuapp.com/";
+              var status = rows[0].izenaMaila+ " " +  rows[0].akronimoTalde + " : " + rows[0].etxekoaPartidu + " - " + rows[0].kanpokoaPartidu + " : " + emaitza + " - http://zarauzkoeskubaloia.herokuapp.com/";
 
               twitter.post('statuses/update', { status: status }, function (err, data, response) {
                   if (err) {
@@ -2851,12 +2849,26 @@ exports.partiduemaitzaeguneratu = function(req,res){
               });
            }
 
-           res.end();
+//           res.end();
 
-//          connection.release();
+            res.render('emaitzakeskerrak.handlebars', {title: "Emaitza Eskerrak", data:rows, emaitza:emaitza, arbitraia:arbitraia});
 
          });
        }
+       else
+         if (arbitraia == "ZZ.ZZ"){
+
+           res.render('emaitzakarbitraiak.handlebars', {title: "Arbitraia Adibideak"});
+         }
+         else
+          if (emaitza == "XX-YY"){
+
+           res.render('emaitzakadibideak.handlebars', {title: "Emaitza Adibideak"});
+          }
+          else
+
+//           res.end();
+           res.sendStatus(404);
       });
 //          connection.release();    
     });

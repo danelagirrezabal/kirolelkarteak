@@ -569,6 +569,7 @@ app.post('/emaitzakgorde/:idPartidua', authorizeArduradun, authorize2, denborald
 
 app.get('/emaitzabidali/:id/:emaitza', kirolElkarteak.partiduemaitzaeguneratu);
 app.get('/emaitzabidali/:id/:emaitza/:arbitraia', kirolElkarteak.partiduemaitzaeguneratu);
+app.get('/admin/emaitzabidali/:id/:emaitza/:arbitraia', kirolElkarteak.partiduemaitzaeguneratu);
 
 app.get('/partiduemaitzaktalde/:idTaldeak', authorize2, denboraldiak.partiduemaitzaktalde);
 app.get('/partiduemaitzaktalde/', authorize2, denboraldiak.partiduemaitzaktalde);

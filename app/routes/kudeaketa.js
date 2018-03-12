@@ -116,6 +116,9 @@ exports.kudeaketamenu = function(req, res){
   var id = req.session.idKirolElkarteak;
   var idDenboraldia = req.session.idDenboraldia;
   var idTaldeak;
+    if (!req.session.nondik){ 
+          req.session.nondik = 0;
+    }
   req.getConnection(function (err, connection) {
       if (err)
               console.log("Error connection : %s ",err ); 
@@ -167,7 +170,7 @@ exports.kudeaketamenu = function(req, res){
                     rowstalde[i].aukeratua = false;
               }
 
-          res.render('kudeaketa.handlebars', {title : 'KirolElkarteko kudeaketa', mailak:rows, taldeak:rowstalde, denboraldiak:rowsdenb, jardunaldiak:rowsd, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, atalak: req.session.atalak, partaidea: req.session.partaidea, idPartaideak:req.session.idPartaideak, arduraduna:req.session.arduraduna});                       
+          res.render('kudeaketa.handlebars', {title : 'KirolElkarteko kudeaketa', mailak:rows, taldeak:rowstalde, denboraldiak:rowsdenb, jardunaldiak:rowsd, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, atalak: req.session.atalak, partaidea: req.session.partaidea, idPartaideak:req.session.idPartaideak, arduraduna:req.session.arduraduna, nondik:req.session.nondik});                       
             });
           }); 
         });
