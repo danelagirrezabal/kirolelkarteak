@@ -2563,19 +2563,29 @@ console.log("nondik: "+ nondik );
                      { 
                       var subj = rows[i].dataPartidu+ "-ko emaitza eta arbitraia sartzeko: "+ rows[i].izenaTalde;
                       body += "<h2>Emaitza eta arbitraia eguneratzeko:</h2>\n" +
-                              "<p><h3>kopiatu beheko linka eta itsatsi nabigatzailean</h3></p> \n"+
-                              "<p><h3>XX-YY ordezkatu emaitzagatik, ordezkatu ZZ.ZZ arbitraiagatik eta klikatu</h3></p> \n"+
+                              "<p style=color:red><h3>kopiatu beheko linka eta itsatsi nabigatzailean</h3></p> \n"+
+                              "<p style=color:red><h3>XX-YY ordezkatu emaitzagatik, ordezkatu ZZ.ZZ arbitraiagatik eta klikatu</h3></p> \n"+
 //                              "<p><h3> eta klikatu: http://"+hosta+"/emaitzabidali/"+ idEnkript +"/XX-YY/ZZZ</h3>" ;
-                              "<p><h3>http://zarauzkoeskubaloia.herokuapp.com/emaitzabidali/"+ idEnkript +"/XX-YY/ZZ.ZZ</h3></p>" ;
+                              "<p><h3>http://zarauzkoeskubaloia.herokuapp.com/emaitzabidali/"+ idEnkript +"/XX-YY/ZZ.ZZ</h3></p> \n";
+                      body += "<h3>Adibidez arbitraia 19,30 euro izan bada eta emaitza 22-20:</h3>\n" +
+                              "<p><b>XX-YY</b>  partez  emaitza ipini behar da :    <b>22-20</b> </p> \n"+
+                              "<p><b>ZZ.ZZ</b>  partez  arbitaria ipini behar da, dezimalak puntu batekin :    <b>19.30</b> </p> \n"+
+                              "<p>Nabigatzailean, linkaren bukaera horrela gelditu behar du: <b>22-20/19.30</b> </p> \n"+
+                              "<p style=color:blue><h3>http://zarauzkoeskubaloia.herokuapp.com/emaitzabidali/"+ idEnkript +"/<b>22-20/19.30</b></h3></p> \n";
                      }
                     else 
                      {  
                       var subj = rows[i].dataPartidu+ "-ko emaitza sartzeko: "+ rows[i].izenaTalde;
                       body += "<h2>Emaitza eguneratzeko:</h2>\n" +
-                              "<p><h3>kopiatu beheko linka eta itsatsi nabigatzailean</h3></p> \n"+
-                              "<p><h3>XX-YY ordezkatu emaitzagatik eta klikatu</h3></p> \n"+
+                              "<p style=color:red><h3>kopiatu beheko linka eta itsatsi nabigatzailean</h3></p> \n"+
+                              "<p style=color:red><h3>XX-YY ordezkatu emaitzagatik eta klikatu</h3></p> \n"+
 //                              "<p><h3> eta klikatu: http://"+hosta+"/emaitzabidali/"+ idEnkript +"/XX-YY</h3>" ;
-                              "<p><h3>http://zarauzkoeskubaloia.herokuapp.com/emaitzabidali/"+ idEnkript +"/XX-YY</h3></p>" ;
+                              "<p><h3>http://zarauzkoeskubaloia.herokuapp.com/emaitzabidali/"+ idEnkript +"/XX-YY</h3></p> \n";
+                      body += "<h3>Adibidez emaitza 22-20:</h3>\n" +
+                              "<p><b>XX-YY</b>  partez  emaitza ipini behar da :    <b>22-20</b> </p> \n"+
+                              "<p>Nabigatzailean, linkaren bukaera horrela gelditu behar du: <b>22-20</b> </p> \n"+
+                              "<p style=color:blue><h3>http://zarauzkoeskubaloia.herokuapp.com/emaitzabidali/"+ idEnkript +"/<b>22-20</b></h3></p> \n";
+
                      }
 //                     if (rows[i].arbitraiaTalde != 0)
 //                      { 
