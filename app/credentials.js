@@ -5,12 +5,20 @@ gmail: {
 	password: 'adminkirolelkarteak',
 },
 twitter: {
-	consumer_key: 'HGlJgf90C64u3Z9TXOlKOAoxe',
-	consumer_secret: 'YTkLulDJ1qjl4mZjFvJIsO3eunkx7ZU87MYm8fsFebJHZMEvGZ',
-	access_token: '203467804-k5rOlskADqUaNljL3gIR6mFE8GEcOrWc4PbF6ICQ',
-	access_token_secret: 'kXilp8jL7ztMhEsmt4yTKeaO0xQYKE9R7Afd0wZSMeM69',
+	consumer_key: 'zIhdpQAYKfAozabYKtt3ssw4f',
+	consumer_secret: 'SO9oIH7X7D2OKKsX2yMqdhVupSjugkeWNkt2SRmVMdOWEWY3iU',
+	access_token: '2227335151-jvY83BAwPcAX4S3hZ4YvwHKkkUD2DPBqxYWwLzg',
+	access_token_secret: 'lKLbYzfVE34yGBr09aKLlCGGzOMTnD6ezZeqw0DeUoe23',
 //screen_name: '',
 	timeout_ms: 60*1000
+},
+twittereskubaloiaZKE: {
+    consumer_key: 'HGlJgf90C64u3Z9TXOlKOAoxe',
+    consumer_secret: 'YTkLulDJ1qjl4mZjFvJIsO3eunkx7ZU87MYm8fsFebJHZMEvGZ',
+    access_token: '203467804-k5rOlskADqUaNljL3gIR6mFE8GEcOrWc4PbF6ICQ',
+    access_token_secret: 'kXilp8jL7ztMhEsmt4yTKeaO0xQYKE9R7Afd0wZSMeM69',
+//screen_name: '',
+    timeout_ms: 60*1000
 },
 dbdevelop: {
         host: 'localhost',

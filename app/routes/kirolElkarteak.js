@@ -6,11 +6,11 @@ var VALID_TEL_REGEX = /^[0-9-()+]{3,20}/;
   formidable = require('formidable');
   var bcrypt = require('bcrypt-nodejs');
   var md = require('marked');
-
+/*
   var credentials = require('../credentials.js');
   var Twitter = require('twit');
   var twitter = new Twitter(credentials.twitter);
-/*            
+            
               twitter.get('followers/list', { screen_name: 'zkeskubaloia' }, function (err, data, response) {
                   if (err) {
                         console.log(err);
@@ -2538,12 +2538,13 @@ console.log("nondik: "+ nondik );
          
         if(input.mezumota == "emarbi"){
 
-            connection.query('SELECT *,DATE_FORMAT(dataPartidu,"%Y/%m/%d") AS dataPartidu FROM partiduak, mailak, taldeak, lekuak where federazioaTalde != 9 and idLekuak=idLekuakPartidu and idTaldeakPartidu=idTaldeak and idTaldeakPartidu=idTaldeak and idMailak=idMailaTalde and idElkarteakPartidu = ? and jardunaldiDataPartidu = ? order by idPartiduak asc',[id, jardunaldia],function(err,rows) {
+            connection.query('SELECT *,DATE_FORMAT(dataPartidu,"%Y/%m/%d") AS dataPartidu FROM partiduak, mailak, taldeak, lekuak where federazioaTalde != 9 and zenbakiLeku != 8 and idLekuak=idLekuakPartidu and idTaldeakPartidu=idTaldeak and idTaldeakPartidu=idTaldeak and idMailak=idMailaTalde and idElkarteakPartidu = ? and jardunaldiDataPartidu = ? order by zenbakiMaila, izenaTalde asc ,orduaPartidu',[id, jardunaldia],function(err,rows) {
             
-              if(err)
+              if(err) 
                console.log("Error Selecting : %s ",err );
                   
               for (var i in rows){
+                if(rows[i].emaitzaPartidu == ""){
                   if(i >= nondik && nora < zenbat){
 //                    if (to != rows[i].emailard){
                     idEnkript = rows[i].idPartiduak * 3456789;
@@ -2558,35 +2559,36 @@ console.log("nondik: "+ nondik );
                        body += "<p> Irteera: "+rows[i].bidaiOrduaPartidu+" - "+rows[i].bidaiaNolaPartidu+" - "+rows[i].nonPartidu+
                                " - "+rows[i].bidaiEgunaPartidu+"</p>\n";
                      } 
-                    body += "<p> Ikusi ordutegia: http://zarauzkoeskubaloia.herokuapp.com eta aukeratu Partiduen Ordutegia</p>\n";   
                     if (rows[i].arbitraiaTalde != 0)
-                     { 
-                      var subj = rows[i].dataPartidu+ "-ko emaitza eta arbitraia sartzeko: "+ rows[i].izenaTalde;
+                     {
+                      var subj = rows[i].dataPartidu+ "-ko emaitza eta arbitraia sartzeko: "+ rows[i].izenaTalde;  
                       body += "<h2>Emaitza eta arbitraia eguneratzeko:</h2>\n" +
-                              "<p style=color:red><h3>kopiatu beheko linka eta itsatsi nabigatzailean</h3></p> \n"+
+                              "<p style=color:red><h3>klikatu beheko linka eta ireki nabigatzailean</h3></p> \n"+
                               "<p style=color:red><h3>XX-YY ordezkatu emaitzagatik, ordezkatu ZZ.ZZ arbitraiagatik eta klikatu</h3></p> \n"+
 //                              "<p><h3> eta klikatu: http://"+hosta+"/emaitzabidali/"+ idEnkript +"/XX-YY/ZZZ</h3>" ;
                               "<p><h3>http://zarauzkoeskubaloia.herokuapp.com/emaitzabidali/"+ idEnkript +"/XX-YY/ZZ.ZZ</h3></p> \n";
-                      body += "<h3>Adibidez arbitraia 19,30 euro izan bada eta emaitza 22-20:</h3>\n" +
-                              "<p><b>XX-YY</b>  partez  emaitza ipini behar da :    <b>22-20</b> </p> \n"+
+                      body += "<h3>Adibidez arbitraia 19,30 euro izan bada eta emaitza 22-25:</h3>\n" +
+                              "<p><b>XX-YY</b>  partez  emaitza ipini behar da :    <b>22-25</b> </p> \n"+
                               "<p><b>ZZ.ZZ</b>  partez  arbitaria ipini behar da, dezimalak puntu batekin :    <b>19.30</b> </p> \n"+
-                              "<p>Nabigatzailean, linkaren bukaera horrela gelditu behar du: <b>22-20/19.30</b> </p> \n"+
-                              "<p style=color:blue><h3>http://zarauzkoeskubaloia.herokuapp.com/emaitzabidali/"+ idEnkript +"/<b>22-20/19.30</b></h3></p> \n";
+                              "<p>Nabigatzailean, linkaren bukaera horrela gelditu behar du: <b>22-25/19.30</b> </p> \n"+
+                              "<p style=color:blue><h3>http://zarauzkoeskubaloia.herokuapp.com/emaitzabidali/"+ idEnkript +"/<b>22-25/19.30</b></h3></p> \n";
                      }
                     else 
-                     {  
+                     {
                       var subj = rows[i].dataPartidu+ "-ko emaitza sartzeko: "+ rows[i].izenaTalde;
                       body += "<h2>Emaitza eguneratzeko:</h2>\n" +
-                              "<p style=color:red><h3>kopiatu beheko linka eta itsatsi nabigatzailean</h3></p> \n"+
+                              "<p style=color:red><h3>klikatu beheko linka eta ireki nabigatzailean</h3></p> \n"+
                               "<p style=color:red><h3>XX-YY ordezkatu emaitzagatik eta klikatu</h3></p> \n"+
 //                              "<p><h3> eta klikatu: http://"+hosta+"/emaitzabidali/"+ idEnkript +"/XX-YY</h3>" ;
                               "<p><h3>http://zarauzkoeskubaloia.herokuapp.com/emaitzabidali/"+ idEnkript +"/XX-YY</h3></p> \n";
-                      body += "<h3>Adibidez emaitza 22-20:</h3>\n" +
-                              "<p><b>XX-YY</b>  partez  emaitza ipini behar da :    <b>22-20</b> </p> \n"+
-                              "<p>Nabigatzailean, linkaren bukaera horrela gelditu behar du: <b>22-20</b> </p> \n"+
-                              "<p style=color:blue><h3>http://zarauzkoeskubaloia.herokuapp.com/emaitzabidali/"+ idEnkript +"/<b>22-20</b></h3></p> \n";
+                      body += "<h3>Adibidez emaitza 22-25:</h3>\n" +
+                              "<p><b>XX-YY</b>  partez  emaitza ipini behar da :    <b>22-25</b> </p> \n"+
+                              "<p>Nabigatzailean, linkaren bukaera horrela gelditu behar du: <b>22-25</b> </p> \n"+
+                              "<p style=color:blue><h3>http://zarauzkoeskubaloia.herokuapp.com/emaitzabidali/"+ idEnkript +"/<b>22-25</b></h3></p> \n";
 
                      }
+//                    body += "<p> Ikusi ordutegia: http://zarauzkoeskubaloia.herokuapp.com eta aukeratu Partiduen Ordutegia</p>\n";   
+
 //                     if (rows[i].arbitraiaTalde != 0)
 //                      { 
                       console.log(i + ". mezua1: " + to + " - "  +rows[i].izenaTalde);
@@ -2604,6 +2606,7 @@ console.log("nondik: "+ nondik );
                      req.session.nondik = parseInt(i) + 1;
                      console.log("nondik: "+ rows.length + "-" + req.session.nondik);
                   }
+                }
               }
               if(i == rows.length - 1 && (nondik >= rows.length - zenbat)){
                   to = "zarauzkoeskubaloia@gmail.com";                     // ADI kirolelkarteko emaila
@@ -2631,7 +2634,7 @@ console.log("nondik: "+ nondik );
                 var body = "<h2> Ordainketa egin mesedez! </h2>\n" + 
                               "<p>"+ req.session.txapelketaizena+ "</p> \n"+
                               "<h3> Sartu " +rows[0].prezioa+" kontu zenbaki honetan: "+rows[0].kontukorrontea+ "</h3>" ;
-               taldeak2 = mezuaknori(input.bidali,subj,body,rows);
+//               taldeak2 = mezuaknori(input.bidali,subj,body,rows);
 
                console.log("Taldeak2: "+JSON.stringify(taldeak2));
 
@@ -2650,7 +2653,7 @@ console.log("nondik: "+ nondik );
               var body = "<h2> Jokalariak sartzeko dituzue </h2>\n" + 
                               "<p>"+ req.session.txapelketaizena+ "</p> \n"+
                               "<h3> Sartu: http://" +hosta+" eta ondoren has ezazu saioa zure datuekin jokalariak gehitu ahal izateko</h3>" ;
-              taldeak2 = mezuaknori(input.bidali,subj,body,rows);
+//              taldeak2 = mezuaknori(input.bidali,subj,body,rows);
 
               console.log("Taldeak2: "+JSON.stringify(taldeak2));
 
@@ -2848,11 +2851,11 @@ exports.partiduemaitzaeguneratu = function(req,res){
 */
           if (rows[0].federazioaTalde !=  0){
             
-              var status = rows[0].izenaMaila+ " " +  rows[0].akronimoTalde + " : " + rows[0].etxekoaPartidu + " - " + rows[0].kanpokoaPartidu + " : " + emaitza + " - http://zarauzkoeskubaloia.herokuapp.com/";
+              var status = rows[0].izenaMaila+ " " +  rows[0].akronimoTalde + " \n " + rows[0].txapelketaPartidu + " \n " + rows[0].etxekoaPartidu +  "  " + emaitza + "  " + rows[0].kanpokoaPartidu + " \n http://zarauzkoeskubaloia.herokuapp.com/ \n #GipuzkoaEskubaloia \n #123Zarautz";
 
-              twitter.post('statuses/update', { status: status }, function (err, data, response) {
+              twitter.post('statuses/update', { status: status }, function (err, data, response) { 
                   if (err) {
-                        console.log(err);
+                      console.log(err);
                   } else {
                         console.log(rows[0].izenaTalde + " - "+data.text + ' txiotu da');
                   }

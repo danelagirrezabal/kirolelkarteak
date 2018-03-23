@@ -692,7 +692,9 @@ exports.partiduaksortu = function(req,res){
             bidaiaNolaPartidu: input.bidaiaNolaPartidu,
             bidaiEgunaPartidu: input.bidaiEgunaPartidu,
             idDenboraldiaPartidu: idDenboraldia,
-            nonPartidu : input.nonPartidu
+            nonPartidu : input.nonPartidu,
+            bidaiKolorePartidu: input.bidaiKolorePartidu,
+            arbitraiaPartidu : input.arbitraiaPartidu
         };
         
   
@@ -1487,7 +1489,7 @@ exports.partiduemaitzakadmin = function(req, res){
 
   req.getConnection(function(err,connection){
        
-     connection.query('SELECT *,DATE_FORMAT(dataPartidu,"%Y/%m/%d") AS dataPartidu FROM partiduak, mailak, taldeak, lekuak where idLekuak=idLekuakPartidu and idTaldeakPartidu=idTaldeak and idMailak=idMailaTalde and idElkarteakPartidu = ? and idDenboraldiaPartidu = ? and jardunaldiDataPartidu >= ? and jardunaldiDataPartidu <= ? order by zenbakiMaila asc, izenaTalde asc',[id, idDenboraldia, jardunaldia, jardunaldia],function(err,rows) {
+     connection.query('SELECT *,DATE_FORMAT(dataPartidu,"%Y/%m/%d") AS dataPartidu FROM partiduak, mailak, taldeak, lekuak where federazioaTalde != 9 and idLekuak=idLekuakPartidu and idTaldeakPartidu=idTaldeak and idMailak=idMailaTalde and idElkarteakPartidu = ? and idDenboraldiaPartidu = ? and jardunaldiDataPartidu >= ? and jardunaldiDataPartidu <= ? order by zenbakiMaila asc, izenaTalde asc',[id, idDenboraldia, jardunaldia, jardunaldia],function(err,rows) {
             
         if(err)
            console.log("Error Selecting : %s ",err );
