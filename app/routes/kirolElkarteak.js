@@ -6,11 +6,10 @@ var VALID_TEL_REGEX = /^[0-9-()+]{3,20}/;
   formidable = require('formidable');
   var bcrypt = require('bcrypt-nodejs');
   var md = require('marked');
-/*
   var credentials = require('../credentials.js');
   var Twitter = require('twit');
   var twitter = new Twitter(credentials.twitter);
-            
+/*            
               twitter.get('followers/list', { screen_name: 'zkeskubaloia' }, function (err, data, response) {
                   if (err) {
                         console.log(err);
