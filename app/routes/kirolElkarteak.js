@@ -1983,8 +1983,8 @@ exports.kontaktuabidali = function(req,res){
             
         if(err)
            console.log("Error Selecting : %s ",err );
-    
-        var to = rows[0].emailElk;
+        if(rows.length != 0){    
+         var to = rows[0].emailElk;
          var subj = "Web orriko zalantza " +rows[0].izenaElk+":  " + input.izenabizen;
          var body = "<p><b>Izen abizenak:</b>  " + input.izenabizen + "</p>";
           body += "<p><b>Emaila:</b>  " + input.email + "</p>";
@@ -1993,14 +1993,14 @@ exports.kontaktuabidali = function(req,res){
           body += "<p><b>Azalpena:</b> " +"<pre>"+ input.azalpena + "</pre></p>";
           console.log("input:" + input.izenabizen);
           emailService.send(to, subj, body);
-
-          res.locals.flash = {
+        }  
+        res.locals.flash = {
               type: 'success',
               intro: 'Bidalita!',
               message: 'Egun gutxiren buruan erantzuna jasoko duzu!',
           };
               
-          res.redirect(303,'/');
+        res.redirect(303,'/');
        });
      });
     }

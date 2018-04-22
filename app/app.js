@@ -278,7 +278,7 @@ app.get('/taldeak',authorize2, taldeak.taldeakikusipartaide);
  
 app.get('/partaidemail/:emaila', partaideak.partaidemail);
 app.get('/partaideak',adminonartua, authorize2, partaideak.ikusi);
-
+app.get('/admin/partaideak',adminonartua, partaideak.ikusi);
 app.get('/izenematea',authorize2, partaideak.partaideakgehitu);
 
 app.post('/partaideakgehitu', authorize2, partaideak.partaideakgehitu);
@@ -287,6 +287,9 @@ app.get('/partaideakbalidatu/:id', partaideak.balidatu);
 app.get('/partaideakezabatu/:idPartaideak', authorizeBerePartaide, partaideak.ezabatu);
 app.get('/partaideakeditatu/:idPartaideak', authorizeBerePartaide, partaideak.editatu);
 app.post('/partaideakaldatu/:idPartaideak', authorizeBerePartaide, partaideak.aldatu);
+
+app.get('/admin/partaideakkargatu', adminonartua, partaideak.partaideakkargatu);
+app.post('/admin/partaideakkargatuegin', adminonartua, partaideak.partaideakkargatuegin);
 
 app.get('/admin/bazkideak', adminonartua, partaideak.bazkideakikusi);
 app.get('/admin/bazkideak/:idDenboraldia', adminonartua, partaideak.bazkideakikusidenboraldiarekin);

@@ -4,7 +4,7 @@ gmail: {
 	user: 'kirolelkarteak@gmail.com',
 	password: 'adminkirolelkarteak',
 },
-twitter: {
+twitterzkeskubaloia: {
 	consumer_key: 'zIhdpQAYKfAozabYKtt3ssw4f',
 	consumer_secret: 'SO9oIH7X7D2OKKsX2yMqdhVupSjugkeWNkt2SRmVMdOWEWY3iU',
 	access_token: '2227335151-jvY83BAwPcAX4S3hZ4YvwHKkkUD2DPBqxYWwLzg',
@@ -12,7 +12,8 @@ twitter: {
 //screen_name: '',
 	timeout_ms: 60*1000
 },
-twittereskubaloiaZKE: {
+//twittereskubaloiaZKE: {
+twitter: {
     consumer_key: 'HGlJgf90C64u3Z9TXOlKOAoxe',
     consumer_secret: 'YTkLulDJ1qjl4mZjFvJIsO3eunkx7ZU87MYm8fsFebJHZMEvGZ',
     access_token: '203467804-k5rOlskADqUaNljL3gIR6mFE8GEcOrWc4PbF6ICQ',

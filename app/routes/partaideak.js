@@ -1031,6 +1031,137 @@ exports.ezabatu = function(req,res){
      });
 };
 
+exports.partaideakkargatu = function(req, res){
+  var id = req.session.idKirolElkarteak;
+  var idDenboraldia = req.session.idDenboraldia;
+  req.getConnection(function(err,connection){
+       
+     connection.query('SELECT * FROM taldeak,mailak where idMailak=idMailaTalde and idElkarteakTalde = ? and idDenboraldiaTalde = ? order by idMailaTalde asc',[id,idDenboraldia],function(err,rowst) {
+            
+        if(err)
+           console.log("Error Selecting : %s ",err );
+
+
+            res.render('partaideakkargatu.handlebars', {title : 'KirolElkarteak-Partaideak kargatu', taldeak:rowst, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea: req.session.partaidea});
+         
+      });  
+           
+  });
+};
+
+exports.partaideakkargatuegin = function(req, res){
+    var input = JSON.parse(JSON.stringify(req.body));
+    var id = req.session.idKirolElkarteak;
+    var idDenboraldia = req.session.idDenboraldia;
+    var now= new Date();
+    var partaideak = input.partaideakCSV.split("\n"); //CSV-a zatitu lerroka (partiduka)
+    var partaidea = [];
+    var idTaldeakPartaide, OrdaintzekoEraPart;
+    var kanpoPosizio, etxePosizio, partaideanoiz, aOrdua, vEguna, vBukaera;
+//    var vEguna = new Date(); 
+//    var vBukaera = new Date();
+    var ordua = input.hasierakoordua;
+
+    req.getConnection(function (err, connection) {
+
+     connection.query('SELECT * FROM elkarteak where idElkarteak = ?',[req.session.idKirolElkarteak],function(err,rowst){          
+            
+      if(err)
+         console.log("Error inserting : %s ",err );
+
+      for (var i in partaideak){ //Partidu bakoitzeko datuak atera, ","-kin banatuta daudelako split erabiliz
+          partaidea = partaideak[i].split(";");
+          console.log(partaideak[i]);
+//debugger;
+//      connection.query('SELECT * FROM partaideak where idElkarteakPart= ? and nanPart = ?',[req.session.idKirolElkarteak, req.body.nanPart],function(err,rows)  {
+//       if(err || rows.length != 0){
+
+        // Generate password hash
+          var salt = bcrypt.genSaltSync();
+          var password_hash = bcrypt.hashSync(partaidea[14], salt);
+
+          var data = {
+            izenaPart : partaidea[0],
+            abizena1Part : partaidea[1],
+            abizena2Part : partaidea[2],
+            nanPart : partaidea[3],     
+            bazkideZenbPart : partaidea[4],
+            jaiotzeDataPart : partaidea[5],
+//            txapelketaPartidu : input.txapelketa,
+            helbideaPart : partaidea[6],              
+            telefonoaPart : partaidea[7],
+            herriaPart : partaidea[8],
+            postaKodeaPart : partaidea[9],
+            emailPart : partaidea[10],
+            kontuZenbPart : partaidea[11],
+            idOrdaintzekoEraPart : partaidea[12],
+            idElkarteakPartidu : id,
+            balidatutaPart : partaidea[13],
+            pasahitzaPart : password_hash,          //partaidea[14],
+            sexuaPart : partaidea[15],
+            berezitasunakPart : partaidea[16] 
+          };
+        
+  
+        var query = connection.query("INSERT INTO partaideak set ? ",data, function(err, rows)
+        {
+         if (err)
+              console.log("Error inserting : %s ",err );
+         if (input.idTaldeakPartaide != "")
+              idTaldeakPartaide = input.idTaldeakPartaide;
+         else
+              idTaldeakPartaide = partaidea[21];
+
+         if (idTaldeakPartaide != "")
+          {  
+           var data = {
+            materialaKide    : partaidea[17],
+            ordainduKide   : partaidea[18],
+            kamixetaZenbKide : partaidea[19],
+            idMotaKide : partaidea[20],
+            idTaldeakKide : idTaldeakPartaide,   // partaidea[21],
+            idPartaideakKide: rows.insertId,
+            bazkideZenbKide : partaidea[22],
+            idElkarteakKide : id
+           };
+       
+           var query = connection.query("INSERT INTO taldekideak set ? ",data, function(err, rows)
+             {
+  
+              if (err)
+               console.log("Error inserting : %s ",err );
+           });
+          }
+          else  
+              if (partaidea[18] != "")
+               {
+                if (partaidea[18] != "K/K")
+                    OrdaintzekoEraPart = 3;
+                else  
+                    OrdaintzekoEraPart = 4;
+                var data = { 
+
+                 idDenboraldiaBazk : idDenboraldia,
+                 idPartaideakBazk: idPartaideak,
+                 ordainduBazk: partaidea[18],                               //"EZ",
+                 idOrdaintzekoEraBazk: OrdaintzekoEraPart,
+                 idElkarteakBazkide: id
+                };
+
+                var query = connection.query("INSERT INTO bazkideak set ? ",data, function(err, rows)
+                {
+  
+                 if (err)
+                    console.log("Error inserting : %s ",err );
+                });
+              }       
+      
+        }); 
+      }
+      res.redirect('/admin/partaideak');
+     });
+    });
+};
 
 // BAZKIDEAK
 
