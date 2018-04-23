@@ -84,16 +84,6 @@ if (process.env.NODE_ENV != 'production'){
 
     connection(mysql, credentials.dbdevelop,'pool') 
 
-/*    connection(mysql,{
-        
-        host: 'localhost',
-        user: 'root',
-        password : 'joanaagi',                    //root
-        port : 3306, //port mysql                   //8889 
-        database: 'heroku_3a7c26fa617acae'      //kirolElkarteak
-    //},'request')
-      },'pool')
-*/
  );
               console.log("localhost1" );
 }
@@ -102,16 +92,6 @@ else{
 
     connection(mysql, credentials.dbproduction,'pool') 
     
-/*    connection(mysql,{
-        
-        host: 'us-cdbr-iron-east-04.cleardb.net',
-        user: 'b65e4830d842c6',
-        password : 'ff86419e',
-      //  port : 3306, //port mysql
-        database:'heroku_3a7c26fa617acae'
-    //},'request')
-    },'pool')
-*/
  );
               console.log("herokuBerria" );
 }
