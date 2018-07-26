@@ -658,7 +658,7 @@ exports.aldatu = function(req,res){
       if(res.locals.flash != null){
 
         //Erroreak badaude "local.flash" aldagaian gordeak, itzuli balioak errorearekin
-         return res.render('partaideakgehitu.handlebars', {
+         return res.render('partaideakeditatu.handlebars', {
             title : 'Partaideak-Izen-ematea',
              partaidea : req.session.partaidea,
             idKirolElkarteak : req.session.idKirolElkarteak,
@@ -688,7 +688,7 @@ exports.aldatu = function(req,res){
 
       connection.query('SELECT * FROM partaideak where idElkarteakPart= ? and nanPart = ?',[req.session.idKirolElkarteak, req.body.nanPart],function(err,rows)  {
             
-        if(err || rows.length != 0){
+        if(err || rows.length > 1){       // rows.length != 0
            res.locals.flash = {
             type: 'danger',
             intro: 'Adi!',
@@ -696,7 +696,7 @@ exports.aldatu = function(req,res){
            };
 
            //NAN berdineko partaidea existitzen bada, errorea dago eta balioak itzuli formulategian
-          return res.render('partaideakgehitu.handlebars', {
+          return res.render('partaideakeditatu.handlebars', {
             title : 'Partaideak-Izen-ematea',
             partaidea : req.session.partaidea,
             idKirolElkarteak : req.session.idKirolElkarteak,
@@ -748,47 +748,27 @@ exports.aldatu = function(req,res){
               herriaPart : input.herriaPart,
               telefonoaPart : input.telefonoaPart,
               emailPart : input.emailPart,
-              idElkarteakPart : id,
+//              idElkarteakPart : id,
               jaiotzeDataPart: input.jaiotzeDataPart,
               sexuaPart: input.sexuaPart,
-              pasahitzaPart:   password_hash,  
+//              pasahitzaPart:   password_hash,  
               berezitasunakPart: input.berezitasunakPart,
               idOrdaintzekoEraPart: input.idOrdaintzekoEraPart,
               kontuZenbPart: input.kontuZenbPart,                  
-              balidatutaPart : "0"
+//              balidatutaPart : "0"
             };
 
-            var query = connection.query("INSERT INTO partaideak set ? ",data, function(err, rows)
+           connection.query("UPDATE partaideak set ? WHERE idPartaideak = ? ",[data,idPartaideak], function(err, rows)
+
            {
   
             if (err)
               console.log("Error inserting : %s ",err );
-
-        //Enkriptatu partaide zenbakia. Zenbaki hau aldatuz gero, partaidea balidatu ere aldatu!
-         var partaideZenbakia= rows.insertId * 3456789;
-         //var mailaizena;   
-         var to = input.emailPart;
-         var subj = "Ongi-etorri " + data.izenaPart +" "+ data.abizena1Part+ " " + data.abizena2Part;
-         var hosta = req.hostname;
-         if (process.env.NODE_ENV != 'production'){ 
-          hosta += ":"+ (process.env.PORT || 3000);
-         }
-         /*for(var i in rowsm ){
-          if(data.kategoria == rowsm[i].idmaila){
-            mailaizena = rowsm[i].mailaizena;
-          }
-         }*/
-
-         //Partaidea sortzeko bidaliko den mezua BALIDAZIO LINKAREKIN
-         var body = "<p>"+rowst[0].izenaElk+" elkartean partaidetza balidatu ahal izateko, </p>";
-         body += "<h3> klik egin: http://"+hosta+"/partaideakbalidatu/" + partaideZenbakia+ ". </h3>";
-         body += "<p> Ez bazaizu klikatzeko link moduan agertzen, kopiatu eta pegatu nabigatzailean. </p>";
-         body += "<p>Ondoren, login egin ziurtatzeko dena ongi dagoela.</p>";
-         body += "<p>Mila esker!</p>";
-          req.session.idPartaideak = rows.insertId;
-          emailService.send(to, subj, body);
-          
-          res.render('partaideakeskerrak.handlebars', {title: "Mila esker!", partaideizena:data.izenaPart, elkarteizena:rowst[0].izenaElk, emailPart:data.emailPart, atalak: req.session.atalak, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia,idPartaideak:req.session.idPartaideak, arduraduna:req.session.arduraduna});
+       
+            if (req.session.erabiltzaile=="admin")
+               res.redirect('/partaideak');
+            else
+               res.redirect('/');
           });
         });
        }); 
@@ -1095,7 +1075,7 @@ exports.partaideakkargatuegin = function(req, res){
             emailPart : partaidea[10],
             kontuZenbPart : partaidea[11],
             idOrdaintzekoEraPart : partaidea[12],
-            idElkarteakPartidu : id,
+            idElkarteakPart : id,
             balidatutaPart : partaidea[13],
             pasahitzaPart : password_hash,          //partaidea[14],
             sexuaPart : partaidea[15],

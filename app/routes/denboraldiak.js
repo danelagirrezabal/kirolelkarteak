@@ -91,7 +91,7 @@ exports.denboraldiakopiatu = function(req, res){
 
             var idDenboraldiaBerria = rows.insertId;
 //ADI
-            connection.query('SELECT * FROM taldeak where idDenboraldiaTalde = ?',[idDenboraldia],function(err,rowst)   {
+            connection.query('SELECT * FROM taldeak where idDenboraldiaTalde = ? order by idMailaTalde, akronimoTalde',[idDenboraldia],function(err,rowst)   {
              if(err)
               console.log("Error Selecting : %s ",err );
              for (var i in rowst) { 
