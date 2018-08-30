@@ -16,6 +16,20 @@
             </div>
         </div>
         <div class="form-group">
+            <label for="generoMaila" class="col-sm-2 control-label">Generoa</label>
+            <div class="col-sm-4">
+                <select name="generoMaila" required id="generoMaila">
+                {{#each generoa}}
+                    {{#if aukeratua}}
+                       <option value="{{balioa}}" selected>{{izena}}</option>
+                    {{else}}
+                       <option value="{{balioa}}">{{izena}}</option>
+                    {{/if}}
+                {{/each}}
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
             <label for="akronimoMaila" class="col-sm-2 control-label">Akronimoa</label>
             <div class="col-sm-4">
                 <textarea name="akronimoMaila" rows="1" cols="40" class="form-control">{{akronimoMaila}}</textarea>

@@ -2200,7 +2200,8 @@ exports.mailakeditatu = function(req, res){
   //var id = req.params.id;
   var id = req.session.idKirolElkarteak;
   var idMailak = req.params.idMailak;
-    
+  var generoa = [{izena: "Neska", balioa: "N"}, {izena: "Mutila", balioa: "M"}];  
+
   req.getConnection(function(err,connection){
        
      connection.query('SELECT * FROM mailak WHERE idElkarteakMaila = ? and idMailak = ?',[id,idMailak],function(err,rows)
@@ -2208,12 +2209,19 @@ exports.mailakeditatu = function(req, res){
             
             if(err)
                 console.log("Error Selecting : %s ",err );
-   
 
-            res.render('mailakeditatu.handlebars', {page_title:"Maila aldatu",data:rows, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea: req.session.partaidea});
+            for(var i in generoa ){
+                  if(rows[0].generoMaila == generoa[i].balioa){
+                    generoa[i].aukeratua = true;
+                  }
+                  else
+                    generoa[i].aukeratua = false;
+            }   
+            rows[0].generoa = generoa;
+
+            res.render('mailakeditatu.handlebars', {page_title:"Maila aldatu",data:rows, generoa:generoa, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea: req.session.partaidea});
                            
          });
-                 
     }); 
 };
 
@@ -2227,6 +2235,7 @@ exports.mailaksortu = function(req,res){
         var data = {
             
             izenaMaila : input.izenaMaila,
+            generoMaila : input.generoMaila,
             zenbakiMaila   : input.zenbakiMaila,
             akronimoMaila   : input.akronimoMaila,
             idElkarteakMaila    : id
@@ -2256,6 +2265,7 @@ exports.mailakaldatu = function(req,res){
         var data = {
             
             izenaMaila : input.izenaMaila,
+            generoMaila : input.generoMaila,
             zenbakiMaila   : input.zenbakiMaila,
             akronimoMaila   : input.akronimoMaila
 

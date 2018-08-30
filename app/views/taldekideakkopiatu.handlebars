@@ -1,0 +1,172 @@
+{{> menuadmin}}
+
+<input type="hidden" name="idTaldeak" id="idTaldeak" value="{{idTaldeak}}">
+
+   <div class="jumbotron">
+   {{#each talde}}
+
+        <h3>Taldekideak Kopiatzeko   {{izenaTalde}} - {{izenaMaila}} - {{generoMaila}}</h3> 
+
+    {{/each}}  
+   </div>
+
+       <div class="form-group">
+
+            <label for="denboraldia" class="col-sm-1 control-label">Denboraldia:</label>
+            <div class="col-sm-2">
+            <select name="denboraldia" id="denboraldia">
+                <!--<option value="">--Aukeratu denboraldia--</option>-->
+                {{#each denboraldiak}}
+                    {{#if aukeratua}}
+                       <option value="{{idDenboraldia}}" selected>{{deskribapenaDenb}}</option>
+                    {{else}}
+                       <option value="{{idDenboraldia}}">{{deskribapenaDenb}}</option>
+                    {{/if}}
+                {{/each}}
+            </select>
+            </div>
+
+<!--            <label for="jardunaldia" class="col-sm-1 control-label">Jardunaldia:</label>
+            <div class="col-sm-2">
+            <select name="jardunaldia" id="jardunaldia">
+                <option value="">--Aukeratu jardunaldia--</option>
+                {{#each jardunaldiak}}
+                    {{#if aukeratua}}
+                       <option value="{{jardunaldiDataPartidu}}" selected>{{jardunaldiDataPartidu}}</option>
+                    {{else}}
+                       <option value="{{jardunaldiDataPartidu}}">{{jardunaldiDataPartidu}}</option>
+                    {{/if}}
+                {{/each}}
+            </select>
+            </div>
+-->
+            <label for="taldea" class="col-sm-1 control-label">TALDEKA :</label>
+            <div class="col-sm-2">
+            <select name="taldea" id="taldea">
+                <option value="">-- Aukeratu taldea --</option>
+                {{#each taldeak}}
+                    {{#if aukeratua}}
+                       <option value="{{idTaldeak}}" selected>{{izenaTalde}} - {{izenaMaila}}</option>
+                    {{else}}
+                       <option value="{{idTaldeak}}">{{izenaTalde}} - {{izenaMaila}}</option>
+                    {{/if}}
+                {{/each}}
+            </select>
+            </div>
+
+        </div>
+
+      </br></br>
+
+<div class="formContainer">
+    <form class="form-horizontal newsletterForm" role="form" action="/admin/taldekideakkopiatuegin/{{idTaldeak}}" method="POST">
+
+      <div class="row marketing">
+        <div class="col-lg-12">
+        <table class="table table-condensed">
+            <tr>
+                    <th>IZENA</th>
+                    <th>1.ABIZENA</th>
+                    <th>2.ABIZENA</th>
+                    <th>NAN DNI</th>
+                    <th>Mota</th>
+                    <th>Taldea</th>
+                    <th>Kamixeta zenbakia</th>
+                    <th>Materiala</th>
+                    <th>Generoa</th> 
+                    <th>Bazkide zenbakia</th>
+ 
+                </tr>                               
+            {{#each data}}
+                  <tr class="active">
+                    <td>{{izenaPart}}</td>  
+                    <td>{{abizena1Part}}</td>
+                    <td>{{abizena2Part}}</td>
+                    <td>{{nanPart}}</td>
+                    <td>{{deskribapenMota}}</td>  
+                    <td>{{izenaTalde}}</td>   
+                    <td>{{kamixetaZenbKide}}</td> 
+                    <td>{{materialaKide}}</td>   
+                    <td>{{sexuaPartaide}}</td> 
+                    <td>{{bazkideZenbKide}}</td> 
+ 
+                    <td class="checkbox"><input type="checkbox" id="aukeratua" name="aukeratua[]" value="{{idPartaideakKide}}-{{idMotaKide}}"> </td>
+  
+                    {{#each jokalariak}} 
+                    <tr>
+                    <td width="20px"> </td>
+                    <td> </td>
+                    <td> </td>
+                    <td> </td>
+                    <td> </td>
+                    <td> </td>
+                    <td> </td>
+                    </tr>
+                    {{/each}} 
+                </tr>
+            {{/each}}
+          </table>
+        </div>
+      </div>
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-4">
+                <button type="submit" class="btn btn-default">AUKERATUTAKOAK KOPIATU</button>
+            </div>
+        </div>
+    </form>
+</div>
+{{#section 'jquery'}}
+<script>
+  $(document).ready(function(){  
+
+    var jardunaldia = $('#jardunaldia').val();
+    var denboraldia = $('#denboraldia').val();       
+
+    $('#jardunaldia').change(function(){
+
+      if ($('#jardunaldia').val() =="")
+        alert("Aukeratu jardunaldia");
+      else {
+
+        var data = 'id=' + $('#jardunaldia').val();
+
+        //$(location).attr('href', '/jardunaldikopartiduakpartaide/'+$('#jardunaldia').val());
+
+        if ($('#admin').val()){
+          $(location).attr('href', '/admin/partiduakmailazka/'+$('#denboraldia').val()+'/'+$('#jardunaldia').val());
+        }
+        else{
+          $(location).attr('href', '/partiduak/'+$('#denboraldia').val()+'/'+$('#jardunaldia').val());
+        }
+      }
+    });
+
+    $('#denboraldia').change(function(){
+
+        var data = 'id=' + $('#denboraldia').val();
+
+
+        $(location).attr('href', '/admin/taldekideakkopiatu/'+$('#idTaldeak').val()+'/'+$('#denboraldia').val()+'/'+$('#idTaldeak').val());
+    
+    });
+
+    var taldea = $('#taldea').val();  
+
+    $('#taldea').change(function(){
+
+        var data = 'id=' + $('#taldea').val();
+        
+        if ($('#admin').val()){
+          $(location).attr('href', '/admin/partiduaktaldeka/'+$('#taldea').val());
+        }
+        else{
+          $(location).attr('href', '/admin/taldekideakkopiatu/'+$('#idTaldeak').val()+'/'+$('#denboraldia').val()+'/'+$('#taldea').val());
+        }
+     
+    });
+
+  });
+            
+</script> 
+        
+{{/section}}
