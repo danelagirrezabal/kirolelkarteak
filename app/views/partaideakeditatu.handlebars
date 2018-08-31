@@ -86,26 +86,26 @@
         <div class="form-group">
             <label for="emailPart" class="col-sm-2 control-label">Email</label>
             <div class="col-sm-4">
-                <input type="email" class="form-control" required id="emailPart" name="emailPart" placeholder="Kontua sortzeko erabiliko da" value={{emailPart}}>
+                <input type="email" class="form-control" id="emailPart" name="emailPart" placeholder="Kontua sortzeko erabiliko da" value={{emailPart}}>
             </div>
         </div>
         <div class="form-group">
             <label for="emailPart2" class="col-sm-2 control-label">Errepikatu Email</label>
             <div class="col-sm-4">
-                <input type="email2" class="form-control" required id="emailPart2" name="emailPart2" value={{emailPart2}}>
+                <input type="email2" class="form-control" id="emailPart2" name="emailPart2" value={{emailPart2}}>
             </div>
         </div>
         <div class="form-group">
             <label for="kontuZenbPart" class="col-sm-2 control-label">Kontu korronte zenbakia</label>
             <div class="col-sm-4">
-                <!--<input type="text" class="form-control" required id="kontuZenbPart" name="kontuZenbPart" value={{kontuZenbPart}}>-->
+                <!--<input type="text" class="form-control" id="kontuZenbPart" name="kontuZenbPart" value={{kontuZenbPart}}>-->
                 <textarea name="kontuZenbPart" rows="1" cols="40" class="form-control">{{kontuZenbPart}}</textarea>
             </div>
         </div>
         <div class="form-group">
             <label for="idOrdaintzekoEraPart" class="col-sm-2 control-label">Ordaintzeko era</label>
             <div class="col-sm-4">
-            <select name="idOrdaintzekoEraPart" required id="idOrdaintzekoEraPart">
+            <select name="idOrdaintzekoEraPart"  id="idOrdaintzekoEraPart">
                 {{#each ordaintzekoErak}}
                     {{#if aukeratua}}
                        <option value="{{idOrdaintzekoErak}}" selected>{{deskribapenaOrdainEra}}</option>
@@ -142,14 +142,14 @@
         <div class="form-group">
             <label for="pasahitzaPart" class="col-sm-2 control-label">Pasahitza</label>
             <div class="col-sm-4">
-                <input type="password" class="form-control" required id="pasahitzaPart" name="pasahitzaPart" placeholder="Sartu pasahitza aldaketak ziurtatzeko">
+                <input type="password" class="form-control"  id="pasahitzaPart" name="pasahitzaPart" placeholder="Sartu pasahitza aldaketak ziurtatzeko">
             </div>
         </div>
         {{/if}}
         <!--<div class="form-group">
             <label for="pasahitzaPart2" class="col-sm-2 control-label">Errepikatu Pasahitza</label>
             <div class="col-sm-4">
-                <input type="password" class="form-control" required id="pasahitzaPart2" name="pasahitzaPart2" placeholder="Errepikatu aurreko pasahitza" value={{pasahitzaPart2}} >
+                <input type="password" class="form-control"  id="pasahitzaPart2" name="pasahitzaPart2" placeholder="Errepikatu aurreko pasahitza" value={{pasahitzaPart2}} >
             </div>
         </div>-->
         <div class="form-group">

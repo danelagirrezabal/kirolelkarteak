@@ -1132,7 +1132,19 @@ exports.edukiakaldatu = function(req,res){
   
           if (err)
               console.log("Error Updating : %s ",err );
-         
+            
+          if (input.bidali){
+            
+              var status = input.izenburuaEdukia + " - http://zarauzkoeskubaloia.herokuapp.com/";
+
+              twitter.post('statuses/update', { status: status }, function (err, data, response) {
+                  if (err) {
+                        console.log(err);
+                  } else {
+                        console.log(data.text + ' txiotu da');
+                  }
+              });
+          }
           res.redirect('/admin/edukiak');
           
         });
@@ -2057,6 +2069,42 @@ exports.mantenimentu = function(req, res){
          });
                  
     }); 
+};
+
+exports.mantenimentuegin = function(req, res){
+    var input = JSON.parse(JSON.stringify(req.body));
+    var id = req.session.idKirolElkarteak;
+    var idDenboraldia = req.session.idDenboraldia;
+    var now= new Date();
+    var taldekideak = input.mantenimentuCSV.split("\n"); //CSV-a zatitu lerroka (partiduka)
+    var taldekidea = [];
+
+  req.getConnection(function(err,connection){
+   
+//      connection.query('SELECT * FROM taldeak WHERE idtaldeak > 172',function(err,rows)
+     connection.query('SELECT * FROM taldekideak, partaideMotak, taldeak, denboraldiak, mailak, partaideak where idMotaKide=idPartaideMotak and idTaldeakKide=idTaldeak and idMailak=idMailaTalde and idPartaideakKide=idPartaideak and idDenboraldiaTalde = idDenboraldia and idDenboraldia= ? and idElkarteakTalde = ?  order by idTaldekideak',[idDenboraldia,id],function(err,rows) {            
+
+      if(err)
+                console.log("Error Selecting : %s ",err );
+      for(var i in rows){
+            taldekidea = taldekideak[i].split(";");
+            console.log("input : " + i + "-" + rows[i].izenaPart + "-" + taldekidea[0] + "-" + taldekidea[1]);
+
+            var data = {
+                  bazkideZenbKide : taldekidea[1]
+            };
+        
+          connection.query("UPDATE taldekideak set ? WHERE idElkarteakKide = ? and idTaldekideak = ?",[data,id, rows[i].idTaldekideak], function(err, rowsu)
+          {
+  
+            if (err)
+              console.log("Error Updating : %s ",err );
+         
+          });
+
+      }
+    });
+  }); 
 };
 
 exports.lekuakbilatu = function(req, res){

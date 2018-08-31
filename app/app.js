@@ -336,6 +336,10 @@ app.get('/admin/argazkiak', adminonartua,function(req, res){
 app.post('/argazkiakigo/:idKirolElkarteak', adminonartua,kirolElkarteak.argazkiakigo);
 
 app.get('/admin/mantenimentu', adminonartua, kirolElkarteak.mantenimentu);
+app.get('/admin/mantenimentucsv', adminonartua,function(req, res){
+    res.render('mantenimentucsv.handlebars', {title : 'Mantenimentu', idKirolElkarteak: req.session.idKirolElkarteak, partaidea: req.session.partaidea});
+});
+app.post('/admin/mantenimentuegin', adminonartua, kirolElkarteak.mantenimentuegin);
 
 app.get('/admin/lekuak', adminonartua, kirolElkarteak.lekuakbilatu);
 app.post('/admin/lekuaksortu', adminonartua, kirolElkarteak.lekuaksortu);
