@@ -2059,16 +2059,12 @@ exports.mantenimentu = function(req, res){
             connection.query("UPDATE taldeak set ? WHERE idtaldeak = ?  ",[data,rows[i].idtaldeak], function(err, rows)
             {
                 if(err)
-
                   console.log("Error Updating : %s ",err );
-             
-              
             });
           }
-                           
-         });
-                 
-    }); 
+          res.redirect('/kirolElkarteakeditatu');                           
+        });
+  }); 
 };
 
 exports.mantenimentuegin = function(req, res){
@@ -2101,8 +2097,8 @@ exports.mantenimentuegin = function(req, res){
               console.log("Error Updating : %s ",err );
          
           });
-
       }
+      res.redirect('/kirolElkarteakeditatu');
     });
   }); 
 };

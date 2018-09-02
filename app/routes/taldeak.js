@@ -808,11 +808,12 @@ exports.taldekideakkopiatuegin = function(req, res){
   var taldekide = [];
   req.getConnection(function(err,connection){
     
-      console.log("Body:" +JSON.stringify(req.body));
+//      console.log("Body:" +JSON.stringify(req.body));
         
       for(var i in input.aukeratua ){
         taldekide = input.aukeratua[i].split("-");
-        console.log("input : " + i + "-" + input.aukeratua[i] + "-" + taldekide[0] + "-" + taldekide[1]);
+// ADI- taldekideakkopiatu.handlebars : gehitu checkbox-en kopiatu nahi duguna        
+//        console.log("input : " + i + "-" + input.aukeratua[i] + "-" + taldekide[0] + "-" + taldekide[1]);
         var data = {
 //            materialaKide    : input.materialaKide,
 //            ordainduKide   : input.ordainduKide,
@@ -820,7 +821,7 @@ exports.taldekideakkopiatuegin = function(req, res){
             idMotaKide : taldekide[1],                                            // input.idMotaKide,
             idTaldeakKide : idTaldeak,
             idPartaideakKide:  taldekide[0],                                 // input.aukeratua[i],
-//            bazkideZenbKide : input.bazkideZenbKide,
+            bazkideZenbKide : taldekide[2],
             idElkarteakKide : id
         };
         
@@ -834,6 +835,28 @@ exports.taldekideakkopiatuegin = function(req, res){
        // console.log(query.sql); 
       }
       res.redirect('/admin/taldekideak/'+idTaldeak);
+  });
+};
+
+exports.taldekidetxartelak = function(req, res){
+  var id = req.session.idKirolElkarteak;
+  var idDenboraldia = req.session.idDenboraldia;
+  var idTaldeak = req.params.idTaldeak;
+  req.getConnection(function(err,connection){
+
+    connection.query('SELECT * FROM taldeak, mailak, denboraldiak where idMailaTalde=idMailak and idDenboraldiaTalde = idDenboraldia and  idTaldeak = ? and idElkarteakTalde = ?',[idTaldeak,id],function(err,rowst) {
+       
+     connection.query('SELECT *,DATE_FORMAT(jaiotzeDataPart,"%Y-%m-%d") AS jaiotzeDataPart FROM taldekideak, partaideMotak, taldeak, denboraldiak, mailak, partaideak where idMotaKide=idPartaideMotak and idTaldeakKide=idTaldeak and idMailak=idMailaTalde and idPartaideakKide=idPartaideak and idDenboraldiaTalde = idDenboraldia and idDenboraldia= ? and idTaldeakKide = ? and idElkarteakTalde = ? order by deskribapenMota, kamixetaZenbKide, abizena1Part, abizena2Part, izenaPart',[idDenboraldia,idTaldeak,id],function(err,rows) {
+            
+        if(err)
+           console.log("Error Selecting : %s ",err );
+         
+         //console.log("Berriak:" +JSON.stringify(rows));
+
+        res.render('taldekidetxartelakadmin.handlebars',{title: "Taldekide Txartelak", idTaldeak: idTaldeak, data:rows, talde:rowst, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea: req.session.partaidea});                       
+
+      });   
+    });
   });
 };
 

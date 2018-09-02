@@ -490,6 +490,8 @@ app.post('/admin/taldeakkopiatuegin/', adminonartua, taldeak.taldeakkopiatuegin)
 
 app.get('/admin/taldekideakkopiatu/:idTaldeak/:idDenboraldia/:idTaldeakopiatu',adminonartua, taldeak.taldekideakkopiatu);
 app.post('/admin/taldekideakkopiatuegin/:idTaldeak', adminonartua, taldeak.taldekideakkopiatuegin);
+app.get('/admin/taldekidetxartelak/:idTaldeak', adminonartua, taldeak.taldekidetxartelak);
+
 app.get('/admin/taldekideak/:idTaldeak', adminonartua, taldeak.taldekideakbilatu);
 app.get('/taldekideak/:idTaldeak', authorize2, taldeak.taldekideakbilatupartaideargazkiekin);
 app.post('/admin/taldekideaksortu/:idTaldeak', adminonartua, taldeak.taldekideaksortu);
