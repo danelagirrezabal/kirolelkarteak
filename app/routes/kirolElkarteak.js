@@ -1570,15 +1570,12 @@ exports.agiriaksortu = function(req,res){
         };
         
   
-        var query = connection.query("INSERT INTO agiriak set ? ",data, function(err, rows)
+        var query = connection.query("INSERT INTO agiriak set ? ",[data], function(err, rows)
         {
   
           if (err)
               console.log("Error inserting : %s ",err );
-
-
-          
-         
+     
           res.redirect('/admin/agiriak');
             //res.render('agiriakigo.handlebars', {page_title:"Agiriak igo",data:rows, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea: req.session.partaidea});
 

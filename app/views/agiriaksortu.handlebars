@@ -7,7 +7,8 @@
 
     <form class="form-horizontal newsletterForm" role="form" action="/admin/agiriaksortu" method="POST">
 
-    <input type="hidden" name="_csrf" value="{{_csrfToken}}">
+    <input type="hidden" name="_csrf" value="{{_csrfToken}}">  
+
         <div class="form-group">
             <label for="atalaAgiria" class="col-sm-2 control-label">Atala</label>
             <div class="col-sm-4">
@@ -23,6 +24,13 @@
         </div>
 
         <div class="form-group">
+            <label for="urlAgiria" class="col-sm-2 control-label">Agiriaren URL</label>
+            <div class="col-sm-4">
+                <textarea name="urlAgiria" rows="1" cols="20" class="form-control" required id="urlAgiria" ></textarea>
+            </div>
+        </div>
+
+        <div class="form-group">
         <div class="checkbox col-sm-offset-3">
               <label>
                 <input type="checkbox" name="publiko" id="publiko" value="true">
@@ -31,21 +39,14 @@
          </div>
          </div>     
 
-         <div class="form-group">
-            <!--<label for="urlAgiria" class="col-sm-2 control-label">Agiriaren URL</label>-->
-            <div class="col-sm-4">
-                <textarea name="urlAgiria" rows="1" cols="20" class="form-control" style="display:none;" id="urlAgiria">{{urlAgiria}}</textarea>
-                <!--<input type="text" class="form-control" required id="urlAgiria" name="urlAgiria" autofocus value={{urlAgiria}} >-->
-            </div>
-        </div> 
 <!--
         <div class="form-group">
           <label for="agiria" class="col-sm-2 control-label">Agiria</label>
           <div class="col-sm-4">
             <input type="file" class="form-control" required accept="*/*" id="agiria" data-url="/upload" name="agiria">
           </div>
-        </div>-->
-
+        </div>
+-->
         <div class="form-group">
             <div class="col-sm-offset-3 col-sm-4">
                 <button type="submit" class="btn btn-default">Fitxategia gehitu</button>

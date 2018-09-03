@@ -853,7 +853,7 @@ exports.taldekidetxartelak = function(req, res){
          
          //console.log("Berriak:" +JSON.stringify(rows));
 
-        res.render('taldekidetxartelakadmin.handlebars',{title: "Taldekide Txartelak", idTaldeak: idTaldeak, data:rows, talde:rowst, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea: req.session.partaidea});                       
+        res.render('taldekidetxartelakadmin.handlebars',{title: "Taldekide Txartelak", idTaldeak: idTaldeak, data:rows, talde:rowst, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea: req.session.partaidea, layout: null});                       
 
       });   
     });

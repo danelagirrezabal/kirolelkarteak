@@ -1087,7 +1087,7 @@ exports.partaideakkargatuegin = function(req, res){
         {
          if (err)
               console.log("Error inserting : %s ",err );
-
+/*
          if (input.idTaldeakPartaide != "")
               idTaldeakPartaide = input.idTaldeakPartaide;
          else
@@ -1136,7 +1136,7 @@ exports.partaideakkargatuegin = function(req, res){
                     console.log("Error inserting : %s ",err );
                 });
               }       
-      
+*/      
         }); 
       }
       res.redirect('/admin/partaideak');

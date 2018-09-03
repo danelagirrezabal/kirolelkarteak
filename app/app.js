@@ -415,7 +415,9 @@ app.get('/agiriak', authorize2, kirolElkarteak.agiriakbilatupartaide);
 app.post('/admin/agiriaksortu', adminonartua, kirolElkarteak.agiriaksortu);
 app.post('/admin/agiriakigo', adminonartua, kirolElkarteak.agiriakigo);
 app.post('/admin/agiriakgehitu', adminonartua, function(req, res){
-    res.render('agiriakigo.handlebars', {title : 'KirolElkarteak-Agiriak gehitu', partaidea: req.session.partaidea});
+//    res.render('agiriakigo.handlebars', {title : 'KirolElkarteak-Agiriak gehitu', partaidea: req.session.partaidea});
+    res.render('agiriaksortu.handlebars', {title:"Agiriak Sortu"});
+
 });
 app.get('/admin/agiriakezabatu/:idAgiriak', adminonartua, kirolElkarteak.agiriakezabatu);
 app.get('/admin/agiriakeditatu/:idAgiriak', adminonartua, kirolElkarteak.agiriakeditatu);
