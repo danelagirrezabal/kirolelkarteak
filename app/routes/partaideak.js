@@ -361,7 +361,7 @@ exports.sortu = function(req,res){
       message: 'Pasahitzak ez dira berdinak',
     };
   }
-
+/*
   else if(req.body.emailPart != req.body.emailPart2) {
     if(req.xhr) return res.json({ error: 'Invalid mail' });
     res.locals.flash = {
@@ -370,7 +370,7 @@ exports.sortu = function(req,res){
       message: 'Emailak ez dira berdinak',
     };
   }
-
+*/
   req.getConnection(function (err, connection) {
 
 
@@ -496,7 +496,8 @@ exports.sortu = function(req,res){
               berezitasunakPart: input.berezitasunakPart,
               idOrdaintzekoEraPart: input.idOrdaintzekoEraPart,
               kontuZenbPart: input.kontuZenbPart,                  
-              balidatutaPart : "0"
+//ADI              balidatutaPart : "0"
+              balidatutaPart : "1"
             };
 
             var query = connection.query("INSERT INTO partaideak set ? ",data, function(err, rows)
@@ -519,7 +520,7 @@ exports.sortu = function(req,res){
             mailaizena = rowsm[i].mailaizena;
           }
          }*/
-
+/*
          //Partaidea sortzeko bidaliko den mezua BALIDAZIO LINKAREKIN
          var body = "<p>"+rowst[0].izenaElk+" elkartean partaidetza balidatu ahal izateko, </p>";
          body += "<h3> klik egin: http://"+hosta+"/partaideakbalidatu/" + partaideZenbakia+ ". </h3>";
@@ -528,8 +529,10 @@ exports.sortu = function(req,res){
          body += "<p>Mila esker!</p>";
           req.session.idPartaideak = rows.insertId;
           emailService.send(to, subj, body);
-          
+         
           res.render('partaideakeskerrak.handlebars', {title: "Mila esker!", partaideizena:data.izenaPart, elkarteizena:rowst[0].izenaElk, emailPart:data.emailPart, atalak: req.session.atalak, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia,idPartaideak:req.session.idPartaideak, arduraduna:req.session.arduraduna});
+*/ 
+          res.redirect('/partaideak');
           });
         });
        }); 
@@ -620,7 +623,7 @@ exports.aldatu = function(req,res){
       message: 'Pasahitzak ez dira berdinak',
     };
   }
-
+/*
   else if(req.body.emailPart != req.body.emailPart2) {
     if(req.xhr) return res.json({ error: 'Invalid mail' });
     res.locals.flash = {
@@ -629,7 +632,7 @@ exports.aldatu = function(req,res){
       message: 'Emailak ez dira berdinak',
     };
   }
-
+*/
   req.getConnection(function (err, connection) {
 
 

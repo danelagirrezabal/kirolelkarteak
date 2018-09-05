@@ -78,15 +78,17 @@
         <div class="form-group">
             <label for="emailPart" class="col-sm-2 control-label">Email</label>
             <div class="col-sm-4">
-                <input type="email" class="form-control" required id="emailPart" name="emailPart" placeholder="Kontua sortzeko erabiliko da" value={{emailPart}}>
+                <input type="email" class="form-control"  id="emailPart" name="emailPart" placeholder="Kontua sortzeko erabiliko da" value={{emailPart}}>
             </div>
         </div>
+<!--
         <div class="form-group">
             <label for="emailPart2" class="col-sm-2 control-label">Errepikatu Email</label>
             <div class="col-sm-4">
                 <input type="email2" class="form-control" required id="emailPart2" name="emailPart2" value={{emailPart2}}>
             </div>
         </div>
+-->        
         <div class="form-group">
             <label for="kontuZenbPart" class="col-sm-2 control-label">Kontu korronte zenbakia</label>
             <div class="col-sm-4">
@@ -97,7 +99,7 @@
          <div class="form-group">
             <label for="idOrdaintzekoEraPart" class="col-sm-2 control-label">Ordaintzeko era</label>
             <div class="col-sm-4">
-            <select name="idOrdaintzekoEraPart" id="idOrdaintzekoEraPart">
+            <select name="idOrdaintzekoEraPart" required id="idOrdaintzekoEraPart">
                 <option value="">--Ordaintzeko era aukeratu--</option>
                 {{#each ordaintzekoErak}}
                     {{#if aukeratua}}
@@ -132,6 +134,7 @@
                 <textarea name="berezitasunakPart" placeholder="Nahi baldin bada" rows="1" cols="40" class="form-control">{{berezitasunakPart}}</textarea>
             </div>
         </div>
+<!--        
         <div class="form-group">
             <label for="pasahitzaPart" class="col-sm-2 control-label">Pasahitza</label>
             <div class="col-sm-4">
@@ -144,6 +147,7 @@
                 <input type="password" class="form-control" required id="pasahitzaPart2" name="pasahitzaPart2" placeholder="Errepikatu aurreko pasahitza" value={{pasahitzaPart2}} >
             </div>
         </div>
+-->        
         <div class="form-group">
             <div class="col-sm-offset-2 col-sm-4">
                 <button type="submit" class="btn btn-default">Partaidea sortu</button>
