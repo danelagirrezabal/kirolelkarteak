@@ -324,7 +324,7 @@ exports.sortu = function(req,res){
 
     console.log("idKirolElkarteak:" + req.session.idKirolElkarteak);
     var id = req.session.idKirolElkarteak;
-
+/*
     //Errore kontrolak
     if(!req.body.nanPart.match(VALID_DNI_REGEX)) {
     if(req.xhr) return res.json({ error: 'Invalid DNI' });
@@ -361,7 +361,7 @@ exports.sortu = function(req,res){
       message: 'Pasahitzak ez dira berdinak',
     };
   }
-/*
+
   else if(req.body.emailPart != req.body.emailPart2) {
     if(req.xhr) return res.json({ error: 'Invalid mail' });
     res.locals.flash = {
@@ -472,8 +472,8 @@ exports.sortu = function(req,res){
             var salt = bcrypt.genSaltSync();
             var password_hash = bcrypt.hashSync(input.pasahitzaPart, salt);
             //var elkartea = rowst.izenaElk;
-            console.log("Hau da elkartea: "+rowst[0].idElkarteak);
-            console.log("Elkartea:" +JSON.stringify(rowst));
+//            console.log("Hau da elkartea: "+rowst[0].idElkarteak);
+//            console.log("Elkartea:" +JSON.stringify(rowst));
             //console.log("Hau da elkarte id: "+req.session.idKirolElkarteak);
 
           
@@ -586,7 +586,7 @@ exports.aldatu = function(req,res){
 //    res.locals.flash = null;
    var admin = (req.path.slice(0,6) == "/admin");
   var generoa = [{izena: "Neska"}, {izena: "Mutila"}];    
-
+/*
     //Errore kontrolak
     if(!req.body.nanPart.match(VALID_DNI_REGEX)) {
     if(req.xhr) return res.json({ error: 'Invalid DNI' });
@@ -623,7 +623,7 @@ exports.aldatu = function(req,res){
       message: 'Pasahitzak ez dira berdinak',
     };
   }
-/*
+
   else if(req.body.emailPart != req.body.emailPart2) {
     if(req.xhr) return res.json({ error: 'Invalid mail' });
     res.locals.flash = {
