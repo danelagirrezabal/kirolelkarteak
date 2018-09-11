@@ -365,6 +365,84 @@ exports.taldeakkopiatuegin = function(req, res){
 
 //TALDEKIDEAK
 
+exports.taldekideakikusi = function(req,res){
+  var id = req.session.idKirolElkarteak;
+  var idDenboraldia = req.session.idDenboraldia;
+  var idTaldeak = req.params.idTaldeak;
+var taldeak = []; 
+var taldea = {};
+var jokalariak = []; 
+var j;
+var t = 0;
+var vTalde;
+var date = new Date();
+  req.getConnection(function(err,connection){
+//      connection.query('SELECT * FROM maila,taldeak LEFT JOIN jokalariak ON idtaldeak=idtaldej WHERE kategoria = idmaila and idtxapeltalde = ? and balidatuta != "admin" order by idtaldeak, idjokalari',[req.session.idtxapelketa],function(err,rows)     {
+    connection.query('SELECT * FROM taldeak, mailak, denboraldiak where idMailaTalde=idMailak and idDenboraldiaTalde = idDenboraldia and  idTaldeak = ? and idElkarteakTalde = ?',[idTaldeak,id],function(err,rowst) {
+       
+     connection.query('SELECT *,DATE_FORMAT(jaiotzeDataPart,"%Y-%m-%d") AS jaiotzeDataPart FROM taldekideak, partaideMotak, taldeak, denboraldiak, mailak, partaideak where idMotaKide=idPartaideMotak and idTaldeakKide=idTaldeak and idMailak=idMailaTalde and idPartaideakKide=idPartaideak and idDenboraldiaTalde = idDenboraldia and idDenboraldia= ? and idElkarteakTalde = ? order by zenbakiMaila desc, izenaTalde asc, deskribapenMota, kamixetaZenbKide, abizena1Part, abizena2Part, izenaPart',[idDenboraldia,id],function(err,rows) {
+//     connection.query('SELECT *,DATE_FORMAT(jaiotzeDataPart,"%Y-%m-%d") AS jaiotzeDataPart FROM denboraldiak,mailak,taldeak LEFT JOIN taldekideak, partaideak, partaideMotak ON idMotaKide=idPartaideMotak and idTaldeakKide=idTaldeak and idPartaideakKide=idPartaideak where federazioaTalde != 9 and idMailak=idMailaTalde and idDenboraldiaTalde = idDenboraldia and idDenboraldia= ? and idElkarteakTalde = ? order by zenbakiMaila desc, izenaTalde asc, deskribapenMota, kamixetaZenbKide, abizena1Part, abizena2Part, izenaPart',[idDenboraldia,id],function(err,rows) {
+
+        if(err)
+           console.log("Error Selecting : %s ",err );
+        for (var i in rows) { 
+          if(vTalde != rows[i].idTaldeak){
+            if(vTalde !=null){
+              taldea.jokalariak = jokalariak;
+              taldeak[t] = taldea;
+              t++;
+            }
+            vTalde = rows[i].idTaldeak;
+            jokalariak = []; 
+            j=0;
+/*            
+            if(rows[i].sortzedata != null){
+            data = rows[i].sortzedata;
+            rows[i].sortzedata= data.getFullYear() + "-"+ (data.getMonth() +1) +"-"+ data.getDate()+" "+data.getHours()+":"+data.getMinutes();
+          }
+*/          
+            taldea = {
+                  idtaldeak  : rows[i].idTaldeak,
+                  izenaMaila  : rows[i].izenaMaila,
+                  akronimoMaila  : rows[i].akronimoMaila,
+                  izenaTalde    : rows[i].izenaTalde,
+                  arduradunEmailTalde   : rows[i].arduradunEmailTalde,
+                  akronimoTalde : rows[i].akronimoTalde
+               };
+               
+          }
+          jokalariak[j] = {
+                  idtaldeak  : rows[i].idTaldeak,
+                  idTaldekideak : rows[i].idTaldekideak,
+                  materialaKide    : rows[i].materialaKide,
+                  ordainduKide   : rows[i].ordainduKide,
+                  kamixetaZenbKide : rows[i].kamixetaZenbKide,
+                  idMotaKide : rows[i].idMotaKide,
+                  idTaldeakKide : rows[i].idTaldeak,
+                  idPartaideakKide: rows[i].idPartaideakKide,
+                  bazkideZenbKide : rows[i].bazkideZenbKide,
+                  nanPart : rows[i].nanPart,
+                  izenaPart : rows[i].izenaPart,
+                  abizena1Part : rows[i].abizena1Part,
+                  abizena2Part : rows[i].abizena2Part,
+                  jaiotzeDataPart : rows[i].jaiotzeDataPart,
+                  deskribapenMota : rows[i].deskribapenMota
+               };
+          j++;
+          
+        }
+        if(vTalde !=null){
+              taldea.jokalariak = jokalariak;
+              taldeak[t] = taldea;
+              t++;
+        }
+
+        res.render('taldekideakikusi.handlebars',{title: "Taldekideak ikusi", idTaldeak: idTaldeak, data:taldeak, talde:rowst, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea: req.session.partaidea});                       
+      });    
+    });
+  });
+}
+
 exports.taldekideakbilatu = function(req, res){
   var id = req.session.idKirolElkarteak;
   var idDenboraldia = req.session.idDenboraldia;

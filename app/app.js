@@ -129,7 +129,6 @@ app.use(function(req, res, next){
   //  static('/img/kirolElkarteak.png');
   res.locals.logoImage = static('/img/ZarauzkoKirolElkartea.jpg');
    //  :
-  //  static('/img/txaparrotan.png');
     next();
 });
 
@@ -353,7 +352,7 @@ app.post('/admin/lekuakaldatu/:idLekuak', adminonartua, kirolElkarteak.lekuakald
 app.get('/admin/mailak', adminonartua, kirolElkarteak.mailakbilatu);
 app.post('/admin/mailaksortu', adminonartua, kirolElkarteak.mailaksortu);
 app.post('/admin/mailakgehitu', adminonartua, function(req, res){
-    res.render('mailaksortu.handlebars', {title : 'Txaparrotan-Mailak gehitu', partaidea: req.session.partaidea});
+    res.render('mailaksortu.handlebars', {title : 'KirolElkarteak-Mailak gehitu', partaidea: req.session.partaidea});
 });
 app.get('/admin/mailakezabatu/:idMailak', adminonartua, kirolElkarteak.mailakezabatu);
 app.get('/admin/mailakeditatu/:idMailak', adminonartua, kirolElkarteak.mailakeditatu);
@@ -494,6 +493,7 @@ app.get('/admin/taldekideakkopiatu/:idTaldeak/:idDenboraldia/:idTaldeakopiatu',a
 app.post('/admin/taldekideakkopiatuegin/:idTaldeak', adminonartua, taldeak.taldekideakkopiatuegin);
 app.get('/admin/taldekidetxartelak/:idTaldeak', adminonartua, taldeak.taldekidetxartelak);
 
+app.get('/admin/taldekideakikusi/', adminonartua, taldeak.taldekideakikusi);
 app.get('/admin/taldekideak/:idTaldeak', adminonartua, taldeak.taldekideakbilatu);
 app.get('/taldekideak/:idTaldeak', authorize2, taldeak.taldekideakbilatupartaideargazkiekin);
 app.post('/admin/taldekideaksortu/:idTaldeak', adminonartua, taldeak.taldekideaksortu);

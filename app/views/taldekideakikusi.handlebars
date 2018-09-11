@@ -1,0 +1,62 @@
+{{> menuadmin}}
+   
+   <div class="jumbotron">
+        <h3>Taldekideak ikusi</h3> 
+   </div>
+      <a href="/admin/taldeak" class="btn btn-primary btn-sm" role="button">Taldeak ikusi</a>
+      <a href="/admin/taldekopurua" class="btn btn-primary btn-sm" role="button">Talde kopurua ikusi</a>
+      <a href="/admin/jokalarikopurua" class="btn btn-primary btn-sm" role="button">Jokalari kopurua ikusi</a>
+
+      <div class="row marketing">
+        <div class="col-lg-12">
+        <table class="table table-condensed">
+            <tr>
+                    <th>Maila</th>
+                    <th  width="15%">TALDEA</th>
+                    <th>NAN DNI</th>
+                    <th>IZEN-ABIZENAK</th>
+                    <th>JAIO.DATA</th>
+                    <th>MOTA</th>
+                    <th>Kamixeta zenbakia</th>
+                    <th>Materiala</th>
+                    <th>Ordainketa</th> 
+                    <th>Bazkide zenbakia</th>
+
+                </tr>                               
+            {{#each data}}
+                  <tr class="active">
+                    <td>{{akronimoMaila}} {{akronimoTalde}}</td>
+                    <td>{{izenaTalde}}</td>  
+                    <td> </td>  
+                    <td>{{arduradunEmailTalde}}</td>  
+                    <td> </td>  
+                    <td> </td> 
+                    <td> </td> 
+                    <td> </td>   
+                    <td> </td> 
+                    <td> </td> 
+<!--                    
+                    <td><a class="a-inside edit" href="/admin/partaideakeditatu/{{idPartaideakKide}}">Partaide</a></td> 
+                    <td><a class="a-inside edit" href="/admin/taldekideakeditatu/{{idTaldekideak}}">Aldatu</a></td>
+                    <td><a class="a-inside edit" href="/admin/taldekideakezabatu/{{idTaldeak}}/{{idTaldekideak}}">Ezabatu</a></td>
+--> 
+                  {{#each jokalariak}} 
+                    <tr>
+                      <td width="20px"> </td>
+                      <td> </td>
+                      <td>{{nanPart}}</td>
+                      <td>{{izenaPart}} {{abizena1Part}} {{abizena2Part}}</td>  
+                      <td>{{jaiotzeDataPart}}</td>  
+                      <td>{{deskribapenMota}}</td> 
+                      <td>{{kamixetaZenbKide}}</td> 
+                      <td>{{materialaKide}}</td>   
+                      <td>{{ordainduKide}}</td> 
+                      <td>{{bazkideZenbKide}}</td>
+                      <td> </td>
+                    </tr>
+                  {{/each}} 
+                </tr>
+            {{/each}}
+          </table>
+        </div>
+      </div>

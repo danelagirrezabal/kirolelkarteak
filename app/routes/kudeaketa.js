@@ -70,7 +70,7 @@ exports.taldekopurua = function(req, res){
   var totala = 0;
   req.getConnection(function(err,connection){
        
-     connection.query('SELECT *, count(*) as taldeakguztira FROM taldeak, mailak where idMailaTalde = idMailak and idElkarteakTalde = ? group by idMailak order by zenbakiMaila asc',[id],function(err,rows) {
+     connection.query('SELECT *, count(*) as taldeakguztira FROM taldeak, mailak where idMailaTalde = idMailak and idElkarteakTalde = ? and idDenboraldiaTalde = ? group by idMailak order by zenbakiMaila asc',[id,idDenboraldia],function(err,rows) {
             
         if(err)
            console.log("Error Selecting : %s ",err );
@@ -94,7 +94,7 @@ exports.jokalarikopurua = function(req, res){
   var totala = 0;
   req.getConnection(function(err,connection){
        
-     connection.query('SELECT *, count(*) as jokalariakguztira FROM taldeak, taldekideak, mailak where idMailak = idMailaTalde and idTaldeak = idTaldeakKide and idElkarteakTalde = ? group by izenaTalde order by idMailaTalde asc',[id],function(err,rows) {
+     connection.query('SELECT *, count(*) as jokalariakguztira FROM taldeak, taldekideak, mailak where idMailak = idMailaTalde and idTaldeak = idTaldeakKide and idElkarteakTalde = ? and idDenboraldiaTalde = ? group by izenaTalde order by idMailaTalde asc',[id,idDenboraldia],function(err,rows) {
             
         if(err)
            console.log("Error Selecting : %s ",err );
