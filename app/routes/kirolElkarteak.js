@@ -2352,7 +2352,7 @@ exports.partaidemotakbilatu = function(req, res){
 
   req.getConnection(function(err,connection){     
    
-        connection.query('SELECT * FROM partaideMotak where idElkarteakPartaideMotak= ?',[id],function(err,rows)     {
+        connection.query('SELECT * FROM partaideMotak where idElkarteakPartaideMotak= ? order by zenbakiMota',[id],function(err,rows)     {
             
           if(err)
            console.log("Error Selecting : %s ",err );
@@ -2394,6 +2394,7 @@ exports.partaidemotaksortu = function(req,res){
         var data = {
             
             deskribapenMota : input.deskribapenMota,
+            zenbakiMota : input.zenbakiMota,
             idElkarteakPartaideMotak    : id
         };
         
@@ -2419,8 +2420,8 @@ exports.partaidemotakaldatu = function(req,res){
         
         var data = {
             
-            deskribapenMota : input.deskribapenMota
-
+            deskribapenMota : input.deskribapenMota,
+            zenbakiMota : input.zenbakiMota
         };
         
         connection.query("UPDATE partaideMotak set ? WHERE idElkarteakPartaideMotak = ? and idPartaideMotak = ? ",[data,id,idPartaideMotak], function(err, rows)

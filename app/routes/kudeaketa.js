@@ -91,21 +91,79 @@ exports.taldekopurua = function(req, res){
 exports.jokalarikopurua = function(req, res){
   var id = req.session.idKirolElkarteak;
   var idDenboraldia = req.session.idDenboraldia;
-  var totala = 0;
+  var kideakguztira = 0, jokalariakguztira = 0, entrenatzaileakguztira = 0, laguntzaileakguztira = 0;
+  var guztirao = {}, guztira = [0,0,0,0], guztirak = [];
+  var mailao = {}, maila = [], mailaizena = [], mailak = [];
+  var j;
+/*  for(var i = 0; i>9; i++){
+    for(var j = 0;j>4;j++){
+      maila[i][j] = 0;
+    }
+  } 
+var taulaS = new Array(jardunkop -1); 
+for (var i = 0; i < jardunkop -1; i++) {
+   taulaS[i] = new Array(partikop); 
+   for (var j = 0; j < partikop; j++) {
+      taulaS[i][j] = [0,0];
+   }
+}  
+ 
+var maila = new Array(10); 
+for (var i = 0; i >9; i++) {
+   maila[i] = new Array(4); 
+   for (var j = 0; j > 4; j++) {
+      maila[i][j] = [0];
+   }
+}
+  console.log("maila:" +JSON.stringify(maila)); 
+*/  
   req.getConnection(function(err,connection){
        
-     connection.query('SELECT *, count(*) as jokalariakguztira FROM taldeak, taldekideak, mailak where idMailak = idMailaTalde and idTaldeak = idTaldeakKide and idElkarteakTalde = ? and idDenboraldiaTalde = ? group by izenaTalde order by idMailaTalde asc',[id,idDenboraldia],function(err,rows) {
+     connection.query('SELECT *, count(*) as kideak, sum(case when zenbakiMota = 1 then 1 else 0 end) as jokalariak, sum(case when zenbakiMota = 2 then 1 else 0 end) as entrenatzaileak, sum(case when zenbakiMota = 3 then 1 else 0 end) as laguntzaileak FROM taldeak, taldekideak, mailak, partaidemotak where idMailak = idMailaTalde and idTaldeak = idTaldeakKide and idMotaKide = idPartaideMotak and idElkarteakTalde = ? and idDenboraldiaTalde = ? group by idTaldeak order by zenbakiMaila,akronimoTalde ',[id,idDenboraldia],function(err,rows) {
             
         if(err)
            console.log("Error Selecting : %s ",err );
 
-
          for(var i in rows){
-          totala += rows[i].jokalariakguztira;
+//          kideakguztira += rows[i].kideak;
+//          jokalariakguztira += rows[i].jokalariak;
+//          entrenatzaileakguztira += rows[i].entrenatzaileak;
+//          laguntzaileakguztira += rows[i].laguntzaileak;
+            guztira[0] += rows[i].kideak;
+            guztira[1] += rows[i].jokalariak;
+            guztira[2] += rows[i].entrenatzaileak;
+            guztira[3] += rows[i].laguntzaileak;
+/*            j = rows[i].zenbakiMaila - 1;
+            mailaizena[j] = rows[i].izenaMaila;
+            maila[j][0] += rows[i].kideak;
+            maila[j][1] += rows[i].jokalariak;
+            maila[j][2] += rows[i].entrenatzaileak;
+            maila[j][3] += rows[i].laguntzaileak;
+*/
          }
-         
-         //console.log("Berriak:" +JSON.stringify(rows));
-      res.render('jokalarikopurua.handlebars', {title : 'KirolElkarteak-Taldeak gehitu', taldetotala: totala, taldeak:rows, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea: req.session.partaidea, partaidea: req.session.partaidea, atalak: req.session.atalak, idPartaideak:req.session.idPartaideak, arduraduna:req.session.arduraduna});
+         guztirao.kideak = guztira[0];
+         guztirao.jokalariak = guztira[1];
+         guztirao.entrenatzaileak = guztira[2]; 
+         guztirao.laguntzaileak = guztira[3]; 
+         guztirak[0] = guztirao; 
+/*         console.log("mailaizena:" +JSON.stringify(mailaizena));
+         console.log("maila:" +JSON.stringify(maila));
+         for(var k = 0;k>9;k++){
+
+           mailao = {
+            mailaizena : mailaizena[k],
+            kideak : maila[k][0],
+            jokalariak : maila[k][1],
+            entrenatzaileak : maila[k][2], 
+            laguntzaileak : maila[k][3] 
+           };
+           console.log("mailao:" +JSON.stringify(mailao));
+
+           mailak[k] = mailao;     
+         }
+         console.log("mailak:" +JSON.stringify(mailak));
+*/
+      res.render('jokalarikopurua.handlebars', {title : 'KirolElkarteak- Kide kopuruak', guztirak: guztirak,mailak: mailak, taldeak:rows, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea: req.session.partaidea, partaidea: req.session.partaidea, atalak: req.session.atalak, idPartaideak:req.session.idPartaideak, arduraduna:req.session.arduraduna});
    
     });  
          

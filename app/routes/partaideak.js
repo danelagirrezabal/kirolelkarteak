@@ -181,13 +181,9 @@ exports.editatu = function(req, res){
    //var id = req.params.id;
   var id = req.session.idKirolElkarteak;
   var idPartaideak = req.params.idPartaideak;
-  var generoa = [{izena: "Neska"}, {izena: "Mutila"}];
+  var generoa = [{izena: "Neska", balioa: "N"}, {izena: "Mutila", balioa: "M"}];
   var admin = (req.path.slice(0,24) == "/admin/partaideakeditatu");
-
-  
-
-
-    
+   
   req.getConnection(function(err,connection){
        
      connection.query('SELECT *, DATE_FORMAT(jaiotzeDataPart,"%Y/%m/%d") AS jaiotzeDataPart  FROM partaideak WHERE idPartaideak = ?',[idPartaideak],function(err,rows)
@@ -206,7 +202,7 @@ exports.editatu = function(req, res){
               res.redirect('/');
             }else{
               for(var i in rowso ){
-                  if(rows[0].idOrdaintzekoEraBazk == rowso[i].idOrdaintzekoErak){
+                  if(rows[0].idOrdaintzekoEraPart == rowso[i].idOrdaintzekoErak){
                     rowso[i].aukeratua = true;
                   }
                   else
@@ -216,7 +212,7 @@ exports.editatu = function(req, res){
               rows[0].ordaintzekoErak = rowso;
 
               for(var i in generoa ){
-                  if(rows[0].sexuaPart == generoa[i].izena){
+                  if(rows[0].sexuaPart == generoa[i].balioa){
                     generoa[i].aukeratua = true;
                   }
                   else
@@ -318,11 +314,11 @@ exports.sortu = function(req,res){
     
     var input = JSON.parse(JSON.stringify(req.body));
     res.locals.flash = null;
-   var generoa = [{izena: "Neska"}, {izena: "Mutila"}];
+   var generoa = [{izena: "Neska", balioa: "N"}, {izena: "Mutila", balioa: "M"}];
 
     var now= new Date();
 
-    console.log("idKirolElkarteak:" + req.session.idKirolElkarteak);
+//    console.log("idKirolElkarteak:" + req.session.idKirolElkarteak);
     var id = req.session.idKirolElkarteak;
 /*
     //Errore kontrolak
@@ -388,7 +384,7 @@ exports.sortu = function(req,res){
           }
 
           for(var i in generoa ){
-                  if(req.body.sexuaPart == generoa[i].izena){
+                  if(req.body.sexuaPart == generoa[i].balioa){
                     generoa[i].aukeratua = true;
                   }
                   else
@@ -544,7 +540,7 @@ exports.sortu = function(req,res){
 exports.partaideakgehitu = function(req, res){ //Datu basetik conboBox-ak betetzeko
   var id = req.session.idKirolElkarteak;
   var idDenboraldia = req.session.idDenboraldia;
-    var generoa = [{izena: "Neska"}, {izena: "Mutila"}];
+  var generoa = [{izena: "Neska", balioa: "N"}, {izena: "Mutila", balioa: "M"}];
 
   req.getConnection(function(err,connection){
        
@@ -552,14 +548,8 @@ exports.partaideakgehitu = function(req, res){ //Datu basetik conboBox-ak betetz
             
               if(err)
                 console.log("Error Selecting : %s ",err );
-
-
-
               //rows[0].generoa = generoa;
-
-            
-
-         
+       
          //console.log("Berriak:" +JSON.stringify(rows));
       res.render('partaideakgehitu.handlebars', {title : 'KirolElkarteak-PartaideakGehitu', generoa:generoa, ordaintzekoErak: rowso, partaidea: req.session.partaidea});
 
@@ -572,11 +562,11 @@ exports.aldatu = function(req,res){
     
 //    var input = JSON.parse(JSON.stringify(req.body));
     res.locals.flash = null;
-   var generoa = [{izena: "Neska"}, {izena: "Mutila"}];
+   var generoa = [{izena: "Neska", balioa: "N"}, {izena: "Mutila", balioa: "M"}];
 
     var now= new Date();
 
-    console.log("idKirolElkarteak:" + req.session.idKirolElkarteak);
+//    console.log("idKirolElkarteak:" + req.session.idKirolElkarteak);
     var id = req.session.idKirolElkarteak;
 
     var input = JSON.parse(JSON.stringify(req.body));
@@ -585,7 +575,7 @@ exports.aldatu = function(req,res){
     var idPartaideak = req.params.idPartaideak;
 //    res.locals.flash = null;
    var admin = (req.path.slice(0,6) == "/admin");
-  var generoa = [{izena: "Neska"}, {izena: "Mutila"}];    
+//  var generoa = [{izena: "Neska"}, {izena: "Mutila"}];    
 /*
     //Errore kontrolak
     if(!req.body.nanPart.match(VALID_DNI_REGEX)) {
@@ -650,7 +640,7 @@ exports.aldatu = function(req,res){
           }
 
           for(var i in generoa ){
-                  if(req.body.sexuaPart == generoa[i].izena){
+                  if(req.body.sexuaPart == generoa[i].balioa){
                     generoa[i].aukeratua = true;
                   }
                   else
@@ -734,8 +724,8 @@ exports.aldatu = function(req,res){
             var salt = bcrypt.genSaltSync();
             var password_hash = bcrypt.hashSync(input.pasahitzaPart, salt);
             //var elkartea = rowst.izenaElk;
-            console.log("Hau da elkartea: "+rowst[0].idElkarteak);
-            console.log("Elkartea:" +JSON.stringify(rowst));
+//            console.log("Hau da elkartea: "+rowst[0].idElkarteak);
+//            console.log("Elkartea:" +JSON.stringify(rowst));
             //console.log("Hau da elkarte id: "+req.session.idKirolElkarteak);
 
           
@@ -853,7 +843,7 @@ req.getConnection(function(err,connection){
           }
 
           for(var i in generoa ){
-                  if(req.body.sexuaPart == generoa[i].izena){
+                  if(req.body.sexuaPart == generoa[i].balioa){
                     generoa[i].aukeratua = true;
                   }
                   else
