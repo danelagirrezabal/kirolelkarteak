@@ -181,7 +181,8 @@ exports.denboraldiakaldatu = function(req,res){
             noraDenb   : input.noraDenb,
             deskribapenaDenb: input.deskribapenaDenb,
             //idElkarteakDenb : id,
-            egoeraDenb: input.egoeraDenb
+            egoeraDenb: input.egoeraDenb,
+            kuotaDenb: input.kuotaDenb
         };
         
         connection.query("UPDATE denboraldiak set ? WHERE idElkarteakDenb = ? and idDenboraldia = ? ",[data,id,idDenboraldia], function(err, rows)

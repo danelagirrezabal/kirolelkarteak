@@ -443,10 +443,48 @@ var date = new Date();
   });
 }
 
+exports.taldekideakabizenez = function(req,res){
+  var id = req.session.idKirolElkarteak;
+  var idDenboraldia = req.session.idDenboraldia;
+//  var idTaldeak = req.params.idTaldeak;
+var taldeak = []; 
+var taldea = {};
+var jokalariak = []; 
+var j;
+var t = 0;
+var vabizena1Part, vabizena2Part;
+var date = new Date();
+  req.getConnection(function(err,connection){
+//      connection.query('SELECT * FROM maila,taldeak LEFT JOIN jokalariak ON idtaldeak=idtaldej WHERE kategoria = idmaila and idtxapeltalde = ? and balidatuta != "admin" order by idtaldeak, idjokalari',[req.session.idtxapelketa],function(err,rows)     {
+//    connection.query('SELECT * FROM taldeak, mailak, denboraldiak where idMailaTalde=idMailak and idDenboraldiaTalde = idDenboraldia and  idTaldeak = ? and idElkarteakTalde = ?',[idTaldeak,id],function(err,rowst) {
+       
+     connection.query('SELECT *,DATE_FORMAT(jaiotzeDataPart,"%Y-%m-%d") AS jaiotzeDataPart FROM taldekideak, partaideMotak, taldeak, denboraldiak, mailak, partaideak where idMotaKide=idPartaideMotak and idTaldeakKide=idTaldeak and idMailak=idMailaTalde and idPartaideakKide=idPartaideak and idDenboraldiaTalde = idDenboraldia and idDenboraldia= ? and idElkarteakTalde = ? order by abizena1Part, abizena2Part, izenaPart',[idDenboraldia,id],function(err,rows) {
+//     connection.query('SELECT *,DATE_FORMAT(jaiotzeDataPart,"%Y-%m-%d") AS jaiotzeDataPart FROM denboraldiak,mailak,taldeak LEFT JOIN taldekideak, partaideak, partaideMotak ON idMotaKide=idPartaideMotak and idTaldeakKide=idTaldeak and idPartaideakKide=idPartaideak where federazioaTalde != 9 and idMailak=idMailaTalde and idDenboraldiaTalde = idDenboraldia and idDenboraldia= ? and idElkarteakTalde = ? order by zenbakiMaila desc, izenaTalde asc, deskribapenMota, kamixetaZenbKide, abizena1Part, abizena2Part, izenaPart',[idDenboraldia,id],function(err,rows) {
+
+        if(err)
+           console.log("Error Selecting : %s ",err );
+        for (var i in rows) { 
+          if(vabizena1Part == rows[i].abizena1Part && vabizena2Part == rows[i].abizena2Part)
+
+              rows[i].kolore = "#FF0000";
+          else  
+              rows[i].kolore = "#000000";
+
+          vabizena1Part = rows[i].abizena1Part;
+          vabizena2Part = rows[i].abizena2Part;
+        }
+
+        res.render('taldekideakabizenez.handlebars',{title: "Taldekideak abizenez", data:rows, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea: req.session.partaidea});                       
+     });    
+//    });
+  });
+}
+
 exports.taldekideakbilatu = function(req, res){
   var id = req.session.idKirolElkarteak;
   var idDenboraldia = req.session.idDenboraldia;
   var idTaldeak = req.params.idTaldeak;
+  var j = 0 ;
   req.getConnection(function(err,connection){
 
     connection.query('SELECT * FROM taldeak, mailak, denboraldiak where idMailaTalde=idMailak and idDenboraldiaTalde = idDenboraldia and  idTaldeak = ? and idElkarteakTalde = ?',[idTaldeak,id],function(err,rowst) {
@@ -491,6 +529,10 @@ exports.taldekideakbilatu = function(req, res){
             };
           });
 
+          for (var i in rows){
+              j++;
+              rows[i].zenbatgarren = j;
+          };
           res.render('taldekideakadmin.handlebars',{title: "Taldekideak", idTaldeak: idTaldeak, irudiak:argazkiak, data:rows, talde:rowst, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea: req.session.partaidea});                       
 
       });   
@@ -788,7 +830,9 @@ exports.taldekideakaldatu = function(req,res){
         
         var data = {
             materialaKide    : input.materialaKide,
-            ordainduKide   : input.ordainduKide,
+//            ordainduKide   : input.ordainduKide,
+            ordaintzekoKide   : input.ordaintzekoKide,
+            ordaindutaKide   : input.ordaindutaKide,
             kamixetaZenbKide : input.kamixetaZenbKide,
             idMotaKide : input.idMotaKide,
             idPartaideakKide: input.idPartaideakKide,
@@ -887,7 +931,10 @@ exports.taldekideakkopiatuegin = function(req, res){
   req.getConnection(function(err,connection){
     
 //      console.log("Body:" +JSON.stringify(req.body));
-        
+    connection.query('SELECT kuotaDenb FROM denboraldiak where idElkarteakDenb = ? and idDenboraldia = ?',[id,idDenboraldia],function(err,rowsdenb) {
+          
+      if(err)
+          console.log("Error Selecting : %s ",err );        
       for(var i in input.aukeratua ){
         taldekide = input.aukeratua[i].split("-");
 // ADI- taldekideakkopiatu.handlebars : gehitu checkbox-en kopiatu nahi duguna        
@@ -900,7 +947,8 @@ exports.taldekideakkopiatuegin = function(req, res){
             idTaldeakKide : idTaldeak,
             idPartaideakKide:  taldekide[0],                                 // input.aukeratua[i],
             bazkideZenbKide : taldekide[2],
-            idElkarteakKide : id
+            idElkarteakKide : id,
+            kuotaDenb: rowsdenb[0].kuotaDenb
         };
         
   
@@ -913,6 +961,7 @@ exports.taldekideakkopiatuegin = function(req, res){
        // console.log(query.sql); 
       }
       res.redirect('/admin/taldekideak/'+idTaldeak);
+    });  
   });
 };
 

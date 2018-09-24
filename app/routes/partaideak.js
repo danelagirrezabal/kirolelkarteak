@@ -417,6 +417,7 @@ exports.sortu = function(req,res){
             berezitasunakPart: req.body.berezitasunakPart,
             idOrdaintzekoEraPart: req.body.idOrdaintzekoEraPart,
             kontuZenbPart: req.body.kontuZenbPart,
+            kontuIbanPart: req.body.kontuIbanPart,
             ordaintzekoErak : rowso,
             generoa : generoa             
 
@@ -455,6 +456,7 @@ exports.sortu = function(req,res){
             berezitasunakPart: req.body.berezitasunakPart,
             idOrdaintzekoEraPart: req.body.idOrdaintzekoEraPart,
             kontuZenbPart: req.body.kontuZenbPart,
+            kontuIbanPart: req.body.kontuIbanPart,
             ordaintzekoErak : rowso,
             generoa : generoa                  
 
@@ -491,7 +493,8 @@ exports.sortu = function(req,res){
               pasahitzaPart:   password_hash,  
               berezitasunakPart: input.berezitasunakPart,
               idOrdaintzekoEraPart: input.idOrdaintzekoEraPart,
-              kontuZenbPart: input.kontuZenbPart,                  
+              kontuZenbPart: input.kontuZenbPart,
+              kontuIbanPart: input.kontuIbanPart,                  
 //ADI              balidatutaPart : "0"
               balidatutaPart : "1"
             };
@@ -673,6 +676,7 @@ exports.aldatu = function(req,res){
             berezitasunakPart: req.body.berezitasunakPart,
             idOrdaintzekoEraPart: req.body.idOrdaintzekoEraPart,
             kontuZenbPart: req.body.kontuZenbPart,
+            kontuIbanPart: req.body.kontuIbanPart,
             ordaintzekoErak : rowso,
             generoa : generoa             
 
@@ -711,6 +715,7 @@ exports.aldatu = function(req,res){
             berezitasunakPart: req.body.berezitasunakPart,
             idOrdaintzekoEraPart: req.body.idOrdaintzekoEraPart,
             kontuZenbPart: req.body.kontuZenbPart,
+            kontuIbanPart: req.body.kontuIbanPart,
             ordaintzekoErak : rowso,
             generoa : generoa                  
 
@@ -747,7 +752,8 @@ exports.aldatu = function(req,res){
 //              pasahitzaPart:   password_hash,  
               berezitasunakPart: input.berezitasunakPart,
               idOrdaintzekoEraPart: input.idOrdaintzekoEraPart,
-              kontuZenbPart: input.kontuZenbPart,                  
+              kontuZenbPart: input.kontuZenbPart, 
+              kontuIbanPart: input.kontuIbanPart                 
 //              balidatutaPart : "0"
             };
 

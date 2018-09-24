@@ -1,0 +1,49 @@
+{{> menuadmin}}
+   
+   <div class="jumbotron">
+        <h3>Taldekideak Abizenez</h3> 
+   </div>
+      <a href="/admin/taldekideikusi" class="btn btn-primary btn-sm" role="button">Taldekideak Ikusi</a>
+      <a href="/admin/taldeak" class="btn btn-primary btn-sm" role="button">Taldeak ikusi</a>
+      <a href="/admin/taldekopurua" class="btn btn-primary btn-sm" role="button">Talde kopurua ikusi</a>
+      <a href="/admin/jokalarikopurua" class="btn btn-primary btn-sm" role="button">Jokalari kopurua ikusi</a>
+
+      <div class="row marketing">
+        <div class="col-lg-12">
+        <table class="table table-condensed">
+            <tr>
+                    <th>NAN DNI</th>
+                    <th>Mota</th>
+                    <th>IZENA</th>
+                    <th>1.ABIZENA</th>
+                    <th>2.ABIZENA</th>
+                    <th>HELBIDEA</th>
+                    <th>HERRIA</th>
+                    <th>JAIO.DATA</th>
+                    <th>Ordaintzeko</th> 
+                    <th>Ordaindutakoa</th>
+                    <th>Bazkide zenbakia</th>
+                    <th> </th>
+                    <th> </th>
+                </tr>                               
+            {{#each data}}
+                  <tr class="active" style="color:{{kolore}}">
+                    <td>{{nanPart}}</td>
+                    <td>{{deskribapenMota}}</td>
+                    <td>{{izenaPart}}</td>  
+                    <td>{{abizena1Part}}</td>
+                    <td>{{abizena2Part}}</td>  
+                    <td width="20%">{{helbideaPart}}</td>
+                    <td>{{herriaPart}}</td>
+                    <td>{{jaiotzeDataPart}}</td>   
+                    <td>{{ordaintzekoKide}}</td> 
+                    <td>{{ordaindutaKide}}</td>
+                    <td>{{bazkideZenbKide}}</td> 
+                    <td><a class="a-inside edit" href="/admin/partaideakeditatu/{{idPartaideakKide}}">Partaide</a></td> 
+                    <td><a class="a-inside edit" href="/admin/taldekideakeditatu/{{idTaldekideak}}">Aldatu</a></td>
+ 
+                </tr>
+            {{/each}}
+          </table>
+        </div>
+      </div>
