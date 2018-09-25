@@ -374,7 +374,7 @@ var taldea = {};
 var jokalariak = []; 
 var j;
 var t = 0;
-var vTalde;
+var vTalde , kolore;
 var date = new Date();
   req.getConnection(function(err,connection){
 //      connection.query('SELECT * FROM maila,taldeak LEFT JOIN jokalariak ON idtaldeak=idtaldej WHERE kategoria = idmaila and idtxapeltalde = ? and balidatuta != "admin" order by idtaldeak, idjokalari',[req.session.idtxapelketa],function(err,rows)     {
@@ -411,11 +411,21 @@ var date = new Date();
                };
                
           }
+          if (rows[i].ordaintzekoKide > 0 && rows[i].ordaindutaKide < rows[i].ordaintzekoKide)
+                kolore = "#FF0000";
+          else 
+              if (rows[i].ordaintzekoKide > 0 && rows[i].ordaindutaKide >= rows[i].ordaintzekoKide)
+                kolore = "#0000FF";
+              else  
+                kolore = "#000000";
+
           jokalariak[j] = {
                   idtaldeak  : rows[i].idTaldeak,
                   idTaldekideak : rows[i].idTaldekideak,
                   materialaKide    : rows[i].materialaKide,
                   ordainduKide   : rows[i].ordainduKide,
+                  ordaintzekoKide  : rows[i].ordaintzekoKide, 
+                  ordaindutaKide  : rows[i].ordaindutaKide,
                   kamixetaZenbKide : rows[i].kamixetaZenbKide,
                   idMotaKide : rows[i].idMotaKide,
                   idTaldeakKide : rows[i].idTaldeak,
@@ -426,7 +436,8 @@ var date = new Date();
                   abizena1Part : rows[i].abizena1Part,
                   abizena2Part : rows[i].abizena2Part,
                   jaiotzeDataPart : rows[i].jaiotzeDataPart,
-                  deskribapenMota : rows[i].deskribapenMota
+                  deskribapenMota : rows[i].deskribapenMota,
+                  kolore : kolore
                };
           j++;
           
@@ -451,7 +462,7 @@ var taldeak = [];
 var taldea = {};
 var jokalariak = []; 
 var j;
-var t = 0;
+var t = 0, familiko = 1;
 var vabizena1Part, vabizena2Part;
 var date = new Date();
   req.getConnection(function(err,connection){
@@ -464,12 +475,30 @@ var date = new Date();
         if(err)
            console.log("Error Selecting : %s ",err );
         for (var i in rows) { 
-          if(vabizena1Part == rows[i].abizena1Part && vabizena2Part == rows[i].abizena2Part)
+          rows[i].familiko = " ";
+          rows[i].bgkolore = "#FFFFFF";
+          if(vabizena1Part == rows[i].abizena1Part && vabizena2Part == rows[i].abizena2Part){
+              if(rows[i].ordaintzekoKide > 0){ 
+                 familiko += 1;
+              }
+              rows[i].familiko = familiko;
+              rows[i].kolore = "#FF8000";
+              rows[i].bgkolore = "#FF8000";
+          }    
+          else {
+            familiko = 1;
+            if (rows[i].ordaintzekoKide > 0 && rows[i].ordaindutaKide < rows[i].ordaintzekoKide){
 
-              rows[i].kolore = "#FF0000";
-          else  
-              rows[i].kolore = "#000000";
+                rows[i].kolore = "#FF0000";
+                rows[i].bgkolore = "#FF0000";
+            }
+            else 
+              if (rows[i].ordaintzekoKide > 0 && rows[i].ordaindutaKide >= rows[i].ordaintzekoKide)
 
+                rows[i].kolore = "#0000FF";
+              else  
+                rows[i].kolore = "#000000"; 
+          }
           vabizena1Part = rows[i].abizena1Part;
           vabizena2Part = rows[i].abizena2Part;
         }
@@ -532,6 +561,11 @@ exports.taldekideakbilatu = function(req, res){
           for (var i in rows){
               j++;
               rows[i].zenbatgarren = j;
+              if (rows[i].ordaintzekoKide > 0 && rows[i].ordaindutaKide < rows[i].ordaintzekoKide)
+
+                rows[i].kolore = "#FF0000";
+              else  
+                rows[i].kolore = "#000000";
           };
           res.render('taldekideakadmin.handlebars',{title: "Taldekideak", idTaldeak: idTaldeak, irudiak:argazkiak, data:rows, talde:rowst, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea: req.session.partaidea});                       
 
@@ -656,7 +690,7 @@ exports.taldekideakgehitu = function(req, res){
       connection.query('SELECT * FROM taldeak, mailak where idMailaTalde=idMailak and idTaldeak = ? and idElkarteakTalde = ?',[idTaldeak,id],function(err,rowst) {
         if(err)
            console.log("Error Selecting : %s ",err );
-        console.log("generotaldea : %s ",rowst[0].generomaila); 
+
         connection.query('SELECT * FROM partaideak where idElkarteakPart = ? and balidatutaPart != ? order by abizena1Part, abizena2Part, izenaPart',[id, "admin"],function(err,rowsp) {
             if(err)
             console.log("Error Selecting : %s ",err );
@@ -866,7 +900,7 @@ exports.taldekideakkopiatu = function(req, res){
   var jardunaldiaIkusgai;
   req.getConnection(function(err,connection){
    connection.query('SELECT * FROM taldeak, mailak where idMailaTalde=idMailak and idTaldeak = ? and idElkarteakTalde = ?',[idTaldeak,id],function(err,rowst) {
-     console.log("generotaldea : " + rowst[0].generoMaila + "-" + rowst[0].izenaMaila); 
+//     console.log("generotaldea : " + rowst[0].generoMaila + "-" + rowst[0].izenaMaila); 
 //     connection.query('SELECT * FROM taldekideak, partaideMotak, taldeak, denboraldiak, mailak, partaideak where idMotaKide=idPartaideMotak and idTaldeakKide=idTaldeak and idMailak=idMailaTalde and idPartaideakKide=idPartaideak and idDenboraldiaTalde = idDenboraldia and idDenboraldia= ? and idTaldeakKide = ? and idElkarteakTalde = ? order by noiztikDenb desc',[idDenboraldia,idTaldeak,id],function(err,rows) {            
 //     connection.query('SELECT * FROM taldekideak, partaideMotak, taldeak, denboraldiak, mailak, partaideak where idMotaKide=idPartaideMotak and idTaldeakKide=idTaldeak and idMailak=idMailaTalde and idPartaideakKide=idPartaideak and idDenboraldiaTalde = idDenboraldia and idDenboraldia= ? and sexuaPartaide = ? and idElkarteakTalde = ? order by noiztikDenb desc',[idDenboraldia,rowst[0].generoMaila,id],function(err,rows) {            
      connection.query('SELECT * FROM taldekideak, partaideMotak, taldeak, denboraldiak, mailak, partaideak where idMotaKide=idPartaideMotak and idTaldeakKide=idTaldeak and idMailak=idMailaTalde and idPartaideakKide=idPartaideak and idDenboraldiaTalde = idDenboraldia and idDenboraldia= ? and idElkarteakTalde = ?  and generoMaila = ? order by zenbakiMaila desc, izenaTalde, abizena1Part, abizena2Part, izenaPart',[idDenboraldia,id,rowst[0].generoMaila],function(err,rows) {            
@@ -927,18 +961,27 @@ exports.taldekideakkopiatuegin = function(req, res){
   var input = JSON.parse(JSON.stringify(req.body));
   var idDenboraldia = req.session.idDenboraldia;
   var idTaldeak = req.params.idTaldeak;
-  var taldekide = [];
+  var taldekide = [], ordaintzeko = 0;
   req.getConnection(function(err,connection){
     
 //      console.log("Body:" +JSON.stringify(req.body));
-    connection.query('SELECT kuotaDenb FROM denboraldiak where idElkarteakDenb = ? and idDenboraldia = ?',[id,idDenboraldia],function(err,rowsdenb) {
+    connection.query('SELECT * FROM denboraldiak where idElkarteakDenb = ? and idDenboraldia = ?',[id,idDenboraldia],function(err,rowsdenb) {
           
       if(err)
-          console.log("Error Selecting : %s ",err );        
+          console.log("Error Selecting : %s ",err );  
+// ADI ADI idMotaKide  4  edo ?
+      if(taldekide[1] == 4) 
+          ordaintzeko = rowsdenb[0].kuotaDenb;
+      else
+          ordaintzeko = 0;
       for(var i in input.aukeratua ){
         taldekide = input.aukeratua[i].split("-");
 // ADI- taldekideakkopiatu.handlebars : gehitu checkbox-en kopiatu nahi duguna        
 //        console.log("input : " + i + "-" + input.aukeratua[i] + "-" + taldekide[0] + "-" + taldekide[1]);
+        if(taldekide[1] == 4) 
+          ordaintzeko = rowsdenb[0].kuotaDenb;
+        else
+          ordaintzeko = 0;
         var data = {
 //            materialaKide    : input.materialaKide,
 //            ordainduKide   : input.ordainduKide,
@@ -948,7 +991,7 @@ exports.taldekideakkopiatuegin = function(req, res){
             idPartaideakKide:  taldekide[0],                                 // input.aukeratua[i],
             bazkideZenbKide : taldekide[2],
             idElkarteakKide : id,
-            kuotaDenb: rowsdenb[0].kuotaDenb
+            ordaintzekoKide: ordaintzeko
         };
         
   
@@ -972,9 +1015,9 @@ exports.taldekidetxartelak = function(req, res){
   req.getConnection(function(err,connection){
 
     connection.query('SELECT * FROM taldeak, mailak, denboraldiak where idMailaTalde=idMailak and idDenboraldiaTalde = idDenboraldia and  idTaldeak = ? and idElkarteakTalde = ?',[idTaldeak,id],function(err,rowst) {
-       
      connection.query('SELECT *,DATE_FORMAT(jaiotzeDataPart,"%Y-%m-%d") AS jaiotzeDataPart FROM taldekideak, partaideMotak, taldeak, denboraldiak, mailak, partaideak where idMotaKide=idPartaideMotak and idTaldeakKide=idTaldeak and idMailak=idMailaTalde and idPartaideakKide=idPartaideak and idDenboraldiaTalde = idDenboraldia and idDenboraldia= ? and idTaldeakKide = ? and idElkarteakTalde = ? order by deskribapenMota, kamixetaZenbKide, abizena1Part, abizena2Part, izenaPart',[idDenboraldia,idTaldeak,id],function(err,rows) {
-            
+//     connection.query('SELECT *,DATE_FORMAT(jaiotzeDataPart,"%Y-%m-%d") AS jaiotzeDataPart FROM taldekideak, partaideMotak, taldeak, denboraldiak, mailak Inner Join partaideak As p On idPartaideakKide=p.idPartaideak Inner Join partaideak As j On bazkideZenbKide=j.bazkideZenbPArt where idMotaKide=idPartaideMotak and idTaldeakKide=idTaldeak and idMailak=idMailaTalde and idPartaideakKide=idPartaideak and idDenboraldiaTalde = idDenboraldia and idDenboraldia= ? and idTaldeakKide = ? and idElkarteakTalde = ? order by deskribapenMota, kamixetaZenbKide, abizena1Part, abizena2Part, izenaPart',[idDenboraldia,idTaldeak,id],function(err,rows) {
+           
         if(err)
            console.log("Error Selecting : %s ",err );
          

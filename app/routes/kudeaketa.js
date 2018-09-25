@@ -93,8 +93,8 @@ exports.jokalarikopurua = function(req, res){
   var idDenboraldia = req.session.idDenboraldia;
   var kideakguztira = 0, jokalariakguztira = 0, entrenatzaileakguztira = 0, laguntzaileakguztira = 0;
   var guztirao = {}, guztira = [0,0,0,0], guztirak = [];
-  var mailao = {}, maila = [], mailaizena = [], mailak = [];
-  var j;
+  var mailao = {}, maila = [[]], mailaizena = [], mailak = [];
+  var k = 0;
 /*  for(var i = 0; i>9; i++){
     for(var j = 0;j>4;j++){
       maila[i][j] = 0;
@@ -107,16 +107,17 @@ for (var i = 0; i < jardunkop -1; i++) {
       taulaS[i][j] = [0,0];
    }
 }  
- 
-var maila = new Array(10); 
+*/ 
+//var maila = new Array(10); 
 for (var i = 0; i >9; i++) {
-   maila[i] = new Array(4); 
+//   maila[i] = new Array(4); 
    for (var j = 0; j > 4; j++) {
-      maila[i][j] = [0];
+      maila[i][j] = 0;
+      console.log("i j maila:" +i +j+maila[i][j]);
    }
 }
   console.log("maila:" +JSON.stringify(maila)); 
-*/  
+  
   req.getConnection(function(err,connection){
        
      connection.query('SELECT *, count(*) as kideak, sum(case when zenbakiMota = 1 then 1 else 0 end) as jokalariak, sum(case when zenbakiMota = 2 then 1 else 0 end) as entrenatzaileak, sum(case when zenbakiMota = 3 then 1 else 0 end) as laguntzaileak FROM taldeak, taldekideak, mailak, partaidemotak where idMailak = idMailaTalde and idTaldeak = idTaldeakKide and idMotaKide = idPartaideMotak and idElkarteakTalde = ? and idDenboraldiaTalde = ? group by idTaldeak order by zenbakiMaila,akronimoTalde ',[id,idDenboraldia],function(err,rows) {

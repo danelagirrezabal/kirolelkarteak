@@ -20,23 +20,25 @@
                     <th>HELBIDEA</th>
                     <th>HERRIA</th>
                     <th>JAIO.DATA</th>
-                    <th>Ordaintzeko</th> 
-                    <th>Ordaindutakoa</th>
+                    <th>Kuota</th>
+                    <th> </th> 
+                    <th>Ordainduta</th>
                     <th>Bazkide zenbakia</th>
                     <th> </th>
                     <th> </th>
                 </tr>                               
             {{#each data}}
-                  <tr class="active" style="color:{{kolore}}">
+                  <tr  class="active" style="color:{{kolore}}">
                     <td>{{nanPart}}</td>
                     <td>{{deskribapenMota}}</td>
                     <td>{{izenaPart}}</td>  
                     <td>{{abizena1Part}}</td>
                     <td>{{abizena2Part}}</td>  
-                    <td width="20%">{{helbideaPart}}</td>
+                    <td>{{helbideaPart}}</td>
                     <td>{{herriaPart}}</td>
                     <td>{{jaiotzeDataPart}}</td>   
-                    <td>{{ordaintzekoKide}}</td> 
+                    <td>{{ordaintzekoKide}} &nbsp;&nbsp; {{familiko}}</td>
+                    <td style="background-color:{{bgkolore}}"> &nbsp;&nbsp; </td>  
                     <td>{{ordaindutaKide}}</td>
                     <td>{{bazkideZenbKide}}</td> 
                     <td><a class="a-inside edit" href="/admin/partaideakeditatu/{{idPartaideakKide}}">Partaide</a></td> 
