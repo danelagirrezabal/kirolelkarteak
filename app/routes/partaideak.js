@@ -1043,7 +1043,7 @@ exports.partaideakkargatuegin = function(req, res){
 
     req.getConnection(function (err, connection) {
 
-     connection.query('SELECT * FROM elkarteak where idElkarteak = ?',[req.session.idKirolElkarteak],function(err,rowst){          
+     connection.query('SELECT * FROM elkarteak, denboraldiak where idElkarteakDenb = idElkarteak and idDenboraldia = ?',[idDenboraldia],function(err,rowst){          
             
       if(err)
          console.log("Error inserting : %s ",err );
@@ -1066,7 +1066,6 @@ exports.partaideakkargatuegin = function(req, res){
             nanPart : partaidea[3],     
             bazkideZenbPart : partaidea[4],
             jaiotzeDataPart : partaidea[5],
-//            txapelketaPartidu : input.txapelketa,
             helbideaPart : partaidea[6],              
             telefonoaPart : partaidea[7],
             herriaPart : partaidea[8],
@@ -1086,22 +1085,24 @@ exports.partaideakkargatuegin = function(req, res){
         {
          if (err)
               console.log("Error inserting : %s ",err );
-/*
+
          if (input.idTaldeakPartaide != "")
               idTaldeakPartaide = input.idTaldeakPartaide;
          else
-              idTaldeakPartaide = partaidea[21];
+              idTaldeakPartaide = partaidea[18];
 
          if (idTaldeakPartaide != "")
+
           {  
            var data = {
-            materialaKide    : partaidea[17],
-            ordainduKide   : partaidea[18],
-            kamixetaZenbKide : partaidea[19],
-            idMotaKide : partaidea[20],
-            idTaldeakKide : idTaldeakPartaide,   // partaidea[21],
+//            materialaKide    : partaidea[17],
+//            ordainduKide   : partaidea[18],
+            ordaintzekoKide   : rowst[0].kuotaDenb,
+//            kamixetaZenbKide : partaidea[19],
+            idMotaKide : partaidea[17],
+            idTaldeakKide : idTaldeakPartaide, // input.idTaldeakPartaide,   // partaidea[21],
             idPartaideakKide: rows.insertId,
-            bazkideZenbKide : partaidea[22],
+//            bazkideZenbKide : partaidea[22],
             idElkarteakKide : id
            };
        
@@ -1112,6 +1113,7 @@ exports.partaideakkargatuegin = function(req, res){
                console.log("Error inserting : %s ",err );
            });
           }
+/*
           else  
               if (partaidea[18] != "")
                {

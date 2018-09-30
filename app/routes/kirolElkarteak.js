@@ -2645,6 +2645,7 @@ console.log("nondik: "+ nondik );
                       console.log(i + ". mezua1: " + to + " - "  +rows[i].izenaTalde);
 //                      if(input.bidali){
                          emailService.send(to, subj, body);
+                         for (var j = 0; j >1000; j++) {}  // atseden denbora ADI ADI
 //                      }   
                       nora++;
                       if(i == rows.length - 1){

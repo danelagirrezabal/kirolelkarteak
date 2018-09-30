@@ -95,28 +95,16 @@ exports.jokalarikopurua = function(req, res){
   var guztirao = {}, guztira = [0,0,0,0], guztirak = [];
   var mailao = {}, maila = [[]], mailaizena = [], mailak = [];
   var k = 0;
-/*  for(var i = 0; i>9; i++){
-    for(var j = 0;j>4;j++){
-      maila[i][j] = 0;
-    }
-  } 
-var taulaS = new Array(jardunkop -1); 
-for (var i = 0; i < jardunkop -1; i++) {
-   taulaS[i] = new Array(partikop); 
-   for (var j = 0; j < partikop; j++) {
-      taulaS[i][j] = [0,0];
-   }
-}  
-*/ 
+ 
 //var maila = new Array(10); 
-for (var i = 0; i >9; i++) {
-//   maila[i] = new Array(4); 
-   for (var j = 0; j > 4; j++) {
+for (var i = 0; i <= 9; i++) {
+   maila[i] = new Array(4); 
+   for (var j = 0; j <= 4; j++) {
       maila[i][j] = 0;
-      console.log("i j maila:" +i +j+maila[i][j]);
+//      console.log("i j maila:" +i +j+maila[i][j]);
    }
 }
-  console.log("maila:" +JSON.stringify(maila)); 
+//  console.log("maila:" +JSON.stringify(maila)); 
   
   req.getConnection(function(err,connection){
        
@@ -134,22 +122,22 @@ for (var i = 0; i >9; i++) {
             guztira[1] += rows[i].jokalariak;
             guztira[2] += rows[i].entrenatzaileak;
             guztira[3] += rows[i].laguntzaileak;
-/*            j = rows[i].zenbakiMaila - 1;
-            mailaizena[j] = rows[i].izenaMaila;
-            maila[j][0] += rows[i].kideak;
-            maila[j][1] += rows[i].jokalariak;
-            maila[j][2] += rows[i].entrenatzaileak;
-            maila[j][3] += rows[i].laguntzaileak;
-*/
+            k = rows[i].zenbakiMaila - 1;
+            mailaizena[k] = rows[i].izenaMaila;
+            maila[k][0] += rows[i].kideak;
+            maila[k][1] += rows[i].jokalariak;
+            maila[k][2] += rows[i].entrenatzaileak;
+            maila[k][3] += rows[i].laguntzaileak;
+
          }
          guztirao.kideak = guztira[0];
          guztirao.jokalariak = guztira[1];
          guztirao.entrenatzaileak = guztira[2]; 
          guztirao.laguntzaileak = guztira[3]; 
          guztirak[0] = guztirao; 
-/*         console.log("mailaizena:" +JSON.stringify(mailaizena));
-         console.log("maila:" +JSON.stringify(maila));
-         for(var k = 0;k>9;k++){
+//         console.log("mailaizena:" +JSON.stringify(mailaizena));
+//         console.log("maila:" +JSON.stringify(maila));
+         for(var k = 0;k <= 9;k++){
 
            mailao = {
             mailaizena : mailaizena[k],
@@ -158,12 +146,12 @@ for (var i = 0; i >9; i++) {
             entrenatzaileak : maila[k][2], 
             laguntzaileak : maila[k][3] 
            };
-           console.log("mailao:" +JSON.stringify(mailao));
+//           console.log("mailao:" +JSON.stringify(mailao));
 
            mailak[k] = mailao;     
          }
-         console.log("mailak:" +JSON.stringify(mailak));
-*/
+//         console.log("mailak:" +JSON.stringify(mailak));
+
       res.render('jokalarikopurua.handlebars', {title : 'KirolElkarteak- Kide kopuruak', guztirak: guztirak,mailak: mailak, taldeak:rows, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea: req.session.partaidea, partaidea: req.session.partaidea, atalak: req.session.atalak, idPartaideak:req.session.idPartaideak, arduraduna:req.session.arduraduna});
    
     });  

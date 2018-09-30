@@ -687,7 +687,7 @@ exports.taldekideakgehitu = function(req, res){
             
       if(err)
            console.log("Error Selecting : %s ",err );
-      connection.query('SELECT * FROM taldeak, mailak where idMailaTalde=idMailak and idTaldeak = ? and idElkarteakTalde = ?',[idTaldeak,id],function(err,rowst) {
+      connection.query('SELECT * FROM taldeak, mailak, denboraldiak where idMailaTalde=idMailak and idDenboraldiaTalde=idDenboraldia and idTaldeak = ? and idElkarteakTalde = ?',[idTaldeak,id],function(err,rowst) {
         if(err)
            console.log("Error Selecting : %s ",err );
 
@@ -696,7 +696,7 @@ exports.taldekideakgehitu = function(req, res){
             console.log("Error Selecting : %s ",err );
          
          //console.log("Berriak:" +JSON.stringify(rows));
-      res.render('taldekideaksortu.handlebars', {title : 'KirolElkarteak-Taldeak gehitu', motak:rowsm, partaideak:rowsp, idTaldeak:idTaldeak, menuadmin:admin, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea: req.session.partaidea, partaidea: req.session.partaidea, atalak: req.session.atalak, idPartaideak:req.session.idPartaideak, arduraduna:req.session.arduraduna});
+      res.render('taldekideaksortu.handlebars', {title : 'KirolElkarteak-Taldeak gehitu', motak:rowsm, talde:rowst, partaideak:rowsp, idTaldeak:idTaldeak, menuadmin:admin, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea: req.session.partaidea, partaidea: req.session.partaidea, atalak: req.session.atalak, idPartaideak:req.session.idPartaideak, arduraduna:req.session.arduraduna});
       }); 
      });  
     });    
@@ -719,7 +719,9 @@ exports.taldekideaksortu = function(req,res){
         
         var data = {
             materialaKide    : input.materialaKide,
-            ordainduKide   : input.ordainduKide,
+//            ordainduKide   : input.ordainduKide,
+            ordaintzekoKide   : input.ordaintzekoKide,
+            ordaindutaKide   : input.ordaindutaKide,
             kamixetaZenbKide : input.kamixetaZenbKide,
             idMotaKide : input.idMotaKide,
             idTaldeakKide : idTaldeak,
@@ -727,14 +729,12 @@ exports.taldekideaksortu = function(req,res){
             bazkideZenbKide : input.bazkideZenbKide,
             idElkarteakKide : id
         };
-        
-  
+ 
         var query = connection.query("INSERT INTO taldekideak set ? ",data, function(err, rows)
         {
   
-          if (err)
+            if (err)
               console.log("Error inserting : %s ",err );
-
 
             if (req.session.arduraduna){
               res.redirect('/taldekideak/'+idTaldeak);
@@ -755,24 +755,19 @@ exports.taldekideakezabatu = function(req,res){
      var idTaldeak = req.params.idTaldeak;
      var idTaldekideak = req.params.idTaldekideak;
 
-    
      req.getConnection(function (err, connection) {
         
         connection.query("DELETE FROM taldekideak WHERE idElkarteakKide = ? and idTaldekideak = ?",[id, idTaldekideak], function(err, rows)
         {
-            
-             if(err)
+            if(err)
                  console.log("Error deleting : %s ",err );
-
 
             if (req.session.arduraduna){
               res.redirect('/taldekideak/'+idTaldeak);
             }else{
               res.redirect('/admin/taldekideak/'+idTaldeak);
             }
-                         
         });
-        
      });
 };
 
@@ -787,13 +782,12 @@ exports.taldekideakeditatu = function(req, res){
        
      connection.query('SELECT * FROM taldekideak WHERE idElkarteakKide = ? and idTaldekideak= ?',[id,idTaldekideak],function(err,rows)
         {
-            
             if(err)
                 console.log("Error Selecting : %s ",err );
 
-              connection.query('SELECT * FROM partaideMotak where idElkarteakPartaideMotak = ? order by idPartaideMotak asc',[id],function(err,rowsm) {
+            connection.query('SELECT * FROM partaideMotak where idElkarteakPartaideMotak = ? order by idPartaideMotak asc',[id],function(err,rowsm) {
             
-                if(err)
+              if(err)
                   console.log("Error Selecting : %s ",err );
               
               if (rows.length == 0){
@@ -840,15 +834,12 @@ exports.taldekideakeditatu = function(req, res){
 
                   rows[0].arduraduna = req.session.arduraduna;
 
-
                 res.render('taldekideakeditatu.handlebars', {page_title:"Taldekideak aldatu",data:rows, menuadmin:admin, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, atalak: req.session.atalak, partaidea: req.session.partaidea, idPartaideak:req.session.idPartaideak, arduraduna:req.session.arduraduna});
-                           
               
                   });
                } 
                 });
             });
-                 
     }); 
 };
 

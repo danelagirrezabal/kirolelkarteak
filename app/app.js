@@ -259,8 +259,7 @@ app.get('/partaidemail/:emaila', partaideak.partaidemail);
 app.get('/partaideak',adminonartua, authorize2, partaideak.ikusi);
 app.get('/admin/partaideak',adminonartua, partaideak.ikusi);
 app.get('/izenematea',authorize2, partaideak.partaideakgehitu);
-
-app.post('/partaideakgehitu', authorize2, partaideak.partaideakgehitu);
+//app.post('/partaideakgehitu', authorize2, partaideak.partaideakgehitu);
 app.post('/partaideaksortu', partaideak.sortu);
 app.get('/partaideakbalidatu/:id', partaideak.balidatu);
 app.get('/partaideakezabatu/:idPartaideak', authorizeBerePartaide, partaideak.ezabatu);
