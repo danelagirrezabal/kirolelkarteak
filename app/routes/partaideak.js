@@ -1154,7 +1154,7 @@ exports.bazkideakikusi = function(req, res){
   var idDenboraldiaSesioa = idDenboraldia;
   req.getConnection(function(err,connection){
        
-     connection.query('SELECT * FROM bazkideak, partaideak, ordaintzekoErak WHERE idOrdaintzekoEraBazk=idOrdaintzekoErak and idPartaideakBazk=idPartaideak and idElkarteakBazkide=? and idDenboraldiaBazk = ?',[id, idDenboraldia],function(err,rows)     {
+     connection.query('SELECT *, DATE_FORMAT(dataBazk,"%Y/%m/%d") AS dataBazk FROM bazkideak, partaideak, ordaintzekoErak WHERE idOrdaintzekoEraBazk=idOrdaintzekoErak and idPartaideakBazk=idPartaideak and idElkarteakBazkide=? and idDenboraldiaBazk = ?',[id, idDenboraldia],function(err,rows)     {
             
         if(err)
            console.log("Error Selecting : %s ",err );
@@ -1191,7 +1191,7 @@ exports.bazkideakikusidenboraldiarekin = function(req, res){
   var idDenboraldiaSesioa = idDenboraldia;
   req.getConnection(function(err,connection){
        
-     connection.query('SELECT * FROM bazkideak, partaideak, ordaintzekoErak WHERE idOrdaintzekoEraBazk=idOrdaintzekoErak and idPartaideakBazk=idPartaideak and idElkarteakBazkide=? and idDenboraldiaBazk = ?',[id, idDenboraldia],function(err,rows)     {
+     connection.query('SELECT *, DATE_FORMAT(dataBazk,"%Y/%m/%d") AS dataBazk FROM bazkideak, partaideak, ordaintzekoErak WHERE idOrdaintzekoEraBazk=idOrdaintzekoErak and idPartaideakBazk=idPartaideak and idElkarteakBazkide=? and idDenboraldiaBazk = ?',[id, idDenboraldia],function(err,rows)     {
             
         if(err)
            console.log("Error Selecting : %s ",err );
