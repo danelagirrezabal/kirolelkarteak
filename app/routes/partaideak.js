@@ -122,7 +122,7 @@ exports.ikusi = function(req, res){
   req.getConnection(function(err,connection){
 
        
-      connection.query('SELECT * FROM partaideak LEFT JOIN bazkideak ON idPartaideak=idPartaideakBazk WHERE idElkarteakPart=?',[id],function(err,rows)     {
+      connection.query('SELECT *, DATE_FORMAT(jaiotzeDataPart,"%Y/%m/%d") AS jaiotzeDataPart FROM partaideak LEFT JOIN bazkideak ON idPartaideak=idPartaideakBazk WHERE idElkarteakPart=?',[id],function(err,rows)     {
             
         if(err)
            console.log("Error Selecting : %s ",err );
@@ -1223,6 +1223,7 @@ exports.bazkideaksortu = function(req,res){
     var id=req.session.idKirolElkarteak;
     var idDenboraldia =req.session.idDenboraldia;
     var idPartaideak = req.params.idPartaideak;
+    var now= new Date();
     req.getConnection(function(err,connection){
 
 
@@ -1255,7 +1256,8 @@ exports.bazkideaksortu = function(req,res){
               idPartaideakBazk: idPartaideak,
               ordainduBazk: "EZ",
               idOrdaintzekoEraBazk: rows[0].idOrdaintzekoEraPart,
-              idElkarteakBazkide: id
+              idElkarteakBazkide: id,
+              dataBazk : now
             };
 
             var query = connection.query("INSERT INTO bazkideak set ? ",data, function(err, rows)
@@ -1285,9 +1287,10 @@ exports.bazkideakaldatu = function(req,res){
         var data = {
 
             idOrdaintzekoEraBazk: input.idOrdaintzekoEraBazk,
-            ordainduBazk : input.ordainduBazk
-            
-        
+            ordainduBazk : input.ordainduBazk,
+            egoeraBazk : input.egoeraBazk,
+            dataBazk : input.dataBazk,
+            berezitasunBazk : input.berezitasunBazk
         };
         
         connection.query("UPDATE bazkideak set ? WHERE idElkarteakBazkide = ? and idBazkideak = ? ",[data,id, idBazkideak], function(err, rows)

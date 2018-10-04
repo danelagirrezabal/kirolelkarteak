@@ -11,51 +11,59 @@
     <input type="hidden" name="_csrf" value="{{_csrfToken}}">
         <div class="form-group">
             <label for="izenaPart" class="col-sm-2 control-label">Bazkidea: </label>
-            <div class="col-sm-4">
+            <div class="col-sm-3">
                 {{izenaPart}} {{abizena1Part}} {{abizena2Part}}
             </div>
-        </div>
-        <div class="form-group">
-            <label for="nanPart" class="col-sm-2 control-label">NAN: </label>
-            <div class="col-sm-4">
+            <label for="nanPart" class="col-sm-1 control-label">NAN: </label>
+            <div class="col-sm-1">
                 {{nanPart}}
             </div>
-        </div>
-        <div class="form-group">
             <label for="bazkideZenbPart" class="col-sm-2 control-label">Bazkide zenbakia: </label>
-            <div class="col-sm-4">
+            <div class="col-sm-1">
                 {{bazkideZenbPart}}
             </div>
         </div>
 
         <div class="form-group">
+            <label for="emailPart" class="col-sm-2 control-label">Email: </label>
+            <div class="col-sm-3">
+                {{emailPart}}
+            </div>
+            <label for="telefonoaPart" class="col-sm-1 control-label">Telefonoa: </label>
+            <div class="col-sm-1">
+                {{telefonoaPart}}
+            </div>
             <label for="herriaPart" class="col-sm-2 control-label">Herria: </label>
-            <div class="col-sm-4">
+            <div class="col-sm-1">
                 {{herriaPart}}
             </div>
         </div>
         <div class="form-group">
-            <label for="telefonoaPart" class="col-sm-2 control-label">Telefonoa: </label>
-            <div class="col-sm-4">
-                {{telefonoaPart}}
-            </div>
-        </div>
-        <div class="form-group">
-            <label for="emailPart" class="col-sm-2 control-label">Email: </label>
-            <div class="col-sm-4">
-                {{emailPart}}
-            </div>
-        </div>
-        <div class="form-group">
-            <label for="kontuZenbPart" class="col-sm-2 control-label">Kontu korronte zenbakia: </label>
-            <div class="col-sm-4">
+            <label for="kontuZenbPart" class="col-sm-2 control-label">Kontu zenbakia: </label>
+            <div class="col-sm-3">
                 {{kontuZenbPart}} - {{kontuIbanPart}}
             </div>
-        </div>
-        <div class="form-group">
             <label for="berezitasunakPart" class="col-sm-2 control-label">Berezitasunak: </label>
             <div class="col-sm-4">
                 {{berezitasunakPart}}
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="egoeraBazk" class="col-sm-2 control-label">Bazkide egoera</label>
+            <div class="col-sm-4">
+                <input type="text" class="form-control" id="egoeraBazk" name="egoeraBazk" value={{egoeraBazk}}>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="dataBazk" class="col-sm-2 control-label">Egoera data</label>
+            <div class="col-sm-4">
+                <input type="date" class="form-control" required id="dataBazk" name="dataBazk" value={{dataBazk}}>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="berezitasunBazk" class="col-sm-2 control-label">Berezitasun</label>
+            <div class="col-sm-4">
+                <textarea name="berezitasunBazk" placeholder="Nahi baldin bada" rows="1" cols="45" class="form-control">{{berezitasunBazk}}</textarea>
             </div>
         </div>
         <div class="form-group">

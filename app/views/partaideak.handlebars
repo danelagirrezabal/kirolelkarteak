@@ -28,13 +28,13 @@
             <table class="table table-striped">
             <tr>
                     <th>Izena</th>
-                    <th>Abizenak</th>
+                    <th>Abizenak/Helbidea</th>
                     <th>Jaiotzea</th>
-                    <th>NAN</th>
-                    <th>Emaila</th>
-                    <th>Telefonoa</th>
+                    <th>NAN / Iban</th>
+                    <th>Emaila / Kontua</th>
+                    <th>Tlfnoa/Bazkid</th>
                     <th>Herria</th>
-                    <th>Balidatuta?</th>
+<!--                    <th>Balidatuta?</th>  -->
                     <th></th>
                     <th></th>
 
@@ -44,7 +44,7 @@
                     <td>{{izenaPart}}</td>
                     <td>{{abizena1Part}}  {{abizena2Part}}</td>
                     <!-- <td>{{jaiotzeDataPartberezitasunakPart}}</td> -->
-                    <td>{{berezitasunakPart}}</td>
+                    <td>{{jaiotzeDataPart}}</td>
                     <td>{{nanPart}}</td>
                     <td>{{emailPart}}</td>
                     <td>{{telefonoaPart}}</td>
@@ -59,6 +59,23 @@
                         <a class="a-inside insert" href="../admin/bazkideaksortu/{{idPartaideak}}">Bazkide egin</a> 
                      {{/if}}
                      </td>
+<!--                     <td>
+                        <a class="a-inside edit" href="../admin/partaideakeditatu/{{idPartaideak}}">Aldatu</a>
+                     </td>
+                     <td>
+                        <a class="a-inside delete" href="../admin/partaideakezabatu/{{idPartaideak}}">Ezabatu</a> 
+                     </td>
+-->
+                </tr>
+                <tr>
+                    <td align="right">{{sexuaPart}}</td>
+                    <td align="right">{{helbideaPart}}</td>
+                    <td align="right">{{berezitasunakPart}}</td>
+                    <td align="right">{{kontuIbanPart}}</td>
+                    <td align="right">{{kontuZenbPart}}</td>
+                    <td align="right">{{bazkideZenbPart}}</td>
+                    <td align="right">{{postaKodeaPart}}</td>
+
                      <td>
                         <a class="a-inside edit" href="../admin/partaideakeditatu/{{idPartaideak}}">Aldatu</a>
                      </td>

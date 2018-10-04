@@ -11,29 +11,29 @@
                 <tr>
                     <th>Talde izena</th>
                     <th>Maila</th>
+                    <th>Jokalariak</th>
+                    <th>Entrenatzaileak</th>
+                    <th>Laguntzaileak</th>
                     <th>Kide kopurua</th>
-                    <th>Jokalari kopurua</th>
-                    <th>Entrenatzaile kopurua</th>
-                    <th>Laguntzaile kopurua</th>
                 </tr> 
                 {{#each taldeak}}
                    <tr>
                     <td>{{izenaTalde}}</td> 
                     <td>{{izenaMaila}}</td> 
-                    <td align="center">{{kideak}}</td>
                     <td align="center">{{jokalariak}}</td>   
                     <td align="center">{{entrenatzaileak}}</td>
-                    <td align="center">{{laguntzaileak}}</td>            
+                    <td align="center">{{laguntzaileak}}</td>
+                    <td align="center">{{kideak}}</td>            
                    </tr>                           
                 {{/each}}  
                 <tr>
-                    <td></td>  
-                    <td><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GUZTIRA</b></td> 
                   {{#each guztirak}}
-                    <td align="center"><b>{{kideak}}</b></td>
+                    <td align="right"><b>{{taldeak}}</b></td>  
+                    <td><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GUZTIRA</b></td> 
                     <td align="center"><b>{{jokalariak}}</b></td>   
                     <td align="center"><b>{{entrenatzaileak}}</b></td>
-                    <td align="center"><b>{{laguntzaileak}}</b></td>  
+                    <td align="center"><b>{{laguntzaileak}}</b></td>
+                    <td align="center"><b>{{kideak}}</b></td>  
                   {{/each}}              
                 </tr> 
                          
@@ -48,7 +48,7 @@
                 {{#each mailak}}
                   {{#if kideak}}
                    <tr>
-                    <td></td> 
+                    <td align="right"><b>{{taldeak}}</b></td> 
                     <td>{{mailaizena}}</td> 
                     <td align="center">{{kideak}}</td>
                     <td align="center">{{jokalariak}}</td>   
@@ -57,7 +57,27 @@
                    </tr>
                   {{/if}}                           
                 {{/each}}  
-        
+ 
+                <tr>
+                    <th> </th>
+                    <th> </th>
+                    <th>Kide kopurua</th>
+                    <th>Jokalari kopurua</th>
+                    <th>Entrenatzaile kopurua</th>
+                    <th>Laguntzaile kopurua</th>
+                </tr>
+                {{#each neskamutilak}}
+                  {{#if kideak}}
+                   <tr>
+                    <td align="right"><b>{{taldeak}}</b></td>
+                    <td>{{genero}}</td> 
+                    <td align="center">{{kideak}}</td>
+                    <td align="center">{{jokalariak}}</td>   
+                    <td align="center">{{entrenatzaileak}}</td>
+                    <td align="center">{{laguntzaileak}}</td>            
+                   </tr>
+                  {{/if}}                           
+                {{/each}}        
  
           </table>
         </div>

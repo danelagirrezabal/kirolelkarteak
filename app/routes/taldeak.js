@@ -455,6 +455,7 @@ var date = new Date();
 }
 
 exports.taldekideakabizenez = function(req,res){
+  req.session.path = req.path;
   var id = req.session.idKirolElkarteak;
   var idDenboraldia = req.session.idDenboraldia;
 //  var idTaldeak = req.params.idTaldeak;
@@ -463,7 +464,7 @@ var taldea = {};
 var jokalariak = []; 
 var j;
 var t = 0, familiko = 1;
-var vabizena1Part, vabizena2Part;
+var vabizena1Part, vabizena2Part, vhelbideaPart;
 var date = new Date();
   req.getConnection(function(err,connection){
 //      connection.query('SELECT * FROM maila,taldeak LEFT JOIN jokalariak ON idtaldeak=idtaldej WHERE kategoria = idmaila and idtxapeltalde = ? and balidatuta != "admin" order by idtaldeak, idjokalari',[req.session.idtxapelketa],function(err,rows)     {
@@ -487,20 +488,23 @@ var date = new Date();
           }    
           else {
             familiko = 1;
-            if (rows[i].ordaintzekoKide > 0 && rows[i].ordaindutaKide < rows[i].ordaintzekoKide){
-
-                rows[i].kolore = "#FF0000";
+//            if (rows[i].ordaintzekoKide > 0 && rows[i].ordaindutaKide < rows[i].ordaintzekoKide){
+//                rows[i].kolore = "#FF0000";
+           if (rows[i].ordaintzekoKide > 0 && rows[i].kuotaDenb != rows[i].ordaintzekoKide)
+                rows[i].kolore = "#0000FF";
+           else
+            if(vabizena1Part == rows[i].abizena1Part || vabizena2Part == rows[i].abizena2Part || vhelbideaPart == rows[i].helbideaPart){
                 rows[i].bgkolore = "#FF0000";
             }
             else 
-              if (rows[i].ordaintzekoKide > 0 && rows[i].ordaindutaKide >= rows[i].ordaintzekoKide)
-
-                rows[i].kolore = "#0000FF";
-              else  
+//              if (rows[i].ordaintzekoKide > 0 && rows[i].ordaindutaKide >= rows[i].ordaintzekoKide)
+//                rows[i].kolore = "#0000FF";
+//              else  
                 rows[i].kolore = "#000000"; 
           }
           vabizena1Part = rows[i].abizena1Part;
           vabizena2Part = rows[i].abizena2Part;
+          vhelbideaPart = rows[i].vhelbideaPart;
         }
 
         res.render('taldekideakabizenez.handlebars',{title: "Taldekideak abizenez", data:rows, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea: req.session.partaidea});                       
@@ -510,6 +514,7 @@ var date = new Date();
 }
 
 exports.taldekideakbilatu = function(req, res){
+  req.session.path = req.path;
   var id = req.session.idKirolElkarteak;
   var idDenboraldia = req.session.idDenboraldia;
   var idTaldeak = req.params.idTaldeak;
@@ -870,11 +875,14 @@ exports.taldekideakaldatu = function(req,res){
           if (err)
               console.log("Error Updating : %s ",err );
          
-         if (req.session.arduraduna){
+         if (req.session.arduraduna)
             res.redirect('/taldekideak/'+idTaldeak);
-         }else{
-          res.redirect('/admin/taldekideak/'+idTaldeak);
-         }
+         else
+          console.log("Path: " + req.session.path);
+          if (req.session.path.slice(0,26) == "/admin/taldekideakabizenez")
+            res.redirect('/admin/taldekideakabizenez');
+          else
+            res.redirect('/admin/taldekideak/'+idTaldeak);
         });
     
     });
