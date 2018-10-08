@@ -380,7 +380,7 @@ var date = new Date();
 //      connection.query('SELECT * FROM maila,taldeak LEFT JOIN jokalariak ON idtaldeak=idtaldej WHERE kategoria = idmaila and idtxapeltalde = ? and balidatuta != "admin" order by idtaldeak, idjokalari',[req.session.idtxapelketa],function(err,rows)     {
     connection.query('SELECT * FROM taldeak, mailak, denboraldiak where idMailaTalde=idMailak and idDenboraldiaTalde = idDenboraldia and  idTaldeak = ? and idElkarteakTalde = ?',[idTaldeak,id],function(err,rowst) {
        
-     connection.query('SELECT *,DATE_FORMAT(jaiotzeDataPart,"%Y-%m-%d") AS jaiotzeDataPart FROM taldekideak, partaideMotak, taldeak, denboraldiak, mailak, partaideak where idMotaKide=idPartaideMotak and idTaldeakKide=idTaldeak and idMailak=idMailaTalde and idPartaideakKide=idPartaideak and idDenboraldiaTalde = idDenboraldia and idDenboraldia= ? and idElkarteakTalde = ? order by zenbakiMaila desc, izenaTalde asc, zenbakiMota, kamixetaZenbKide, abizena1Part, abizena2Part, izenaPart',[idDenboraldia,id],function(err,rows) {
+     connection.query('SELECT *,DATE_FORMAT(jaiotzeDataPart,"%Y-%m-%d") AS jaiotzeDataPart FROM taldekideak, partaideMotak, taldeak, denboraldiak, mailak, partaideak where idMotaKide=idPartaideMotak and idTaldeakKide=idTaldeak and idMailak=idMailaTalde and idPartaideakKide=idPartaideak and idDenboraldiaTalde = idDenboraldia and idDenboraldia= ? and idElkarteakTalde = ? order by zenbakiMaila desc, izenaTalde asc, zenbakiMota, abizena1Part, abizena2Part, izenaPart',[idDenboraldia,id],function(err,rows) {
 //     connection.query('SELECT *,DATE_FORMAT(jaiotzeDataPart,"%Y-%m-%d") AS jaiotzeDataPart FROM denboraldiak,mailak,taldeak LEFT JOIN taldekideak, partaideak, partaideMotak ON idMotaKide=idPartaideMotak and idTaldeakKide=idTaldeak and idPartaideakKide=idPartaideak where federazioaTalde != 9 and idMailak=idMailaTalde and idDenboraldiaTalde = idDenboraldia and idDenboraldia= ? and idElkarteakTalde = ? order by zenbakiMaila desc, izenaTalde asc, deskribapenMota, kamixetaZenbKide, abizena1Part, abizena2Part, izenaPart',[idDenboraldia,id],function(err,rows) {
 
         if(err)
@@ -493,10 +493,13 @@ var date = new Date();
            if (rows[i].ordaintzekoKide > 0 && rows[i].kuotaDenb != rows[i].ordaintzekoKide)
                 rows[i].kolore = "#0000FF";
            else
-            if(vabizena1Part == rows[i].abizena1Part || vabizena2Part == rows[i].abizena2Part || vhelbideaPart == rows[i].helbideaPart){
+            if (rows[i].ordaintzekoKide == 0 && rows[i].idMotaKide == 4)  // ADI ADI  jokalari = 4 ?
+                rows[i].kolore = "#006600";
+            else
+             if(vabizena1Part == rows[i].abizena1Part || vabizena2Part == rows[i].abizena2Part || vhelbideaPart == rows[i].helbideaPart){
                 rows[i].bgkolore = "#FF0000";
-            }
-            else 
+             }
+             else 
 //              if (rows[i].ordaintzekoKide > 0 && rows[i].ordaindutaKide >= rows[i].ordaintzekoKide)
 //                rows[i].kolore = "#0000FF";
 //              else  
@@ -513,6 +516,71 @@ var date = new Date();
   });
 }
 
+exports.familikoak = function(req,res){
+  req.session.path = req.path;
+  var id = req.session.idKirolElkarteak;
+  var idDenboraldia = req.session.idDenboraldia;
+//  var idTaldeak = req.params.idTaldeak;
+var familikoak = []; 
+var f = 0, familiko = 1;
+var vabizena1Part, vabizena2Part, vhelbideaPart, vidTaldekideak;
+var date = new Date();
+  req.getConnection(function(err,connection){
+//      connection.query('SELECT * FROM maila,taldeak LEFT JOIN jokalariak ON idtaldeak=idtaldej WHERE kategoria = idmaila and idtxapeltalde = ? and balidatuta != "admin" order by idtaldeak, idjokalari',[req.session.idtxapelketa],function(err,rows)     {
+//    connection.query('SELECT * FROM taldeak, mailak, denboraldiak where idMailaTalde=idMailak and idDenboraldiaTalde = idDenboraldia and  idTaldeak = ? and idElkarteakTalde = ?',[idTaldeak,id],function(err,rowst) {
+       
+     connection.query('SELECT *,DATE_FORMAT(jaiotzeDataPart,"%Y-%m-%d") AS jaiotzeDataPart FROM taldekideak, partaideMotak, taldeak, denboraldiak, mailak, partaideak where idMotaKide=idPartaideMotak and idTaldeakKide=idTaldeak and idMailak=idMailaTalde and idPartaideakKide=idPartaideak and idDenboraldiaTalde = idDenboraldia and idDenboraldia= ? and idElkarteakTalde = ? order by abizena1Part, abizena2Part, izenaPart',[idDenboraldia,id],function(err,rows) {
+//     connection.query('SELECT *,DATE_FORMAT(jaiotzeDataPart,"%Y-%m-%d") AS jaiotzeDataPart FROM denboraldiak,mailak,taldeak LEFT JOIN taldekideak, partaideak, partaideMotak ON idMotaKide=idPartaideMotak and idTaldeakKide=idTaldeak and idPartaideakKide=idPartaideak where federazioaTalde != 9 and idMailak=idMailaTalde and idDenboraldiaTalde = idDenboraldia and idDenboraldia= ? and idElkarteakTalde = ? order by zenbakiMaila desc, izenaTalde asc, deskribapenMota, kamixetaZenbKide, abizena1Part, abizena2Part, izenaPart',[idDenboraldia,id],function(err,rows) {
+
+        if(err)
+           console.log("Error Selecting : %s ",err );
+        for (var i in rows) { 
+           if(vabizena1Part == rows[i].abizena1Part && vabizena2Part == rows[i].abizena2Part){
+              if(rows[i].ordaintzekoKide > 0){ 
+                 familiko += 1;
+                 if(vidTaldekideak != 0)
+                 {
+                  familikoak[f] = vidTaldekideak;
+                  f++;
+                 }
+              }
+          }    
+          else 
+          {
+            if(vidTaldekideak != 0 && familiko != 1)
+             {
+                familikoak[f] = vidTaldekideak;
+                f++;
+             }
+            familiko = 1;
+          }
+          vabizena1Part = rows[i].abizena1Part;
+          vabizena2Part = rows[i].abizena2Part;
+          vhelbideaPart = rows[i].helbideaPart;
+          if(rows[i].ordaintzekoKide > 0)
+              vidTaldekideak = rows[i].idTaldekideak;
+          else
+              vidTaldekideak = 0;  
+        }
+        console.log("familikoak:" +JSON.stringify(familikoak));
+        for (var k = 0; k < f; k++){
+          vidTaldekideak = familikoak[k];
+          var data = {
+            ordaintzekoKide   : req.body.ordainduBerria
+          };
+        
+          connection.query("UPDATE taldekideak set ? WHERE idElkarteakKide = ? and idTaldekideak = ?",[data,id, vidTaldekideak], function(err, rows)
+          {
+            if (err)
+              console.log("Error Updating : %s ",err );
+          });
+        }
+        res.redirect('/admin/taldekideakabizenez');
+     });    
+//    });
+  });
+}
+
 exports.taldekideakbilatu = function(req, res){
   req.session.path = req.path;
   var id = req.session.idKirolElkarteak;
@@ -523,7 +591,7 @@ exports.taldekideakbilatu = function(req, res){
 
     connection.query('SELECT * FROM taldeak, mailak, denboraldiak where idMailaTalde=idMailak and idDenboraldiaTalde = idDenboraldia and  idTaldeak = ? and idElkarteakTalde = ?',[idTaldeak,id],function(err,rowst) {
        
-     connection.query('SELECT *,DATE_FORMAT(jaiotzeDataPart,"%Y-%m-%d") AS jaiotzeDataPart FROM taldekideak, partaideMotak, taldeak, denboraldiak, mailak, partaideak where idMotaKide=idPartaideMotak and idTaldeakKide=idTaldeak and idMailak=idMailaTalde and idPartaideakKide=idPartaideak and idDenboraldiaTalde = idDenboraldia and idDenboraldia= ? and idTaldeakKide = ? and idElkarteakTalde = ? order by zenbakiMota, kamixetaZenbKide, abizena1Part, abizena2Part, izenaPart',[idDenboraldia,idTaldeak,id],function(err,rows) {
+     connection.query('SELECT *,DATE_FORMAT(jaiotzeDataPart,"%Y-%m-%d") AS jaiotzeDataPart FROM taldekideak, partaideMotak, taldeak, denboraldiak, mailak, partaideak where idMotaKide=idPartaideMotak and idTaldeakKide=idTaldeak and idMailak=idMailaTalde and idPartaideakKide=idPartaideak and idDenboraldiaTalde = idDenboraldia and idDenboraldia= ? and idTaldeakKide = ? and idElkarteakTalde = ? order by zenbakiMota, abizena1Part, abizena2Part, izenaPart',[idDenboraldia,idTaldeak,id],function(err,rows) {
             
         if(err)
            console.log("Error Selecting : %s ",err );

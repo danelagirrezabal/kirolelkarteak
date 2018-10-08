@@ -5,22 +5,16 @@
 </div>
 
 <div class="container">
-
-
   <a href="/partaideak" class="btn btn-primary btn-sm" role="button">Partaideak ikusi</a>
   <!--<a href="/bazkideakgehitu" class="btn btn-primary btn-sm" role="button">Bazkidea gehitu</a>-->
+</div>
 
-
+</br>
 
 <div class="row marketing">
-
-
-        </br></br>
-
-
         <div class="form-group">
             <label for="denboraldia" class="col-sm-2 control-label">Denboraldia aukeratu:</label>
-            <div class="col-sm-4">
+            <div class="col-sm-2">
             <select name="denboraldia" id="denboraldia">
                 <!--<option value="">--Aukeratu denboraldia--</option>-->
                 {{#each denboraldiak}}
@@ -33,53 +27,88 @@
             </select>
             </div>
 
+            <label for="egoera" class="col-sm-1 control-label">Egoera:</label>
+            <div class="col-sm-1">
+                <input type="num" class="form-control" id="egoera" name="egoera" value={{egoera}}>
+<!--
+                <select name="egoera" id="egoera">
+                  <option value="">--Aukeratu denboraldia--</option>
+                  <option value="{{idDenboraldia}}">{{deskribapenaDenb}}</option>
+                </select>
+-->
+            </div>
+<!--
+            <form class="form-horizontal newsletterForm" role="form" action="/admin/egoeraaldatu/{{egoera}}" method="POST">
+              <label for="egoeraBerria" class="col-sm-1 control-label">Egoera Berria:</label>
+               <div class="col-sm-1">
+                <input type="num" class="form-control" required id="egoeraBerria" name="egoeraBerria" value={{egoeraBerria}}>
+               </div>
+ 
+               <button type="submit" class="btn btn-default">Egoera Aldatu</button>
+            </form>
+-->
         </div>
-        </br></br>
-        </form> 
-            <table class="table table-striped">
+
+        </br>
+
+        <table class="table table-striped">
             <tr>
-                    <th>Zenbakia</th>
+                    <th>Zkia</th>
                     <th>Izena</th>
-                    <th>Abizenak</th>
+                    <th>1.Abizen</th>
+                    <th>2.Abizen</th>
                     <th>NAN</th>
-                    <th>Telefonoa</th>
                     <th>Kontua</th>
                     <th>Berezitasun</th>
-                    <th>Ordaintzeko era</th>
-                    <th>Ordainduta?</th>
-                    <th>EgoeraData</th>
+                    <th>Ordainera</th>
+                    <th>Ordainduta</th>
+                    <th>EgoerakData</th>
                     <th></th>
                     <th></th>
-
+                    <th></th>
                 </tr>                               
             {{#each data}}
                   <tr>
                     <td>{{bazkideZenbPart}}</td>
                     <td>{{izenaPart}}</td>
-                    <td>{{abizena1Part}}  {{abizena2Part}}</td>
+                    <td>{{abizena1Part}}</td>
+                    <td>{{abizena2Part}}</td>
                     <td>{{nanPart}}</td>
-                    <td>{{telefonoaPart}}</td>
                     <td>{{kontuIbanPart}} - {{kontuZenbPart}}</td>
                     <td>{{berezitasunBazk}}</td>
                     <td>{{deskribapenaOrdainEra}}</td>
                     <td>{{ordainduBazk}}</td>
-                    <td>{{egoeraBazk}} - {{dataBazk}}</td>
+                    <td>{{egoeraBazk}}-{{dataBazk}}</td>
                      <td>
                         <a class="a-inside edit" href="/admin/bazkideakeditatu/{{idBazkideak}}">Aldatu</a>
                      </td>
                      <td>
                         <a class="a-inside delete" href="/admin/bazkideakezabatu/{{idBazkideak}}">Ezabatu</a> 
                      </td>
-                     
+                     <td>
+                        <a class="a-inside edit" href="/admin/partaideakeditatu/{{idPartaideakBazk}}">Partaide</a>
+                     </td>
 
                 </tr>
             {{/each}}
           </table>
         </div>
-
-        
       </div>
-      
+
+    <form class="form-horizontal newsletterForm" role="form" action="/admin/egoeraaldatu/{{egoera}}" method="POST">
+        <input type="hidden" name="_csrf" value="{{_csrfToken}}">
+        <div class="form-group">
+            <label for="egoeraBerria" class="col-sm-offset-7 col-sm-2 control-label">Egoera Berria :</label>
+            <div class="col-sm-1">
+                <input type="text" class="form-control" required id="egoeraBerria" name="egoeraBerria" value={{egoeraBerria}}>
+            </div>
+
+            <div class="col-sm-1">
+                <button type="submit" class="btn btn-default" id="aldatu">Egoera aldatu</button>
+            </div>
+        </div>
+    </form>
+
 </div>
 
 
@@ -91,20 +120,24 @@
   var denboraldia = $('#denboraldia').val();     
   
     $('#denboraldia').change(function(){
-
-
-      var data = 'id=' + $('#denboraldia').val();
-
+        var data = 'id=' + $('#denboraldia').val();
         $(location).attr('href', '/admin/bazkideak/'+$('#denboraldia').val());
-     
+    });
+    $('#egoera').change(function(){
+        $(location).attr('href', '/admin/bazkideak/'+$('#denboraldia').val()+'/'+$('#egoera').val());
+    });
+    $("#aldatu").on('click',function (){ 
+        myFunction(); 
     });
   });
+       
+function myFunction() {
+    var r = confirm("Ziur al zaude bazkide egoerak aldatu nahi dituzula?");
+    if (r == false) {
+        $(location).attr('href', '/admin/bazkideak/');
+    }
 
-
-
+}
             
 </script> 
-
-
-        
 {{/section}}

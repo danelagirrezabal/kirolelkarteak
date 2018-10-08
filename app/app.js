@@ -271,6 +271,8 @@ app.post('/admin/partaideakkargatuegin', adminonartua, partaideak.partaideakkarg
 
 app.get('/admin/bazkideak', adminonartua, partaideak.bazkideakikusi);
 app.get('/admin/bazkideak/:idDenboraldia', adminonartua, partaideak.bazkideakikusidenboraldiarekin);
+app.get('/admin/bazkideak/:idDenboraldia/:egoera', adminonartua, partaideak.bazkideakikusiegoerarekin);
+app.post('/admin/egoeraaldatu/:egoera', adminonartua, partaideak.bazkideegoerakaldatu);
 app.get('/admin/bazkideaksortu/:idPartaideak', adminonartua, partaideak.bazkideaksortu);
 app.get('/admin/bazkideakezabatu/:idBazkideak', adminonartua, partaideak.bazkideakezabatu);
 app.get('/admin/bazkideakeditatu/:idBazkideak', adminonartua, partaideak.bazkideakeditatu);
@@ -494,6 +496,7 @@ app.get('/admin/taldekidetxartelak/:idTaldeak', adminonartua, taldeak.taldekidet
 
 app.get('/admin/taldekideakikusi/', adminonartua, taldeak.taldekideakikusi);
 app.get('/admin/taldekideakabizenez/', adminonartua, taldeak.taldekideakabizenez);
+app.post('/admin/familikoak', adminonartua, taldeak.familikoak);
 app.get('/admin/taldekideak/:idTaldeak', adminonartua, taldeak.taldekideakbilatu);
 app.get('/taldekideak/:idTaldeak', authorize2, taldeak.taldekideakbilatupartaideargazkiekin);
 app.post('/admin/taldekideaksortu/:idTaldeak', adminonartua, taldeak.taldekideaksortu);

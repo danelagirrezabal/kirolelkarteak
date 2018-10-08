@@ -3,6 +3,7 @@
    <div class="jumbotron">
         <h3>Taldekideak Abizenez</h3> 
    </div>
+
       <a href="/admin/taldekideikusi" class="btn btn-primary btn-sm" role="button">Taldekideak Ikusi</a>
       <a href="/admin/taldeak" class="btn btn-primary btn-sm" role="button">Taldeak ikusi</a>
       <a href="/admin/taldekopurua" class="btn btn-primary btn-sm" role="button">Talde kopurua ikusi</a>
@@ -40,12 +41,41 @@
                     <td>{{ordaintzekoKide}} &nbsp;&nbsp; {{familiko}}</td>
                     <td style="background-color:{{bgkolore}}"> &nbsp;&nbsp; </td>  
                     <td>{{ordaindutaKide}}</td>
-                    <td>{{bazkideZenbKide}}</td> 
+                    <td>{{bazkideZenbKide}}</td>
+                    <td><a class="a-inside edit" href="/admin/taldekideakeditatu/{{idTaldekideak}}">Aldatu</a></td> 
                     <td><a class="a-inside edit" href="/admin/partaideakeditatu/{{idPartaideakKide}}">Partaide</a></td> 
-                    <td><a class="a-inside edit" href="/admin/taldekideakeditatu/{{idTaldekideak}}">Aldatu</a></td>
- 
+       
                 </tr>
             {{/each}}
           </table>
+
+            <form class="form-horizontal newsletterForm" role="form" action="/admin/familikoak" method="POST">
+              <label for="ordainduBerria" class="col-sm-offset-7 col-sm-2 control-label">Ordaindu Familia:</label>
+               <div class="col-sm-1">
+                <input type="num" class="form-control" required id="ordainduBerria" name="ordainduBerria" value={{ordainduBerria}}>
+               </div>
+ 
+               <button type="submit" class="btn btn-default" id="aldatu">Ordaintzekoa Aldatu</button>
+            </form>
         </div>
       </div>
+
+{{#section 'jquery'}}
+<script>
+  $(document).ready(function(){        
+
+   $("#aldatu").on('click',function (){ 
+        myFunction(); 
+   });
+  });
+        
+function myFunction() {
+    var r = confirm("Ziur al zaude ordaintzekoak aldatu nahi dituzula?");
+    if (r == false) {
+        $(location).attr('href', '/admin/taldekideakabizenez');
+    }
+
+}
+</script>
+
+{{/section}}
