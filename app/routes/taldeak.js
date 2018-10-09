@@ -1075,6 +1075,46 @@ exports.taldekideakkopiatuegin = function(req, res){
   });
 };
 
+exports.taldekideakordainduta = function(req, res){
+  var id = req.session.idKirolElkarteak;
+  var input = JSON.parse(JSON.stringify(req.body));
+  var idDenboraldia = req.session.idDenboraldia;
+  var taldekide = [], ordaintzeko = 0;
+  req.getConnection(function(err,connection){
+    
+//      console.log("Body:" +JSON.stringify(req.body));
+ 
+    for(var i in input.aukeratua ){
+      var  idTaldekideak = input.aukeratua[i];                                           //  ADI   .split("-");
+// ADI- taldekideakkopiatu.handlebars : gehitu checkbox-en kopiatu nahi duguna        
+        console.log("input : " + i + "-" + input.aukeratua[i] + "-" + idTaldekideak);
+      connection.query('SELECT * FROM taldekideak WHERE idElkarteakKide = ? and idTaldekideak= ?',[id,idTaldekideak],function(err,rows)
+      {
+       
+        if(err)
+          console.log("Error Selecting : %s ",err );        
+        console.log("kide : " + i + "-" + rows[0].ordaintzekoKide + "-" + rows[0].idTaldekideak);
+        var  idTaldekide = rows[0].idTaldekideak; 
+        var data = {
+
+            ordaindutaKide   : rows[0].ordaintzekoKide
+
+        };
+        
+        connection.query("UPDATE taldekideak set ? WHERE idElkarteakKide = ? and idTaldekideak = ?",[data,id, idTaldekide], function(err, rows)
+        { 
+          if (err)
+              console.log("Error inserting : %s ",err );
+        });
+      });
+    }
+
+    for (var j = 0; j < 1000; j++) {}  // atseden denbora ADI ADI
+
+    res.redirect('/admin/taldekideakikusi/');
+  });
+};
+
 exports.taldekidetxartelak = function(req, res){
   var id = req.session.idKirolElkarteak;
   var idDenboraldia = req.session.idDenboraldia;
