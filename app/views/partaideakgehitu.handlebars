@@ -9,6 +9,17 @@
     <form class="form-horizontal newsletterForm" role="form" action="/partaideaksortu" method="POST">
     <input type="hidden" name="_csrf" value="{{_csrfToken}}">
         <div class="form-group">
+            <label for="idMotaPart" class="col-sm-2 control-label">Partaide mota</label>
+            <div class="col-sm-4">
+            <select name="idMotaPart" id="idMotaPart">
+                <option value="">--Mota aukeratu--</option>
+                {{#each motak}}
+                       <option value="{{idPartaideMotak}}">{{deskribapenMota}}</option>
+                {{/each}}
+            </select>
+            </div>
+        </div>
+        <div class="form-group">
             <label for="izenaPart" class="col-sm-2 control-label">Partaidearen izena</label>
             <div class="col-sm-4">
                 <!--<input type="text" class="form-control" required id="izenaPart" autofocus name="izenaPart" value={{izenaPart}}>-->

@@ -122,7 +122,7 @@ exports.ikusi = function(req, res){
   req.getConnection(function(err,connection){
 
        
-      connection.query('SELECT *, DATE_FORMAT(jaiotzeDataPart,"%Y/%m/%d") AS jaiotzeDataPart FROM partaideak LEFT JOIN bazkideak ON idPartaideak=idPartaideakBazk WHERE idElkarteakPart=?',[id],function(err,rows)     {
+      connection.query('SELECT *, DATE_FORMAT(jaiotzeDataPart,"%Y/%m/%d") AS jaiotzeDataPart FROM partaideMotak, partaideak LEFT JOIN bazkideak ON idPartaideak=idPartaideakBazk WHERE idMotaPart=idPartaideMotak and idElkarteakPart=?',[id],function(err,rows)     {
             
         if(err)
            console.log("Error Selecting : %s ",err );
@@ -136,18 +136,17 @@ exports.ikusi = function(req, res){
                 
               if(rows[i].balidatutaPart == 0){
                 rows[i].balidatuta = "EZ";
-              }else if (rows[i].balidatutaPart == 1){
-                rows[i].balidatuta = "BAI";
                 rows[i].balidatutaNegrita = true;
+              }else if (rows[i].balidatutaPart == 1){
+//                rows[i].balidatuta = "BAI";
+//                rows[i].balidatutaNegrita = true;
+                rows[i].balidatuta = rows[i].deskribapenMota;
               }else if (rows[i].balidatutaPart == "admin" ){
                 rows[i].balidatuta = "BAI - admin";
                 rows[i].balidatutaNegrita = true;
 
               }
-
           }
-
-
 
         res.render('partaideak.handlebars', {title : 'KirolElkarteak-Partaideak', data:rows, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea: req.session.partaidea} );
         //res.render('partaideak.handlebars', {title : 'KirolElkarteak-Partaideak', data:rows, taldeizena: req.session.taldeizena} );               
@@ -188,9 +187,27 @@ exports.editatu = function(req, res){
        
      connection.query('SELECT *, DATE_FORMAT(jaiotzeDataPart,"%Y/%m/%d") AS jaiotzeDataPart  FROM partaideak WHERE idPartaideak = ?',[idPartaideak],function(err,rows)
         {
+          if(err)
+                console.log("Error Selecting : %s ",err );
+
+          connection.query('SELECT * FROM partaideMotak where idElkarteakPartaideMotak = ? order by zenbakiMota, idPartaideMotak asc',[id],function(err,rowsm) {
             
             if(err)
-                console.log("Error Selecting : %s ",err );
+                  console.log("Error Selecting : %s ",err );
+              
+            if (rows.length == 0){
+                res.redirect('/');
+            }else{
+                for(var i in rowsm ){
+                  if(rows[0].idMotaPart == rowsm[i].idPartaideMotak){
+                    deskribapenMota = rowsm[i].deskribapenMota;
+                    rowsm[i].aukeratua = true;
+                  }
+                  else
+                    rowsm[i].aukeratua = false;
+                }
+
+                rows[0].motak = rowsm;    
 
             connection.query('SELECT * FROM ordaintzekoErak where idElkarteakOrdaintzekoErak = ? order by idOrdaintzekoErak asc',[id],function(err,rowso) {
             
@@ -225,10 +242,11 @@ exports.editatu = function(req, res){
 
 
             res.render('partaideakeditatu.handlebars', {page_title:"Partaidea aldatu",data:rows, partaidea: req.session.partaidea});
-            }     
+            } 
+           });  
+          }              
          });
         });
-                 
     }); 
 };
 /*Save the customer*/
@@ -477,6 +495,7 @@ exports.sortu = function(req,res){
           
 
              var data = { //Partaidearen datuak
+              idMotaPart : input.idMotaPart,
               izenaPart    : input.izenaPart,
               abizena1Part : input.abizena1Part,
               abizena2Part : input.abizena2Part,
@@ -546,17 +565,19 @@ exports.partaideakgehitu = function(req, res){ //Datu basetik conboBox-ak betetz
   var generoa = [{izena: "Neska", balioa: "N"}, {izena: "Mutila", balioa: "M"}];
 
   req.getConnection(function(err,connection){
-       
-     connection.query('SELECT * FROM ordaintzekoErak where idElkarteakOrdaintzekoErak = ? order by idOrdaintzekoErak asc',[id],function(err,rowso) {
-            
-              if(err)
-                console.log("Error Selecting : %s ",err );
+    connection.query('SELECT * FROM partaideMotak where idElkarteakPartaideMotak = ? order by zenbakiMota, idPartaideMotak asc',[id],function(err,rowsm) {
+      if(err)
+           console.log("Error Selecting : %s ",err ); 
+
+      connection.query('SELECT * FROM ordaintzekoErak where idElkarteakOrdaintzekoErak = ? order by idOrdaintzekoErak asc',[id],function(err,rowso) {
+        if(err)
+          console.log("Error Selecting : %s ",err );
               //rows[0].generoa = generoa;
        
          //console.log("Berriak:" +JSON.stringify(rows));
-      res.render('partaideakgehitu.handlebars', {title : 'KirolElkarteak-PartaideakGehitu', generoa:generoa, ordaintzekoErak: rowso, partaidea: req.session.partaidea});
+        res.render('partaideakgehitu.handlebars', {title : 'KirolElkarteak-PartaideakGehitu', motak:rowsm, generoa:generoa, ordaintzekoErak: rowso, partaidea: req.session.partaidea});
 
-    
+      });    
     });
          
   });
@@ -736,6 +757,7 @@ exports.aldatu = function(req,res){
           
 
              var data = { //Partaidearen datuak
+              idMotaPart : input.idMotaPart,
               izenaPart    : input.izenaPart,
               abizena1Part : input.abizena1Part,
               abizena2Part : input.abizena2Part,
@@ -875,6 +897,7 @@ req.getConnection(function(err,connection){
 
 
       var data = [{
+            idMotaPart : req.body.idMotaPart,
             izenaPart    : req.body.izenaPart,
             abizena1Part : req.body.abizena1Part,
             abizena2Part : req.body.abizena2Part,
@@ -919,7 +942,7 @@ req.getConnection(function(err,connection){
     
         
         var data2 = {
-            
+            idMotaPart : input.idMotaPart,
             izenaPart    : input.izenaPart,
             abizena1Part : input.abizena1Part,
             abizena2Part : input.abizena2Part,
@@ -1154,7 +1177,7 @@ exports.bazkideakikusi = function(req, res){
   var idDenboraldiaSesioa = idDenboraldia;
   req.getConnection(function(err,connection){
        
-     connection.query('SELECT *, DATE_FORMAT(dataBazk,"%Y/%m/%d") AS dataBazk FROM bazkideak, partaideak, ordaintzekoErak WHERE idOrdaintzekoEraBazk=idOrdaintzekoErak and idPartaideakBazk=idPartaideak and idElkarteakBazkide=? and idDenboraldiaBazk = ?',[id, idDenboraldia],function(err,rows)     {
+     connection.query('SELECT *, DATE_FORMAT(dataBazk,"%Y/%m/%d") AS dataBazk FROM bazkideak, partaideak, ordaintzekoErak, partaideMotak WHERE idMotaPart=idPartaideMotak and idOrdaintzekoEraBazk=idOrdaintzekoErak and idPartaideakBazk=idPartaideak and idElkarteakBazkide=? and idDenboraldiaBazk = ?',[id, idDenboraldia],function(err,rows)     {
             
         if(err)
            console.log("Error Selecting : %s ",err );

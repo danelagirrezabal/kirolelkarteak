@@ -756,7 +756,7 @@ exports.taldekideakgehitu = function(req, res){
   var admin=(req.path.slice(0,18) == "/admin/taldekideak");
   req.getConnection(function(err,connection){
        
-     connection.query('SELECT * FROM partaideMotak where idElkarteakPartaideMotak = ? order by idPartaideMotak asc',[id],function(err,rowsm) {
+     connection.query('SELECT * FROM partaideMotak where idElkarteakPartaideMotak = ? order by zenbakiMota, idPartaideMotak asc',[id],function(err,rowsm) {
             
       if(err)
            console.log("Error Selecting : %s ",err );
@@ -858,7 +858,7 @@ exports.taldekideakeditatu = function(req, res){
             if(err)
                 console.log("Error Selecting : %s ",err );
 
-            connection.query('SELECT * FROM partaideMotak where idElkarteakPartaideMotak = ? order by idPartaideMotak asc',[id],function(err,rowsm) {
+            connection.query('SELECT * FROM partaideMotak where idElkarteakPartaideMotak = ? order by zenbakiMota, idPartaideMotak asc',[id],function(err,rowsm) {
             
               if(err)
                   console.log("Error Selecting : %s ",err );
