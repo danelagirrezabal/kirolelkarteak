@@ -49,6 +49,20 @@
             </div>
         </div>
         <div class="form-group">
+            <label for="idMotaBazk" class="col-sm-2 control-label">Bazkide mota</label>
+            <div class="col-sm-4">
+            <select name="idMotaBazk" id="idMotaBazk">
+                {{#each motak}}
+                    {{#if aukeratua}}
+                       <option value="{{idPartaideMotak}}" selected>{{deskribapenMota}}</option>
+                    {{else}}
+                        <option value="{{idPartaideMotak}}">{{deskribapenMota}}</option>
+                    {{/if}}
+                {{/each}}
+            </select>
+            </div>
+        </div>
+        <div class="form-group">
             <label for="egoeraBazk" class="col-sm-2 control-label">Bazkide egoera</label>
             <div class="col-sm-4">
                 <input type="text" class="form-control" id="egoeraBazk" name="egoeraBazk" value={{egoeraBazk}}>

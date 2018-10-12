@@ -877,7 +877,7 @@ exports.taldekideakeditatu = function(req, res){
 
                 rows[0].motak = rowsm;
 
-                connection.query('SELECT * FROM partaideak where idElkarteakPart = ? order by izenaPart asc',[id],function(err,rowsp) {
+                connection.query('SELECT * FROM partaideak where idElkarteakPart = ? order by abizena1Part, abizena2Part, izenaPart',[id],function(err,rowsp) {
                   if(err)
                     console.log("Error Selecting : %s ",err );
 

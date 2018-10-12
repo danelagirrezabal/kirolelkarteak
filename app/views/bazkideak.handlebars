@@ -5,7 +5,7 @@
 </div>
 
 <div class="container">
-  <a href="/partaideak" class="btn btn-primary btn-sm" role="button">Partaideak ikusi</a>
+  <!--<a href="/partaideak" class="btn btn-primary btn-sm" role="button">Partaideak ikusi</a>-->
   <!--<a href="/bazkideakgehitu" class="btn btn-primary btn-sm" role="button">Bazkidea gehitu</a>-->
 </div>
 
@@ -27,6 +27,20 @@
             </select>
             </div>
 
+            <label for="mota" class="col-sm-2 control-label">Mota aukeratu:</label>
+            <div class="col-sm-2">
+            <select name="mota" id="mota">
+                <option value="">--Aukeratu mota--</option>
+                {{#each motak}}
+                    {{#if aukeratua}}
+                       <option value="{{idPartaideMotak}}" selected>{{deskribapenMota}}</option>
+                    {{else}}
+                       <option value="{{idPartaideMotak}}">{{deskribapenMota}}</option>
+                    {{/if}}
+                {{/each}}
+            </select>
+            </div>            
+
             <label for="egoera" class="col-sm-1 control-label">Egoera:</label>
             <div class="col-sm-1">
                 <input type="num" class="form-control" id="egoera" name="egoera" value={{egoera}}>
@@ -38,7 +52,7 @@
 -->
             </div>
 <!--
-            <form class="form-horizontal newsletterForm" role="form" action="/admin/egoeraaldatu/{{egoera}}" method="POST">
+            <form class="form-horizontal newsletterForm" role="form" action="/admin/egoeraaldatu/{{mota}}/{{egoera}}" method="POST">
               <label for="egoeraBerria" class="col-sm-1 control-label">Egoera Berria:</label>
                <div class="col-sm-1">
                 <input type="num" class="form-control" required id="egoeraBerria" name="egoeraBerria" value={{egoeraBerria}}>
@@ -97,7 +111,7 @@
         </div>
       </div>
 
-    <form class="form-horizontal newsletterForm" role="form" action="/admin/egoeraaldatu/{{egoera}}" method="POST">
+    <form class="form-horizontal newsletterForm" role="form" action="/admin/egoeraaldatu/{{mota}}/{{egoera}}" method="POST">
         <input type="hidden" name="_csrf" value="{{_csrfToken}}">
         <div class="form-group">
             <label for="egoeraBerria" class="col-sm-offset-7 col-sm-2 control-label">Egoera Berria :</label>
@@ -125,9 +139,15 @@
         var data = 'id=' + $('#denboraldia').val();
         $(location).attr('href', '/admin/bazkideak/'+$('#denboraldia').val());
     });
-    $('#egoera').change(function(){
-        $(location).attr('href', '/admin/bazkideak/'+$('#denboraldia').val()+'/'+$('#egoera').val());
+
+    $('#mota').change(function(){
+        $(location).attr('href', '/admin/bazkideak/'+$('#denboraldia').val()+'/'+$('#mota').val());
     });
+
+    $('#egoera').change(function(){
+        $(location).attr('href', '/admin/bazkideak/'+$('#denboraldia').val()+'/'+$('#mota').val()+'/'+$('#egoera').val());
+    });
+
     $("#aldatu").on('click',function (){ 
         myFunction(); 
     });

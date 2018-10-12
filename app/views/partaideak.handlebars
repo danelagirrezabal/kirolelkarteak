@@ -7,6 +7,19 @@
  <div class="container">
   <a href="/izenematea" class="btn btn-primary btn-sm" role="button">Partaideak Gehitu</a>
   <a href="/admin/partaideakkargatu" class="btn btn-primary btn-sm" role="button">Partaideak Kargatu</a>
+            <label for="mota" class="col-sm-2 control-label">Mota aukeratu:</label>
+            <div class="col-sm-2">
+            <select name="mota" id="mota">
+                <option value="">--Aukeratu mota--</option>
+                {{#each motak}}
+                    {{#if aukeratua}}
+                       <option value="{{idPartaideMotak}}" selected>{{deskribapenMota}}</option>
+                    {{else}}
+                       <option value="{{idPartaideMotak}}">{{deskribapenMota}}</option>
+                    {{/if}}
+                {{/each}}
+            </select>
+            </div>
 
   <div class="row marketing">
 
@@ -93,3 +106,15 @@
       </div>
       
 </div>
+
+{{#section 'jquery'}}
+<script>
+  $(document).ready(function(){   
+ 
+    $('#mota').change(function(){
+        $(location).attr('href', '/admin/partaideak/'+$('#mota').val());
+    });
+  });
+           
+</script> 
+{{/section}}
