@@ -497,6 +497,7 @@ app.get('/admin/taldekidetxartelak/:idTaldeak', adminonartua, taldeak.taldekidet
 
 app.get('/admin/taldekideakikusi/', adminonartua, taldeak.taldekideakikusi);
 app.post('/admin/taldekideakordainduta', adminonartua, taldeak.taldekideakordainduta);
+app.post('/admin/taldekideakbazkideegin', adminonartua, taldeak.taldekideakbazkideegin);
 app.get('/admin/taldekideakabizenez/', adminonartua, taldeak.taldekideakabizenez);
 app.post('/admin/familikoak', adminonartua, taldeak.familikoak);
 app.get('/admin/taldekideak/:idTaldeak', adminonartua, taldeak.taldekideakbilatu);

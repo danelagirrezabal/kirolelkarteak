@@ -724,7 +724,17 @@ exports.aldatu = function(req,res){
   }
 */
   req.getConnection(function (err, connection) {
-
+    connection.query('SELECT * FROM partaideMotak where idElkarteakPartaideMotak = ? order by zenbakiMota, idPartaideMotak asc',[id],function(err,rowsm) {
+      if(err)
+          console.log("Error Selecting : %s ",err );
+              
+      for(var i in rowsm ){
+          if(req.body.idMotaPart == rowsm[i].idPartaideMotak){
+              rowsm[i].aukeratua = true;
+          }
+          else
+              rowsm[i].aukeratua = false;
+      }
 
       connection.query('SELECT * FROM ordaintzekoErak where idElkarteakOrdaintzekoErak = ? order by idOrdaintzekoErak asc',[id],function(err,rowso) {
             
@@ -873,6 +883,7 @@ exports.aldatu = function(req,res){
        }); 
       });
     });
+  });
   //});
 };
 exports.aldatu2 = function(req,res){
