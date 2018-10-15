@@ -62,14 +62,14 @@
                       <td>{{ordaintzekoKide}}</td>
                       <td class="checkbox">
                        {{#if ezordaindua}}
-                        <input type="checkbox" id="aukeratua" name="aukeratua[]" value="{{idTaldekideak}}">
+                        <input type="checkbox" id="aukeratuo" name="aukeratuo[]" value="{{idTaldekideak}}">
                        {{/if}}
                       </td> 
                       <td>{{ordaindutaKide}}</td> 
                       <td>{{bazkideZenbKide}}</td>
                       <td class="checkbox">
                        {{#if ezbazkidea}}
-                        <input type="checkbox" id="aukeratua" name="aukeratua[]" value="{{idTaldekideak}}">
+                        <input type="checkbox" id="aukeratub" name="aukeratub[]" value="{{idTaldekideak}}">
                        {{/if}}
                       </td>
                       <td> </td>
@@ -82,11 +82,33 @@
       </div>
         <div class="form-group">
             <div class="col-sm-offset-8 col-sm-4">
-                <button type="submit" class="btn btn-default">1. ORDAINDUTA BERDINDU</button>
+                <button type="submit" class="btn btn-default" id="aldatu1">1. ORDAINDUTA BERDINDU</button>
             </div>
-            <div class="col-sm-offset-8 col-sm-4">
-                <button type="submit" class="btn btn-default" action="/admin/taldekideakbazkideegin">2. BAZKIDEAK EGIN</button>
+            <div class="col-sm-offset-10 col-sm-2">
+                <button type="submit" class="btn btn-default" formaction="/admin/taldekideakbazkideegin"id="aldatu2">2. BAZKIDEAK EGIN</button>
             </div>
         </div>
     </form>
 </div>
+
+{{#section 'jquery'}}
+<script>
+  $(document).ready(function(){   
+
+    $("#aldatu1").on('click',function (){ 
+        var r = confirm("Ziur al zaude Ordainduta berdindu nahi dituzula?");
+        if (r == false) {
+          $(location).attr('href', '/admin/taldekideakikusi/');
+        } 
+    });
+
+    $("#aldatu2").on('click',function (){ 
+        var r = confirm("Ziur al zaude bazkideak egin nahi dituzula?");
+        if (r == false) {
+          $(location).attr('href', '/admin/taldekideakikusi/');
+        } 
+    });
+  });
+            
+</script> 
+{{/section}}     

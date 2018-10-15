@@ -380,12 +380,27 @@ var date = new Date();
 //      connection.query('SELECT * FROM maila,taldeak LEFT JOIN jokalariak ON idtaldeak=idtaldej WHERE kategoria = idmaila and idtxapeltalde = ? and balidatuta != "admin" order by idtaldeak, idjokalari',[req.session.idtxapelketa],function(err,rows)     {
     connection.query('SELECT * FROM taldeak, mailak, denboraldiak where idMailaTalde=idMailak and idDenboraldiaTalde = idDenboraldia and  idTaldeak = ? and idElkarteakTalde = ?',[idTaldeak,id],function(err,rowst) {
        
-     connection.query('SELECT *,DATE_FORMAT(jaiotzeDataPart,"%Y-%m-%d") AS jaiotzeDataPart FROM taldekideak, partaideMotak, taldeak, denboraldiak, mailak, partaideak where idMotaKide=idPartaideMotak and idTaldeakKide=idTaldeak and idMailak=idMailaTalde and idPartaideakKide=idPartaideak and idDenboraldiaTalde = idDenboraldia and idDenboraldia= ? and idElkarteakTalde = ? order by zenbakiMaila desc, izenaTalde asc, zenbakiMota, abizena1Part, abizena2Part, izenaPart',[idDenboraldia,id],function(err,rows) {
+     connection.query('SELECT *,DATE_FORMAT(jaiotzeDataPart,"%Y-%m-%d") AS jaiotzeDataPart FROM taldekideak, partaideMotak, taldeak, denboraldiak, mailak, partaideak LEFT JOIN bazkideak ON idPartaideak=idPartaideakBazk where idMotaKide=idPartaideMotak and idTaldeakKide=idTaldeak and idMailak=idMailaTalde and idPartaideakKide=idPartaideak and idDenboraldiaTalde = idDenboraldia and idDenboraldia= ? and idElkarteakTalde = ? order by zenbakiMaila desc, izenaTalde asc, zenbakiMota, abizena1Part, abizena2Part, izenaPart',[idDenboraldia,id],function(err,rows) {
 //     connection.query('SELECT *,DATE_FORMAT(jaiotzeDataPart,"%Y-%m-%d") AS jaiotzeDataPart FROM denboraldiak,mailak,taldeak LEFT JOIN taldekideak, partaideak, partaideMotak ON idMotaKide=idPartaideMotak and idTaldeakKide=idTaldeak and idPartaideakKide=idPartaideak where federazioaTalde != 9 and idMailak=idMailaTalde and idDenboraldiaTalde = idDenboraldia and idDenboraldia= ? and idElkarteakTalde = ? order by zenbakiMaila desc, izenaTalde asc, deskribapenMota, kamixetaZenbKide, abizena1Part, abizena2Part, izenaPart',[idDenboraldia,id],function(err,rows) {
 
+//      connection.query('SELECT *, DATE_FORMAT(jaiotzeDataPart,"%Y/%m/%d") AS jaiotzeDataPart FROM partaideMotak, partaideak LEFT JOIN bazkideak ON idPartaideak=idPartaideakBazk WHERE idMotaPart=idPartaideMotak and idElkarteakPart=? order by abizena1Part, abizena2Part, izenaPart',[id],function(err,rows)     {
+            
         if(err)
            console.log("Error Selecting : %s ",err );
-        for (var i in rows) { 
+        for (var i in rows) {
+
+          if(rows[i].idBazkideak || rows[i].zenbakiMaila < 5){     // < 5 kadete, infantil, alebin BAZKIDE EZ
+                rows[i].ezbazkidea = false;
+          }
+          else
+                rows[i].ezbazkidea = true;
+
+          if(rows[i].ordaindutaKide == rows[i].ordaintzekoKide){
+                rows[i].ezordaindua = false;
+          }
+          else
+                rows[i].ezordaindua = true;
+
           if(vTalde != rows[i].idTaldeak){
             if(vTalde !=null){
               taldea.jokalariak = jokalariak;
@@ -437,6 +452,8 @@ var date = new Date();
                   abizena2Part : rows[i].abizena2Part,
                   jaiotzeDataPart : rows[i].jaiotzeDataPart,
                   deskribapenMota : rows[i].deskribapenMota,
+                  ezordaindua : rows[i].ezordaindua,
+                  ezbazkidea : rows[i].ezbazkidea,
                   kolore : kolore
                };
           j++;
@@ -1084,16 +1101,16 @@ exports.taldekideakordainduta = function(req, res){
     
 //      console.log("Body:" +JSON.stringify(req.body));
  
-    for(var i in input.aukeratua ){
-      var  idTaldekideak = input.aukeratua[i];                                           //  ADI   .split("-");
+    for(var i in input.aukeratuo ){
+      var  idTaldekideak = input.aukeratuo[i];                                           //  ADI   .split("-");
 // ADI- taldekideakkopiatu.handlebars : gehitu checkbox-en kopiatu nahi duguna        
-        console.log("input : " + i + "-" + input.aukeratua[i] + "-" + idTaldekideak);
+//        console.log("input : " + i + "-" + input.aukeratuo[i] + "-" + idTaldekideak);
       connection.query('SELECT * FROM taldekideak WHERE idElkarteakKide = ? and idTaldekideak= ?',[id,idTaldekideak],function(err,rows)
       {
        
         if(err)
           console.log("Error Selecting : %s ",err );        
-        console.log("kide : " + i + "-" + rows[0].ordaintzekoKide + "-" + rows[0].idTaldekideak);
+//        console.log("kide : " + i + "-" + rows[0].ordaintzekoKide + "-" + rows[0].idTaldekideak);
         var  idTaldekide = rows[0].idTaldekideak; 
         var data = {
 
@@ -1104,7 +1121,7 @@ exports.taldekideakordainduta = function(req, res){
         connection.query("UPDATE taldekideak set ? WHERE idElkarteakKide = ? and idTaldekideak = ?",[data,id, idTaldekide], function(err, rows)
         { 
           if (err)
-              console.log("Error inserting : %s ",err );
+              console.log("Error updating : %s ",err );
         });
       });
     }
@@ -1120,32 +1137,39 @@ exports.taldekideakbazkideegin = function(req, res){
   var input = JSON.parse(JSON.stringify(req.body));
   var idDenboraldia = req.session.idDenboraldia;
   var taldekide = [], ordaintzeko = 0;
+  var now= new Date();
   req.getConnection(function(err,connection){
     
 //      console.log("Body:" +JSON.stringify(req.body));
  
-    for(var i in input.aukeratua ){
-      var  idTaldekideak = input.aukeratua[i];                                           //  ADI   .split("-");
+    for(var i in input.aukeratub ){
+      var  idTaldekideak = input.aukeratub[i];                                           //  ADI   .split("-");
 // ADI- taldekideakkopiatu.handlebars : gehitu checkbox-en kopiatu nahi duguna        
-        console.log("input : " + i + "-" + input.aukeratua[i] + "-" + idTaldekideak);
+//        console.log("input : " + i + "-" + input.aukeratub[i] + "-" + idTaldekideak);
       connection.query('SELECT * FROM taldekideak WHERE idElkarteakKide = ? and idTaldekideak= ?',[id,idTaldekideak],function(err,rows)
       {
        
         if(err)
           console.log("Error Selecting : %s ",err );        
-        console.log("kide : " + i + "-" + rows[0].ordaintzekoKide + "-" + rows[0].idTaldekideak);
+//        console.log("kide : " + i + "-" + rows[0].ordaintzekoKide + "-" + rows[0].idTaldekideak);
         var  idTaldekide = rows[0].idTaldekideak; 
-        var data = {
 
-            ordaindutaKide   : rows[0].ordaintzekoKide
+        var data = { 
+              idMotaBazk: rows[0].idMotaKide,
+              idDenboraldiaBazk : idDenboraldia,
+              idPartaideakBazk: rows[0].idPartaideakKide,
+              ordainduBazk: "EZ",
+              idOrdaintzekoEraBazk: 12,        // ADI ADI ADI  
+              idElkarteakBazkide: id,
+              dataBazk : now
+            };
 
-        };
-        
-        connection.query("UPDATE taldekideak set ? WHERE idElkarteakKide = ? and idTaldekideak = ?",[data,id, idTaldekide], function(err, rows)
-        { 
-          if (err)
+            var query = connection.query("INSERT INTO bazkideak set ? ",data, function(err, rows)
+           {
+  
+            if (err)
               console.log("Error inserting : %s ",err );
-        });
+           });
       });
     }
 
