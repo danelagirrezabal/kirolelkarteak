@@ -1,2 +1,2 @@
 # kirolelkarteak
-OSATZEKOTAN! bai
+OSATZEKOTAN! bai bai
