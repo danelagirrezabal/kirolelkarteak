@@ -1189,7 +1189,8 @@ exports.partaideakkargatuegin = function(req, res){
             balidatutaPart : partaidea[13],
             pasahitzaPart : password_hash,          //partaidea[14],
             sexuaPart : partaidea[15],
-            berezitasunakPart : partaidea[16] 
+            berezitasunakPart : partaidea[16],
+            idMotaPart : partaidea[17] 
           };
         
   
