@@ -51,9 +51,9 @@
             <select name="idArduradunTalde" id="idArduradunTalde">
                 {{#each arduradunak}}
                     {{#if aukeratua}}
-                       <option value="{{idPartaideak}}" selected >{{izenaPart}} {{abizena1Part}}</option>
+                       <option value="{{idPartaideak}}" selected >{{abizena1Part}} {{abizena2Part}} {{izenaPart}}</option>
                     {{else}}
-                        <option value="{{idPartaideak}}">{{izenaPart}} {{abizena1Part}}</option>
+                        <option value="{{idPartaideak}}">{{abizena1Part}} {{abizena2Part}} {{izenaPart}}</option>
                     {{/if}}
                 {{/each}}
             </select>

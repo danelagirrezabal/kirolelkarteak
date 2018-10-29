@@ -289,8 +289,9 @@ exports.arbitraiak = function(req, res){
                 rows[i].kolore = "#000000";
             jasotakoatotala += rows[i].arbitraiaTalde;
             arbitraiatotala += rows[i].arbitraiaguztira;
+            rows[i].arbitraiaguztira = parseFloat(rows[i].arbitraiaguztira).toFixed(2);
          }
-         
+         arbitraiatotala = parseFloat(arbitraiatotala).toFixed(2);         
          //console.log("Berriak:" +JSON.stringify(rows));
       res.render('arbitraiak.handlebars', {title : 'KirolElkarteak-Arbitraiak', arbitraiatotala: arbitraiatotala, jasotakoatotala: jasotakoatotala,taldeak:rows, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea: req.session.partaidea, partaidea: req.session.partaidea, atalak: req.session.atalak, idPartaideak:req.session.idPartaideak, arduraduna:req.session.arduraduna});
    

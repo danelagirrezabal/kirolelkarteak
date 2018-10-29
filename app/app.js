@@ -163,6 +163,8 @@ return next();*/
   var month = ('0' + (today.getMonth() + 1)).slice(-2);
   var year = today.getFullYear();
 
+  var atalak, adminatalak, iatal = 0, iadminatal = 0;
+
 //debugger;
 
   req.session.jardunaldia= year + '-' + month + '-' + day;
@@ -200,15 +202,17 @@ return next();*/
             }
           }
 
-           connection.query('SELECT * FROM atalak where zenbakiAtala>0 AND idElkarteakAtala = ? order by zenbakiAtala asc',[req.session.idKirolElkarteak],function(err,rowsatal) {
-          
+           connection.query('SELECT * FROM atalak where zenbakiAtala > 0 AND zenbakiAtala <= 10 AND idElkarteakAtala = ? order by zenbakiAtala asc',[req.session.idKirolElkarteak],function(err,rowsatal) {
+            if(err)
+                console.log("Error Selecting : %s ",err );
+            connection.query('SELECT * FROM atalak where zenbakiAtala > 10 AND idElkarteakAtala = ? order by zenbakiAtala asc',[req.session.idKirolElkarteak],function(err,rowsadminatalak) {
               if(err)
                 console.log("Error Selecting : %s ",err );
+              req.session.atalak = rowsatal;         // atalak;  
+              req.session.adminatalak = rowsadminatalak;
 
-                req.session.atalak=rowsatal;  
-
-            return next();
-
+              return next();
+            });
            });
         });
 
@@ -394,6 +398,7 @@ app.get('/azpiatalak/:idAzpiAtalak', authorize2, kirolElkarteak.azpiatalakikusi)
 app.get('/edukiak/:idEdukiak', authorize2, kirolElkarteak.edukiakikusi);
 
 app.get('/admin/atalak', adminonartua, kirolElkarteak.atalakbilatu);
+app.get('/admin/atalak/:idAtalak', adminonartua, kirolElkarteak.atalakikusi);
 app.post('/admin/atalaksortu', adminonartua, kirolElkarteak.atalaksortu);
 app.post('/admin/atalakgehitu', adminonartua, function(req, res){
     res.render('atalaksortu.handlebars', {title : 'KirolElkarteak-Atalak gehitu', partaidea: req.session.partaidea});

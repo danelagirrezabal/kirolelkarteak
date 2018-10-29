@@ -208,7 +208,7 @@ exports.taldeakeditatu = function(req, res){
 
                 rows[0].mailak = rowsm;
 
-                connection.query('SELECT * FROM partaideak where idElkarteakPart = ? order by izenaPart asc',[id],function(err,rowsp) {
+                connection.query('SELECT * FROM partaideak where idElkarteakPart = ? order by abizena1Part, abizena2Part, izenaPart',[id],function(err,rowsp) {
                   if(err)
                     console.log("Error Selecting : %s ",err );
 
@@ -496,6 +496,7 @@ var taldea = {};
 var jokalariak = []; 
 var j;
 var t = 0, familiko = 1;
+var abizena1Part, abizena2Part, helbideaPart;
 var vabizena1Part, vabizena2Part, vhelbideaPart;
 var date = new Date();
   req.getConnection(function(err,connection){
@@ -510,7 +511,10 @@ var date = new Date();
         for (var i in rows) { 
           rows[i].familiko = " ";
           rows[i].bgkolore = "#FFFFFF";
-          if(vabizena1Part == rows[i].abizena1Part && vabizena2Part == rows[i].abizena2Part){
+          abizena1Part = rows[i].abizena1Part.toLowerCase();
+          abizena2Part = rows[i].abizena2Part.toLowerCase();
+          helbideaPart = rows[i].helbideaPart.toLowerCase();
+          if(vabizena1Part == abizena1Part && vabizena2Part == abizena2Part){
               if(rows[i].ordaintzekoKide > 0){ 
                  familiko += 1;
               }
@@ -528,7 +532,7 @@ var date = new Date();
             if (rows[i].ordaintzekoKide == 0 && rows[i].idMotaKide == 4)  // ADI ADI  jokalari = 4 ?
                 rows[i].kolore = "#006600";
             else
-             if(vabizena1Part == rows[i].abizena1Part || vabizena2Part == rows[i].abizena2Part || vhelbideaPart == rows[i].helbideaPart){
+             if(vabizena1Part == abizena1Part || vabizena2Part == abizena2Part || vhelbideaPart == helbideaPart){
                 rows[i].bgkolore = "#FF0000";
              }
              else 
@@ -537,9 +541,9 @@ var date = new Date();
 //              else  
                 rows[i].kolore = "#000000"; 
           }
-          vabizena1Part = rows[i].abizena1Part;
-          vabizena2Part = rows[i].abizena2Part;
-          vhelbideaPart = rows[i].vhelbideaPart;
+          vabizena1Part = abizena1Part;
+          vabizena2Part = abizena2Part;
+          vhelbideaPart = helbideaPart;
         }
 
         res.render('taldekideakabizenez.handlebars',{title: "Taldekideak abizenez", data:rows, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea: req.session.partaidea});                       
@@ -555,6 +559,7 @@ exports.familikoak = function(req,res){
 //  var idTaldeak = req.params.idTaldeak;
 var familikoak = []; 
 var f = 0, familiko = 1;
+var abizena1Part, abizena2Part, helbideaPart;
 var vabizena1Part, vabizena2Part, vhelbideaPart, vidTaldekideak;
 var date = new Date();
   req.getConnection(function(err,connection){
@@ -566,9 +571,12 @@ var date = new Date();
 
         if(err)
            console.log("Error Selecting : %s ",err );
-        for (var i in rows) { 
-           if(vabizena1Part == rows[i].abizena1Part && vabizena2Part == rows[i].abizena2Part){
-              if(rows[i].ordaintzekoKide > 0){ 
+        for (var i in rows) {
+           abizena1Part = rows[i].abizena1Part.toLowerCase();
+           abizena2Part = rows[i].abizena2Part.toLowerCase();
+           helbideaPart = rows[i].helbideaPart.toLowerCase(); 
+           if(vabizena1Part == abizena1Part && vabizena2Part == abizena2Part){
+              if(rows[i].ordaintzekoKide == rows[i].kuotaDenb){       // ADI  > 0
                  familiko += 1;
                  if(vidTaldekideak != 0)
                  {
@@ -586,10 +594,10 @@ var date = new Date();
              }
             familiko = 1;
           }
-          vabizena1Part = rows[i].abizena1Part;
-          vabizena2Part = rows[i].abizena2Part;
-          vhelbideaPart = rows[i].helbideaPart;
-          if(rows[i].ordaintzekoKide > 0)
+          vabizena1Part = abizena1Part;
+          vabizena2Part = abizena2Part;
+          vhelbideaPart = helbideaPart;
+          if(rows[i].ordaintzekoKide == rows[i].kuotaDenb)       // ADI  > 0
               vidTaldekideak = rows[i].idTaldekideak;
           else
               vidTaldekideak = 0;  

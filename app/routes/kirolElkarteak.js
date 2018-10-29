@@ -192,7 +192,8 @@ exports.editatu = function(req,res){
             herriaElk : rows[0].herriaElk,
             telefonoaElk : rows[0].telefonoaElk,
             emailElk : rows[0].emailElk, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia,
-            partaidea: req.session.partaidea
+            partaidea: req.session.partaidea,
+            adminatalak: req.session.adminatalak
             });
           
         });
@@ -659,7 +660,7 @@ exports.edukiakhasiera = function(req, res){
   req.getConnection(function(err,connection){
        
      
-     connection.query('SELECT * FROM edukiak, azpiAtalak where idElkarteakEdukia = ? and idAzpiAtalakEdukia = idAzpiAtalak and zenbakiAzpiAtala != ? and zenbakiEdukia != ? order by zenbakiEdukia asc,  dataEdukia desc',[id, 0, 0],function(err,rows)     {
+     connection.query('SELECT * FROM edukiak, azpiAtalak, atalak where zenbakiAtala > 0 AND zenbakiAtala <= 10 AND idElkarteakEdukia = ? and idAzpiAtalakEdukia = idAzpiAtalak and idAtalakAzpiAtala = idAtalak and zenbakiAzpiAtala != ? and zenbakiEdukia != ? order by zenbakiEdukia asc,  dataEdukia desc',[id, 0, 0],function(err,rows)     {
             
         if(err)
            console.log("Error Selecting : %s ",err );
@@ -807,7 +808,7 @@ exports.atalakikusi = function(req, res){
               //k++;
           }
 
-          res.render('edukiakikusi.handlebars',{title: "kirolElkarteak", azpiAtalak:azpiAtalak, data:rows, data2: rowst,menuadmin:admin, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, atalak: req.session.atalak, partaidea: req.session.partaidea, idPartaideak:req.session.idPartaideak, arduraduna:req.session.arduraduna});
+          res.render('edukiakikusi.handlebars',{title: "kirolElkarteak", azpiAtalak:azpiAtalak, data:rows, data2: rowst,menuadmin:admin, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, atalak: req.session.atalak, adminatalak: req.session.adminatalak, partaidea: req.session.partaidea, idPartaideak:req.session.idPartaideak, arduraduna:req.session.arduraduna, menuadmin:admin});
 
         });  
 

@@ -19,6 +19,8 @@
           <li><a href="/">GAUR EGUN</a></li>
           <li><a href="/admin/argazkiak">Argazkiak igo</a></li>
           <li><a href="/admin/agiriak">Agiriak</a></li>
-
+          {{#each adminatalak}}
+              <li><a href="/admin/atalak/{{idAtalak}}">{{izenaAtala}}</a></li>
+          {{/each}}
         </ul>
 </div>
