@@ -7,6 +7,19 @@
       <a href="/admin/taldeak" class="btn btn-primary btn-sm" role="button">Taldeak ikusi</a>
       <a href="/admin/taldekopurua" class="btn btn-primary btn-sm" role="button">Talde kopurua ikusi</a>
       <a href="/admin/jokalarikopurua" class="btn btn-primary btn-sm" role="button">Jokalari kopurua ikusi</a>
+            <label for="mota" class="col-sm-2 control-label">Mota:</label>
+            <div class="col-sm-2">
+            <select name="mota" id="mota">
+                <option value="">--Aukeratu mota--</option>
+                {{#each motak}}
+                    {{#if aukeratua}}
+                       <option value="{{idPartaideMotak}}" selected>{{deskribapenMota}}</option>
+                    {{else}}
+                       <option value="{{idPartaideMotak}}">{{deskribapenMota}}</option>
+                    {{/if}}
+                {{/each}}
+            </select>
+            </div> 
 
 <div class="formContainer">
     <form class="form-horizontal newsletterForm" role="form" action="/admin/taldekideakordainduta" method="POST">
@@ -75,6 +88,21 @@
                       <td> </td>
                     </tr>
                   {{/each}} 
+
+                    <td> </td>
+                    <td> </td>  
+                    <td> </td>  
+                    <td> </td>  
+                    <td> </td>  
+                    <td> </td>
+                    <td> </td> 
+                    <td>Guztira ... </td> 
+                    <td>{{ordaintzekoa}} </td>
+                    <td> </td>   
+                    <td>{{ordaindutakoa}} </td>
+                    <td> </td> 
+                    <td> </td>
+
                 </tr>
             {{/each}}
           </table>
@@ -108,6 +136,11 @@
           $(location).attr('href', '/admin/taldekideakikusi/');
         } 
     });
+
+    $('#mota').change(function(){
+        $(location).attr('href', '/admin/taldekideakikusi/'+$('#mota').val());
+    });
+
   });
             
 </script> 

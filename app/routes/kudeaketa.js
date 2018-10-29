@@ -92,7 +92,7 @@ exports.jokalarikopurua = function(req, res){
   var id = req.session.idKirolElkarteak;
   var idDenboraldia = req.session.idDenboraldia;
   var kideakguztira = 0, jokalariakguztira = 0, entrenatzaileakguztira = 0, laguntzaileakguztira = 0;
-  var guztirao = {}, guztira = [0,0,0,0,0], guztirak = [];
+  var guztirao = {}, guztira = [0,0,0,0,0,0,0], guztirak = [];
   var mailao = {}, maila = [[]], mailaizena = [], mailak = [];
   var neskamutilao = {}, neskamutila = [[]], neskamutilak = [];
   var generoa = [{izena: "Neska", balioa: "N"}, {izena: "Mutila", balioa: "M"}];
@@ -100,15 +100,15 @@ exports.jokalarikopurua = function(req, res){
  
 //var maila = new Array(10); 
 for (var i = 0; i <= 9; i++) {
-   maila[i] = new Array(4); 
-   for (var j = 0; j <= 4; j++) {
+   maila[i] = new Array(6); 
+   for (var j = 0; j <= 6; j++) {
       maila[i][j] = 0;
 //      console.log("i j maila:" +i +j+maila[i][j]);
    }
 }
 for (var i = 0; i <= 2; i++) {
-   neskamutila[i] = new Array(4); 
-   for (var j = 0; j <= 5; j++) {
+   neskamutila[i] = new Array(6); 
+   for (var j = 0; j <= 7; j++) {     /// adiadi 5
       neskamutila[i][j] = 0;
 //      console.log("i j maila:" +i +j+maila[i][j]);
    }
@@ -119,7 +119,7 @@ for (var i = 0; i <= 2; i++) {
 //    connection.query('SELECT *, count(*) as kideak, sum(case when zenbakiMota = 1 then 1 else 0 end) as jokalariak, sum(case when zenbakiMota = 2 then 1 else 0 end) as entrenatzaileak, sum(case when zenbakiMota = 3 then 1 else 0 end) as laguntzaileak FROM taldeak, taldekideak, mailak, partaidemotak where idMailak = idMailaTalde and idTaldeak = idTaldeakKide and idMotaKide = idPartaideMotak and idElkarteakTalde = ? and idDenboraldiaTalde = ? group by generoMaila order by generoMaila desc ',[id,idDenboraldia],function(err,rowsg) {
 //     if(err)
 //         console.log("Error Selecting : %s ",err );       
-     connection.query('SELECT *, count(*) as kideak, sum(case when zenbakiMota = 1 then 1 else 0 end) as jokalariak, sum(case when zenbakiMota = 2 then 1 else 0 end) as entrenatzaileak, sum(case when zenbakiMota = 3 then 1 else 0 end) as laguntzaileak FROM taldeak, taldekideak, mailak, partaidemotak where idMailak = idMailaTalde and idTaldeak = idTaldeakKide and idMotaKide = idPartaideMotak and idElkarteakTalde = ? and idDenboraldiaTalde = ? group by idTaldeak order by zenbakiMaila,akronimoTalde ',[id,idDenboraldia],function(err,rows) {
+     connection.query('SELECT *, sum(ordaintzekoKide) as ordaintzekoa, sum(ordaindutaKide) as ordaindutakoa, count(*) as kideak, sum(case when zenbakiMota = 1 then 1 else 0 end) as jokalariak, sum(case when zenbakiMota = 2 then 1 else 0 end) as entrenatzaileak, sum(case when zenbakiMota = 3 then 1 else 0 end) as laguntzaileak FROM taldeak, taldekideak, mailak, partaidemotak where idMailak = idMailaTalde and idTaldeak = idTaldeakKide and idMotaKide = idPartaideMotak and idElkarteakTalde = ? and idDenboraldiaTalde = ? group by idTaldeak order by zenbakiMaila,akronimoTalde ',[id,idDenboraldia],function(err,rows) {
             
         if(err)
            console.log("Error Selecting : %s ",err );
@@ -134,13 +134,17 @@ for (var i = 0; i <= 2; i++) {
             guztira[2] += rows[i].entrenatzaileak;
             guztira[3] += rows[i].laguntzaileak;
             guztira[4] += 1;                               // taldekopurua
-            k = rows[i].zenbakiMaila - 1;
+            guztira[5] += rows[i].ordaintzekoa;
+            guztira[6] += rows[i].ordaindutakoa;
+            k = rows[i].zenbakiMaila;               //ADI ADI  - 1;
             mailaizena[k] = rows[i].izenaMaila;
             maila[k][0] += rows[i].kideak;
             maila[k][1] += rows[i].jokalariak;
             maila[k][2] += rows[i].entrenatzaileak;
             maila[k][3] += rows[i].laguntzaileak;
             maila[k][4] += 1;
+            maila[k][5] += rows[i].ordaintzekoa;
+            maila[k][6] += rows[i].ordaindutakoa;
             if(rows[i].generoMaila == generoa[0].balioa)
               n = 0;
             else
@@ -150,12 +154,16 @@ for (var i = 0; i <= 2; i++) {
             neskamutila[n][2] += rows[i].entrenatzaileak;
             neskamutila[n][3] += rows[i].laguntzaileak;
             neskamutila[n][4] += 1;
+            neskamutila[n][5] += rows[i].ordaintzekoa;
+            neskamutila[n][6] += rows[i].ordaindutakoa;
          }
          guztirao.kideak = guztira[0];
          guztirao.jokalariak = guztira[1];
          guztirao.entrenatzaileak = guztira[2]; 
          guztirao.laguntzaileak = guztira[3]; 
          guztirao.taldeak = guztira[4];
+         guztirao.ordaintzekoa = guztira[5]; 
+         guztirao.ordaindutakoa = guztira[6];
          guztirak[0] = guztirao; 
 //         console.log("mailaizena:" +JSON.stringify(mailaizena));
 //         console.log("maila:" +JSON.stringify(maila));
@@ -167,7 +175,9 @@ for (var i = 0; i <= 2; i++) {
             jokalariak : maila[k][1],
             entrenatzaileak : maila[k][2], 
             laguntzaileak : maila[k][3],
-            taldeak : maila[k][4] 
+            taldeak : maila[k][4],
+            ordaintzekoa : maila[k][5], 
+            ordaindutakoa : maila[k][6] 
            };
 //           console.log("mailao:" +JSON.stringify(mailao));
 
@@ -181,7 +191,9 @@ for (var i = 0; i <= 2; i++) {
             jokalariak : neskamutila[n][1],
             entrenatzaileak : neskamutila[n][2], 
             laguntzaileak : neskamutila[n][3],
-            taldeak : neskamutila[n][4] 
+            taldeak : neskamutila[n][4],
+            ordaintzekoa : neskamutila[n][5], 
+            ordaindutakoa : neskamutila[n][6] 
            };
            neskamutilak[n] = neskamutilao;     
          }
