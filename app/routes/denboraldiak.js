@@ -1619,7 +1619,8 @@ exports.partiduemaitzakgordeadmin = function(req,res){
         
         var data = {
             
-            emaitzaPartidu : input.emaitzaPartidu
+            emaitzaPartidu : input.emaitzaPartidu,
+            arbitraiaPartidu : input.arbitraiaPartidu
         };
         
         connection.query("UPDATE partiduak set ? WHERE idElkarteakPartidu = ? and idPartiduak = ? ",[data,id,idPartidua], function(err, rows)
