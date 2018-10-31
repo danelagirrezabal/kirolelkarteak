@@ -1,51 +1,57 @@
-   
-          </br> </br>
-          </br> </br> 
+ 
 
 {{#each data}}
       <div class="row marketing" width: "21cm"  height: "29.7cm" display: "block" margin: "0" "auto" margin-bottom: "0.5cm" >
+          </br> 
+          <p><pre>                                                                  {{zenbatgarren}}</pre></p>
+          </br> 
 <!--      
   display: block;
   margin: 0 auto;
   margin-bottom: 0.5cm;>
 -->
         <div class="col-lg-12">
-          <p>                   BAZKIDE TXARTELA</p>
+          <p><pre>                            BAZKIDE TXARTELA    </pre></p>
             </br>
-          <p>NAN ZKIA: {{nanPart}}   BAZKIDE ZKIA:   {{bazkideZenbKide}}</p>
+          <p><pre>NAN ZKIA: {{btnanPart}}            BAZKIDE ZKIA:   {{btbazkideZenbPart}}</pre></p>
             </br>  
-          <p>1.ABIZENA:  {{abizena1Part}}    2.ABIZENA:  {{abizena2Part}}</p>
+          <p><pre>1.ABIZENA:  {{btabizena1Part}}         2.ABIZENA:  {{btabizena2Part}}</pre></p>
             </br>
-          <p>IZENA:  {{izenaPart}}       JAIOTZE DATA:  {{jaiotzeDataPart}}      TFNO ZKIA:  {{telefonoaPart}}</p>
+          <p><pre>IZENA:  {{btizenaPart}}                JAIOTZE DATA:  {{btjaiotzeDataPart}}</pre></p>
             </br>
-          <p>HELBIDEA:  {{helbideaPart}}   TFNO ZKIA:  {{telefonoaPart}}</p>
+          <p><pre>HELBIDEA:  {{bthelbideaPart}}           TFNO ZKIA:  {{bttelefonoaPart}}</pre></p>
             </br>
-          <p>HERRIA :   {{herriaPart}}      POSTAKODEA: {{postaKodeaPart}}</p>
+          <p><pre>HERRIA :   {{btherriaPart}}         POSTAKODEA: {{btpostaKodeaPart}}</pre></p>
             </br>
-          <p>HELBIDE ELEKTRONIKOA:   {{emailPart}}</p>
+          <p><pre>HELBIDE ELEKTRONIKOA:   {{btemailPart}}</pre></p>
             </br>
-          <p>ORDAINTZEKO ERA:   {{deskribapenaOrdainEra}}</p>
-            </br> 
-          <p>KONTU ZKIA:   {{kontuZenbPart}}</p>
-            </br> </br> </br> </br>
-          <p>                   JOKALARIEN DATUAK</p>
-            </br>
-          <p>IZEN ABIZENAK:   {{izenaPart}}  {{abizena1Part}}  {{abizena2Part}}</p>
-            </br>
-          <p>JAIOTZE DATA:  {{jaiotzeDataPart}}      TFNO ZKIA:  {{telefonoaPart}}</p>
-            </br>
-          <p>KATEGORIA ETA TALDEA:  {{izenaTalde}} - {{izenaMaila}}</p>
-            </br>
-          <p>HELBIDEA:   {{helbideaPart}}</p>
-            </br>
-          <p>UDALHERRIA:   {{herriaPart}}      POSTAKODEA: {{postaKodeaPart}}   N.A.N.: {{nanPart}}</p>
-            </br>
-          <p>HELBIDE ELEKTRONIKOA:   {{emailPart}}</p>
-            </br>    
-          
-          </br> </br>
-          </br> </br>                             
+          <p><pre>ORDAINTZEKO ERA:     {{btdeskribapenaOrdainEra}}</pre></p>
 
+          <p><pre>KONTU ZKIA:    {{btkontuZenbPart}}</pre></p>
+
+             </br>
+            <a target="_blank" class="a-inside edit" href="/admin/partaideakeditatu/{{btidPartaideak}}">Partaidea ALDATU</a>
+            </br>  </br>
+          <p><pre>                JOKALARIEN DATUAK - {{bazkideZenbKide}}   </pre></p>
+            
+          <p>IZEN ABIZENAK:   {{izenaPart}}  {{abizena1Part}}  {{abizena2Part}}</p>
+
+          <p>JAIOTZE DATA:  {{jaiotzeDataPart}}      TFNO ZKIA:  {{telefonoaPart}}</p>
+
+          <p>KATEGORIA ETA TALDEA:  {{izenaTalde}} - {{izenaMaila}}</p>
+
+          <p>HELBIDEA:   {{helbideaPart}}</p>
+
+          <p>UDALHERRIA:   {{herriaPart}}      POSTAKODEA: {{postaKodeaPart}}   N.A.N.: {{nanPart}}</p>
+
+          <p>HELBIDE ELEKTRONIKOA:   {{emailPart}}</p>
+
+          <a target="_blank" class="a-inside edit" href="/admin/partaideakeditatu/{{idPartaideak}}">Jokalaria ALDATU      </a> 
+          <a target="_blank" class="a-inside edit" href="/admin/taldekideakeditatu/{{idTaldekideak}}">-  Bazkide Zkia  ALDATU</a>   
+          </br> </br> </br>
+          </br> </br> </br>
+
+               
         </div>
       </div>
 {{/each}}
