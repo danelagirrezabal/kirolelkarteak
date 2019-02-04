@@ -257,6 +257,8 @@ function adminKirolElkarteaonartua(req, res, next){
 
 app.get('/', authorize2, kirolElkarteak.edukiakhasiera);
 //app.get('/', kirolElkarteak.edukiakikusi);
+app.get('/urtebetetzeak', authorize2, taldeak.urtebetetzeak);
+
 app.get('/taldeak',authorize2, taldeak.taldeakikusipartaide);
  
 app.get('/partaidemail/:emaila', partaideak.partaidemail);
@@ -470,7 +472,7 @@ app.get('/admin/partiduordutegiak/:idDenboraldia/:jardunaldia',adminonartua,auth
 app.get('/admin/partiduordutegiak/:idDenboraldia',adminonartua,authorize2, denboraldiak.partiduordutegiak);
 app.get('/admin/partiduordutegiakgf/:idDenboraldia/:jardunaldia',adminonartua,authorize2, denboraldiak.partiduordutegiak);
 app.get('/admin/partiduordutegiakbus/:idDenboraldia/:jardunaldia',adminonartua,authorize2, denboraldiak.partiduordutegiak);
-
+app.get('/admin/partiduordutegiaktrsf/:idDenboraldia/:jardunaldia',adminonartua,authorize2, denboraldiak.partiduordutegiak);
 app.get('/admin/jardunaldiaikusgai/:jardunaldia',adminonartua,authorize2, denboraldiak.jardunaldiaikusgai);
 
 app.get('/partiduordutegiak/:idDenboraldia/:jardunaldia', authorize2, denboraldiak.partiduordutegiak);
@@ -533,7 +535,9 @@ app.get('/admin/jokalarikopurua', adminonartua, kudeaketa.jokalarikopurua);
 app.get('/admin/kudeaketa', adminonartua, kudeaketa.kudeaketamenu);
 
 app.post('/admin/mezuakbidali', adminonartua, kirolElkarteak.mezuakbidali);
-app.post('/admin/arbitraiak', adminonartua, kudeaketa.arbitraiak);
+//app.post('/admin/arbitraiak', adminonartua, kudeaketa.arbitraiak);
+app.get('/admin/arbitraiak', adminonartua, kudeaketa.arbitraiak);
+
 app.post('/admin/partiduakreset', adminonartua, kudeaketa.partiduakreset);
 
 app.get('/admin/partaidemotak', adminonartua, kirolElkarteak.partaidemotakbilatu);
@@ -557,6 +561,7 @@ app.post('/admin/ordaintzekoerakaldatu/:idOrdaintzekoErak', adminonartua, kirolE
 app.get('/admin/partaideakezabatu/:idPartaideak', adminonartua, partaideak.ezabatu);
 app.get('/admin/partaideakeditatu/:idPartaideak', adminonartua, partaideak.editatu);
 app.post('/admin/partaideakaldatu/:idPartaideak', adminonartua, partaideak.aldatu);
+app.get('/admin/partaidehistoriala/:idPartaideak', adminonartua, partaideak.historiala);
 
 //app.get('/emaitzak/', denboraldiak.emaitzakikusi);
 //app.get('/jardunaldikoemaitzak/:jardunaldia', denboraldiak.jardunaldikoemaitzakikusi);

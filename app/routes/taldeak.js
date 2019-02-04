@@ -486,6 +486,108 @@ var ordaintzekoa = 0, ordaindutakoa = 0;
   });
 }
 
+exports.urtebetetzeak = function(req,res){
+  var id = req.session.idKirolElkarteak;
+  var idDenboraldia = req.session.idDenboraldia;
+  var mota = req.params.mota;
+var taldeak = []; 
+var taldea = {};
+var jokalariak = []; 
+var j;
+var t = 0;
+var vTalde , kolore;
+Date.prototype.getWeek = function() {
+  var date = new Date(this.getTime());
+  date.setHours(0, 0, 0, 0);
+  // Thursday in current week decides the year.
+  date.setDate(date.getDate() + 3 - (date.getDay() + 6) % 7);
+  // January 4 is always in week 1.
+  var week1 = new Date(date.getFullYear(), 0, 4);
+  // Adjust to Thursday in week 1 and count number of weeks from date to week1.
+  return 1 + Math.round(((date.getTime() - week1.getTime()) / 86400000
+                        - 3 + (week1.getDay() + 6) % 7) / 7);
+}
+var today = new Date();
+var weekNumber = today.getWeek();
+//console.log(weekNumber);
+  req.getConnection(function(err,connection){
+         
+      connection.query('SELECT *,DATE_FORMAT(jaiotzeDataPart,"%Y-%m-%d") AS jaiotzeDataPart FROM taldekideak, partaideMotak, taldeak, denboraldiak, mailak, partaideak where idMotaKide=idPartaideMotak and idTaldeakKide=idTaldeak and idMailak=idMailaTalde and idPartaideakKide=idPartaideak and idDenboraldiaTalde = idDenboraldia and idDenboraldia= ? and idElkarteakTalde = ? order by zenbakiMaila desc, izenaTalde asc, zenbakiMota, abizena1Part, abizena2Part, izenaPart',[idDenboraldia,id],function(err,rows) {
+        if(err)
+           console.log("Error Selecting : %s ",err );
+        for (var i in rows) {
+
+         var date = new Date(rows[i].jaiotzeDataPart);
+         if(weekNumber == date.getWeek()){
+
+          if(vTalde != rows[i].idTaldeak){
+            if(vTalde !=null){
+              taldea.jokalariak = jokalariak;
+              taldeak[t] = taldea;
+              t++;
+            }
+            vTalde = rows[i].idTaldeak;
+            jokalariak = []; 
+            j=0;
+/*            
+            if(rows[i].sortzedata != null){
+            data = rows[i].sortzedata;
+            rows[i].sortzedata= data.getFullYear() + "-"+ (data.getMonth() +1) +"-"+ data.getDate()+" "+data.getHours()+":"+data.getMinutes();
+          }
+*/          
+            taldea = {
+                  idtaldeak  : rows[i].idTaldeak,
+                  izenaMaila  : rows[i].izenaMaila,
+                  akronimoMaila  : rows[i].akronimoMaila,
+                  izenaTalde    : rows[i].izenaTalde,
+                  arduradunEmailTalde   : rows[i].arduradunEmailTalde,
+                  akronimoTalde : rows[i].akronimoTalde
+               };
+               
+          }
+          if (rows[i].ordaintzekoKide > 0 && rows[i].ordaindutaKide < rows[i].ordaintzekoKide)
+                kolore = "#FF0000";
+          else 
+              if (rows[i].ordaintzekoKide > 0 && rows[i].ordaindutaKide >= rows[i].ordaintzekoKide)
+                kolore = "#0000FF";
+              else  
+                kolore = "#000000";
+          if (!mota || (mota && (mota == rows[i].idMotaKide)))
+          {
+            jokalariak[j] = {
+                  idtaldeak  : rows[i].idTaldeak,
+                  idTaldekideak : rows[i].idTaldekideak,
+                  izenaPart : rows[i].izenaPart,
+                  abizena1Part : rows[i].abizena1Part,
+                  abizena2Part : rows[i].abizena2Part,
+                  jaiotzeDataPart : rows[i].jaiotzeDataPart,
+                  jaiotzeEguna : date.getDate(),
+                  deskribapenMota : rows[i].deskribapenMota,
+                  kolore : kolore
+               };
+            j++;
+
+          }
+         } 
+        }
+        if(vTalde !=null){
+              taldea.jokalariak = jokalariak;
+              taldeak[t] = taldea;
+              t++;
+        }
+
+        res.render('urtebetetzeak.handlebars',{title: "Urtebetetzeak ikusi", data:taldeak, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea: req.session.partaidea});                       
+      }); 
+    });   
+}
+
+function getNumberOfWeek() {
+    const today = new Date();
+    const firstDayOfYear = new Date(today.getFullYear(), 0, 1);
+    const pastDaysOfYear = (today - firstDayOfYear) / 86400000;
+    return Math.ceil((pastDaysOfYear + firstDayOfYear.getDay() + 1) / 7);
+}
+
 exports.taldekideakabizenez = function(req,res){
   req.session.path = req.path;
   var id = req.session.idKirolElkarteak;

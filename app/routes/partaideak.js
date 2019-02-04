@@ -312,7 +312,41 @@ exports.editatu = function(req, res){
         });
     }); 
 };
-/*Save the customer*/
+
+exports.historiala = function(req, res){
+   //var id = req.params.id;
+  var id = req.session.idKirolElkarteak;
+  var idPartaideak = req.params.idPartaideak;
+  var generoa = [{izena: "Neska", balioa: "N"}, {izena: "Mutila", balioa: "M"}];
+  var admin = (req.path.slice(0,25) == "/admin/partaidehistoriala");
+
+  req.getConnection(function(err,connection){
+       
+    connection.query('SELECT *, DATE_FORMAT(jaiotzeDataPart,"%Y/%m/%d") AS jaiotzeDataPart  FROM partaideak WHERE idPartaideak = ?',[idPartaideak],function(err,rows)
+        {
+          if(err)
+                console.log("Error Selecting : %s ",err );
+
+     connection.query('SELECT *,DATE_FORMAT(jaiotzeDataPart,"%Y-%m-%d") AS jaiotzeDataPart FROM taldekideak, partaideMotak, taldeak, denboraldiak, mailak, partaideak where idMotaKide=idPartaideMotak and idTaldeakKide=idTaldeak and idMailak=idMailaTalde and idDenboraldiaTalde = idDenboraldia and idPartaideak = idArduradunTalde and idTaldeakKide = idTaldeak and idPartaideakKide = ? and idElkarteakTalde = ? order by deskribapenaDenb desc, zenbakiMota',[idPartaideak,id],function(err,rowsk) {
+      if(err)
+           console.log("Error Selecting : %s ",err );
+
+      rows[0].historialkide = rowsk;
+
+      connection.query('SELECT *, DATE_FORMAT(dataBazk,"%Y/%m/%d") AS dataBazk FROM bazkideak, ordaintzekoErak, partaideMotak, denboraldiak WHERE idMotaBazk=idPartaideMotak and idOrdaintzekoEraBazk=idOrdaintzekoErak and idDenboraldiaBazk = idDenboraldia and idElkarteakBazkide=? and idPartaideakBazk = ? order by idDenboraldiaBazk desc, idBazkideak',[id, idPartaideak],function(err,rowsb)     {
+        if(err)
+           console.log("Error Selecting : %s ",err );
+
+        rows[0].historialbazkide = rowsb;    
+  
+        rows[0].ezadmin = !admin;
+
+        res.render('partaidehistoriala.handlebars', {page_title:"Partaide Historiala",data:rows, partaidea: req.session.partaidea});
+      });  
+     });
+    });
+  }); 
+};
 
 exports.partaidemail = function(req, res){
 

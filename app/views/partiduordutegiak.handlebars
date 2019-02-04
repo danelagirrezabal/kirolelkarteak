@@ -5,13 +5,13 @@
     {{> menu}}                  
 {{/if}}
    <div class="jumbotron">
-        <h2>Partiduen ordutegia</h2>
+        <h2>Partiduen ordutegia {{textoa}}</h2>
   </div>
 
 
       <div class="form-group">
             <label for="denboraldia" class="col-sm-1 control-label">Denboraldia:</label>
-            <div class="col-sm-2">
+            <div class="col-sm-1">
             <select name="denboraldia" id="denboraldia">
                 <!--<option value="">--Aukeratu denboraldia--</option>-->
                 {{#each denboraldiak}}
@@ -40,8 +40,10 @@
             </select>
             {{#if menuadmin}}
             <a href="/admin/jardunaldiaikusgai/{{jardunaldia}}" class="btn btn-primary btn-sm" role="button">Jardunaldia ikusgai jarri</a>
-            <a href="/admin/partiduordutegiakgf/{{idDenboraldia}}/{{jardunaldia}}" class="btn btn-primary btn-sm" role="button">Gipuzkoarrentzat</a>
-            <a href="/admin/partiduordutegiakbus/{{idDenboraldia}}/{{jardunaldia}}" class="btn btn-primary btn-sm" role="button">Autobusentzat</a>
+            <a target="_blank" href="/admin/partiduordutegiakgf/{{idDenboraldia}}/{{jardunaldia}}" class="btn btn-primary btn-sm" role="button">Gipuzkoarrentzat</a>
+            <a target="_blank" href="/admin/partiduordutegiakbus/{{idDenboraldia}}/{{jardunaldia}}" class="btn btn-primary btn-sm" role="button">Autobusentzat</a>
+            <a target="_blank" href="/admin/arbitraiak" class="btn btn-primary btn-sm" role="button">Arbitraiak</a>
+            <a target="_blank" href="/admin/partiduordutegiaktrsf/{{idDenboraldia}}/{{jardunaldia}}" class="btn btn-primary btn-sm" role="button">Transferentziak</a>
             <p>Ikusgai dagoen jardunaldia: {{jardunaldiaIkusgaiH}}</p>
             {{/if}}
 

@@ -866,6 +866,16 @@ var vHerriak, vEgunak, vLekuak;
 var admin=(req.path.slice(0,24) == "/admin/partiduordutegiak");
 var gipuzkoa=(req.path.slice(0,26) == "/admin/partiduordutegiakgf");
 var busa=(req.path.slice(0,27) == "/admin/partiduordutegiakbus");
+var transfer=(req.path.slice(0,28) == "/admin/partiduordutegiaktrsf");
+var textoa = "";
+          if (transfer)
+             textoa = "- Transferentziak";
+          else 
+            if (busa)
+               textoa = "- Autobusak";
+            else
+              if (gipuzkoa)
+                  textoa = "- Gipuzkoako Federazio";
 req.session.admin=0;
 req.session.idTaldeak = 0;
 var jardunaldiaIkusgai, jardunaldiaIkusgaiH;
@@ -931,7 +941,7 @@ console.log(req.path.slice(0,24));
              autobusez = ""
           else 
              autobusez = rows[i].bidaiaNolaPartidu.slice(0,7);
-         if ((gipuzkoa && rows[i].federazioaTalde == 0 && rows[i].zenbakiLeku < 8) || (busa && autobusez == "AUTOBUS") || ( !gipuzkoa && !busa)){
+         if ((gipuzkoa && rows[i].federazioaTalde == 0 && rows[i].zenbakiLeku < 8) || (transfer && rows[i].federazioaTalde != 0 && rows[i].zenbakiLeku < 8) || (busa && autobusez == "AUTOBUS") || ( !gipuzkoa && !busa && !transfer)){
           if(vHerriak != rows[i].herriaLeku){
             if(vHerriak !=null){
               //console.log("vKategoria:" +vKategoria);
@@ -1075,7 +1085,7 @@ console.log(req.path.slice(0,24));
 
       
   
-        res.render('partiduordutegiak.handlebars', {title : 'KirolElkarteak-Partiduak', jardunaldiaIkusgaiH:jardunaldiaIkusgaiH, jardunaldiaIkusgai:jardunaldiaIkusgai, data2:etxekokanpokoak, jardunaldiak:rowsd, denboraldiak:rowsdenb, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea: req.session.partaidea, menuadmin:admin, atalak: req.session.atalak, idPartaideak:req.session.idPartaideak, arduraduna:req.session.arduraduna} );
+        res.render('partiduordutegiak.handlebars', {title : 'KirolElkarteak-Partiduak', jardunaldiaIkusgaiH:jardunaldiaIkusgaiH, jardunaldiaIkusgai:jardunaldiaIkusgai, data2:etxekokanpokoak, jardunaldiak:rowsd, denboraldiak:rowsdenb, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea: req.session.partaidea, menuadmin:admin, atalak: req.session.atalak, idPartaideak:req.session.idPartaideak, arduraduna:req.session.arduraduna, textoa:textoa} );
 
         });
      });   
