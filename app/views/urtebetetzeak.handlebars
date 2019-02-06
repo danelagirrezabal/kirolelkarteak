@@ -1,0 +1,52 @@
+
+   
+   <div class="jumbotron">
+        <h3>Aste honetako urtebetetzeak ikusi</h3> 
+   </div>
+
+<div class="formContainer">
+
+      <div class="row marketing">
+        <div class="col-lg-12">
+        <table class="table table-condensed">
+            <tr>
+                    <th>Maila</th>
+                    <th  width="15%">TALDEA</th>
+                    <th>IZEN-ABIZENAK</th>
+                    <th>EGUNA</th>
+<!--
+                    <th>JAIO.DATA</th>
+                    <th>MOTA</th>
+-->                    
+            </tr>                               
+            {{#each data}}
+                  <tr class="active">
+                    <td>{{izenaMaila}} {{akronimoMaila}} {{akronimoTalde}}</td>
+                    <td>{{izenaTalde}}</td>  
+                    <td> </td>  
+                    <td> </td>
+                    <td> </td>
+<!--  
+                    <td> </td>  
+                    <td> </td> 
+--> 
+                  {{#each jokalariak}} 
+                    <tr style="color:{{kolore}}">
+                      <td> </td>
+                      <td> </td>
+                      <td>{{izenaPart}} {{abizena1Part}} {{abizena2Part}}</td> 
+                      <td>{{jaiotzeEguna}} - {{jaiotzeDataPart}}</td>
+<!--                       
+                      <td>{{jaiotzeDataPart}}</td>  
+                      <td>{{deskribapenMota}}</td> 
+-->
+                    </tr>
+                  {{/each}} 
+
+                </tr>
+            {{/each}}
+          </table>
+        </div>
+      </div>
+</div>
+ 

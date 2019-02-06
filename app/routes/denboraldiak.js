@@ -819,7 +819,8 @@ exports.partiduakaldatu = function(req,res){
             bidaiEgunaPartidu: input.bidaiEgunaPartidu,
             nonPartidu : input.nonPartidu,
             bidaiKolorePartidu: input.bidaiKolorePartidu,
-            arbitraiaPartidu : input.arbitraiaPartidu
+            arbitraiaPartidu : input.arbitraiaPartidu,
+            diruaPartidu : input.diruaPartidu
         };
         
         connection.query("UPDATE partiduak set ? WHERE idElkarteakPartidu = ? and idPartiduak = ? ",[data,id,idPartiduak], function(err, rows)
@@ -864,9 +865,12 @@ var j,t, goizez, jauzi, kanpoan;
 var k = 0, h = 0;
 var vHerriak, vEgunak, vLekuak;
 var admin=(req.path.slice(0,24) == "/admin/partiduordutegiak");
-var gipuzkoa=(req.path.slice(0,26) == "/admin/partiduordutegiakgf");
-var busa=(req.path.slice(0,27) == "/admin/partiduordutegiakbus");
-var transfer=(req.path.slice(0,28) == "/admin/partiduordutegiaktrsf");
+//var gipuzkoa=(req.path.slice(0,26) == "/admin/partiduordutegiakgf");
+//var busa=(req.path.slice(0,27) == "/admin/partiduordutegiakbus");
+//var transfer=(req.path.slice(0,28) == "/admin/partiduordutegiaktrsf");
+var gipuzkoa=(req.path.slice(0,20) == "/partiduordutegiakgf");
+var busa=(req.path.slice(0,21) == "/partiduordutegiakbus");
+var transfer=(req.path.slice(0,22) == "/partiduordutegiaktrsf");
 var textoa = "";
           if (transfer)
              textoa = "- Transferentziak";
@@ -876,12 +880,16 @@ var textoa = "";
             else
               if (gipuzkoa)
                   textoa = "- Gipuzkoako Federazio";
+          if (gipuzkoa || busa || transfer)
+               admingfbus = 1;
+          else 
+               admingfbus = 0;
 req.session.admin=0;
 req.session.idTaldeak = 0;
 var jardunaldiaIkusgai, jardunaldiaIkusgaiH;
 var admingfbus, autobusez;
-console.log(jardunaldia);
-console.log(req.path.slice(0,24));
+//console.log(jardunaldia);
+//console.log(req.path.slice(0,24));
    req.getConnection(function(err,connection){
 
       
@@ -1033,10 +1041,10 @@ console.log(req.path.slice(0,24));
            } 
           else 
                jauzi = 0;
-          if (admin && !gipuzkoa && !busa)
-               admingfbus = admin;
-          else 
-               admingfbus = 0;
+//          if (admin && !gipuzkoa && !busa && !transfer)
+//               admingfbus = admin;
+//          else 
+//               admingfbus = 0;
 
           partiduak[j] = {
                   idPartiduak    : rows[i].idPartiduak,
@@ -1051,7 +1059,8 @@ console.log(req.path.slice(0,24));
                   bidaiEgunaPartidu: rows[i].bidaiEgunaPartidu,
                   emaitzaPartidu : rows[i].emaitzaPartidu,
                   nonPartidu: rows[i].nonPartidu,
-                  admin: admingfbus,
+//                  admin: admingfbus,
+                  admin: admin,
                   jauzi : jauzi,
                   bidaiKolorePartidu : rows[i].bidaiKolorePartidu
                };
@@ -1085,7 +1094,7 @@ console.log(req.path.slice(0,24));
 
       
   
-        res.render('partiduordutegiak.handlebars', {title : 'KirolElkarteak-Partiduak', jardunaldiaIkusgaiH:jardunaldiaIkusgaiH, jardunaldiaIkusgai:jardunaldiaIkusgai, data2:etxekokanpokoak, jardunaldiak:rowsd, denboraldiak:rowsdenb, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea: req.session.partaidea, menuadmin:admin, atalak: req.session.atalak, idPartaideak:req.session.idPartaideak, arduraduna:req.session.arduraduna, textoa:textoa} );
+        res.render('partiduordutegiak.handlebars', {title : 'KirolElkarteak-Partiduak', jardunaldiaIkusgaiH:jardunaldiaIkusgaiH, jardunaldiaIkusgai:jardunaldiaIkusgai, data2:etxekokanpokoak, jardunaldiak:rowsd, denboraldiak:rowsdenb, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea: req.session.partaidea, menuadmin:admin, admingfbus:admingfbus, atalak: req.session.atalak, idPartaideak:req.session.idPartaideak, arduraduna:req.session.arduraduna, textoa:textoa} );
 
         });
      });   
@@ -1630,7 +1639,8 @@ exports.partiduemaitzakgordeadmin = function(req,res){
         var data = {
             
             emaitzaPartidu : input.emaitzaPartidu,
-            arbitraiaPartidu : input.arbitraiaPartidu
+            arbitraiaPartidu : input.arbitraiaPartidu,
+            diruaPartidu : input.diruaPartidu
         };
         
         connection.query("UPDATE partiduak set ? WHERE idElkarteakPartidu = ? and idPartiduak = ? ",[data,id,idPartidua], function(err, rows)

@@ -66,6 +66,7 @@
                     <th>A ekipoa</th>
                     <th>B ekipoa</th>
                     <th>Emaitza</th>
+                    <th>Dirua</th>
                     <th>Arbitraia</th>
                 </tr>          
 
@@ -83,7 +84,10 @@
     
                     <form class="form-horizontal newsletterForm" role="form" action="/admin/emaitzakgorde/{{idPartiduak}}" method="POST">
 
-                     <td><textarea name="emaitzaPartidu" rows="1" cols="5" class="form-control" required id="emaitzaPartidu" placeholder="0-0" value={{emaitzaPartidu}}>{{emaitzaPartidu}}</textarea></td>
+                     <td><textarea name="emaitzaPartidu" rows="1" cols="5" class="form-control" id="emaitzaPartidu" placeholder="0-0" value={{emaitzaPartidu}}>{{emaitzaPartidu}}</textarea></td>
+                     <td>
+                      <input type="number" class="form-control"  id="diruaPartidu" name="diruaPartidu" value={{diruaPartidu}} step="0.01" min="0" max="999">
+                     </td>
                      <td>
                       <input type="number" class="form-control"  id="arbitraiaPartidu" name="arbitraiaPartidu" value={{arbitraiaPartidu}} step="0.01" min="0" max="999">
                      </td>

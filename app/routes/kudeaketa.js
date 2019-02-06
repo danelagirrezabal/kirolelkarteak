@@ -276,22 +276,24 @@ exports.arbitraiak = function(req, res){
   var jasotakoatotala = 0, arbitraiatotala = 0;
   req.getConnection(function(err,connection){
        
-     connection.query('SELECT *, sum(arbitraiaPartidu) as arbitraiaguztira FROM taldeak, mailak, partiduak where (arbitraiaTalde != 0 or arbitraiaPartidu != 0) and idTaldeak = idTaldeakPartidu and idMailaTalde = idMailak and idElkarteakTalde = ? and idDenboraldiaTalde = ? group by idTaldeak order by idMailaTalde asc, akronimoTalde asc',[id,idDenboraldia],function(err,rows) {
+     connection.query('SELECT *, sum(diruaPartidu) as diruaguztira, sum(arbitraiaPartidu) as arbitraiaguztira FROM taldeak, mailak, partiduak where (diruaPartidu != 0 or arbitraiaPartidu != 0) and idTaldeak = idTaldeakPartidu and idMailaTalde = idMailak and idElkarteakTalde = ? and idDenboraldiaTalde = ? group by idTaldeak order by idMailaTalde asc, akronimoTalde asc',[id,idDenboraldia],function(err,rows) {
             
         if(err)
            console.log("Error Selecting : %s ",err );
 
  
          for(var i in rows){
-            if((rows[i].arbitraiaTalde - rows[i].arbitraiaguztira) <= 50 && rows[i].arbitraiaTalde != 0)
+            if((rows[i].diruaguztira - rows[i].arbitraiaguztira) <= 50 && rows[i].diruaguztira != 0)
                 rows[i].kolore = "#FF0000";
             else
                 rows[i].kolore = "#000000";
-            jasotakoatotala += rows[i].arbitraiaTalde;
+            jasotakoatotala += rows[i].diruaguztira;
             arbitraiatotala += rows[i].arbitraiaguztira;
             rows[i].arbitraiaguztira = parseFloat(rows[i].arbitraiaguztira).toFixed(2);
+            rows[i].diruaguztira = parseFloat(rows[i].diruaguztira).toFixed(2);
          }
-         arbitraiatotala = parseFloat(arbitraiatotala).toFixed(2);         
+         arbitraiatotala = parseFloat(arbitraiatotala).toFixed(2); 
+         jasotakoatotala = parseFloat(jasotakoatotala).toFixed(2);        
          //console.log("Berriak:" +JSON.stringify(rows));
       res.render('arbitraiak.handlebars', {title : 'KirolElkarteak-Arbitraiak', arbitraiatotala: arbitraiatotala, jasotakoatotala: jasotakoatotala,taldeak:rows, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea: req.session.partaidea, partaidea: req.session.partaidea, atalak: req.session.atalak, idPartaideak:req.session.idPartaideak, arduraduna:req.session.arduraduna});
    
