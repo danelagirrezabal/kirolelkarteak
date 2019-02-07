@@ -2226,7 +2226,7 @@ exports.mailakbilatu = function(req, res){
 
   req.getConnection(function(err,connection){     
    
-        connection.query('SELECT * FROM mailak where idElkarteakMaila= ?',[id],function(err,rows)     {
+        connection.query('SELECT * FROM mailak where idElkarteakMaila= ? order by zenbakiMaila, idMailak',[id],function(err,rows)     {
             
           if(err)
            console.log("Error Selecting : %s ",err );
@@ -2611,7 +2611,8 @@ console.log("nondik: "+ nondik );
                        body += "<p> Irteera: "+rows[i].bidaiOrduaPartidu+" - "+rows[i].bidaiaNolaPartidu+" - "+rows[i].nonPartidu+
                                " - "+rows[i].bidaiEgunaPartidu+"</p>\n";
                      } 
-                    if (rows[i].arbitraiaTalde != 0)
+//                    if (rows[i].arbitraiaTalde != 0)
+                    if (rows[i].federazioTalde == 0 && rows[i].arbitraiaTalde == 1)
                      {
                       var subj = rows[i].dataPartidu+ "-ko emaitza eta arbitraia sartzeko: "+ rows[i].izenaTalde;  
                       body += "<h2>Emaitza eta arbitraia eguneratzeko:</h2>\n" +

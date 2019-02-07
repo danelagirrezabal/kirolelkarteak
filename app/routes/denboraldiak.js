@@ -864,13 +864,13 @@ var lekuaKanpoan = false;
 var j,t, goizez, jauzi, kanpoan;
 var k = 0, h = 0;
 var vHerriak, vEgunak, vLekuak;
-var admin=(req.path.slice(0,24) == "/admin/partiduordutegiak");
+//var admin=(req.path.slice(0,24) == "/admin/partiduordutegiak");
 //var gipuzkoa=(req.path.slice(0,26) == "/admin/partiduordutegiakgf");
 //var busa=(req.path.slice(0,27) == "/admin/partiduordutegiakbus");
-//var transfer=(req.path.slice(0,28) == "/admin/partiduordutegiaktrsf");
+var admin=(req.path.slice(0,7) == "/admin/");
 var gipuzkoa=(req.path.slice(0,20) == "/partiduordutegiakgf");
 var busa=(req.path.slice(0,21) == "/partiduordutegiakbus");
-var transfer=(req.path.slice(0,22) == "/partiduordutegiaktrsf");
+var transfer=(req.path.slice(0,28) == "/admin/partiduordutegiaktrsf");
 var textoa = "";
           if (transfer)
              textoa = "- Transferentziak";
@@ -880,14 +880,14 @@ var textoa = "";
             else
               if (gipuzkoa)
                   textoa = "- Gipuzkoako Federazio";
-          if (gipuzkoa || busa || transfer)
+          if (gipuzkoa || busa)
                admingfbus = 1;
           else 
                admingfbus = 0;
 req.session.admin=0;
 req.session.idTaldeak = 0;
 var jardunaldiaIkusgai, jardunaldiaIkusgaiH;
-var admingfbus, autobusez;
+var admingfbus, autobusez, kanpokoaPartidu;
 //console.log(jardunaldia);
 //console.log(req.path.slice(0,24));
    req.getConnection(function(err,connection){
@@ -949,7 +949,7 @@ var admingfbus, autobusez;
              autobusez = ""
           else 
              autobusez = rows[i].bidaiaNolaPartidu.slice(0,7);
-         if ((gipuzkoa && rows[i].federazioaTalde == 0 && rows[i].zenbakiLeku < 8) || (transfer && rows[i].federazioaTalde != 0 && rows[i].zenbakiLeku < 8) || (busa && autobusez == "AUTOBUS") || ( !gipuzkoa && !busa && !transfer)){
+         if ((gipuzkoa && rows[i].federazioaTalde == 0 && rows[i].zenbakiLeku < 8) || (transfer && rows[i].arbitraiaTalde != 0 && rows[i].federazioaTalde != 0 && rows[i].zenbakiLeku < 8) || (busa && autobusez == "AUTOBUS") || ( !gipuzkoa && !busa && !transfer)){
           if(vHerriak != rows[i].herriaLeku){
             if(vHerriak !=null){
               //console.log("vKategoria:" +vKategoria);
@@ -1046,12 +1046,23 @@ var admingfbus, autobusez;
 //          else 
 //               admingfbus = 0;
 
+          if (transfer)
+          { 
+            kanpokoaPartidu = rows[i].arbitraiaTalde;
+            if (rows[i].federazioaTalde == 2)
+               kanpokoaPartidu += "€ - 0075 0349 41 0606161256";
+            else 
+               kanpokoaPartidu += "€ - 3035 0083 22 0830120507";;
+          }
+          else 
+               kanpokoaPartidu = rows[i].kanpokoaPartidu;
+
           partiduak[j] = {
                   idPartiduak    : rows[i].idPartiduak,
                   izenaMaila: rows[i].izenaMaila,
                   akronimoTalde: rows[i].akronimoTalde,
                   etxekoaPartidu: rows[i].etxekoaPartidu,
-                  kanpokoaPartidu    : rows[i].kanpokoaPartidu,
+                  kanpokoaPartidu    : kanpokoaPartidu,               // ADI rows[i].kanpokoaPartidu,
                   orduaPartidu    : rows[i].orduaPartidu,
                   txapelketaPartidu : rows[i].txapelketaPartidu,
                   bidaiOrduaPartidu: rows[i].bidaiOrduaPartidu,

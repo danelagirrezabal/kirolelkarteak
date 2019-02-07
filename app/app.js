@@ -472,10 +472,9 @@ app.get('/admin/partiduordutegiak/:idDenboraldia/:jardunaldia',adminonartua,auth
 app.get('/admin/partiduordutegiak/:idDenboraldia',adminonartua,authorize2, denboraldiak.partiduordutegiak);
 //app.get('/admin/partiduordutegiakgf/:idDenboraldia/:jardunaldia',adminonartua,authorize2, denboraldiak.partiduordutegiak);
 //app.get('/admin/partiduordutegiakbus/:idDenboraldia/:jardunaldia',adminonartua,authorize2, denboraldiak.partiduordutegiak);
-//app.get('/admin/partiduordutegiaktrsf/:idDenboraldia/:jardunaldia',adminonartua,authorize2, denboraldiak.partiduordutegiak);
 app.get('/partiduordutegiakgf/:idDenboraldia/:jardunaldia',authorize2, denboraldiak.partiduordutegiak);
 app.get('/partiduordutegiakbus/:idDenboraldia/:jardunaldia',authorize2, denboraldiak.partiduordutegiak);
-app.get('/partiduordutegiaktrsf/:idDenboraldia/:jardunaldia',authorize2, denboraldiak.partiduordutegiak);
+app.get('/admin/partiduordutegiaktrsf/:idDenboraldia/:jardunaldia',adminonartua,authorize2, denboraldiak.partiduordutegiak);
 
 app.get('/admin/jardunaldiaikusgai/:jardunaldia',adminonartua,authorize2, denboraldiak.jardunaldiaikusgai);
 

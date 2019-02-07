@@ -276,7 +276,7 @@ exports.arbitraiak = function(req, res){
   var jasotakoatotala = 0, arbitraiatotala = 0;
   req.getConnection(function(err,connection){
        
-     connection.query('SELECT *, sum(diruaPartidu) as diruaguztira, sum(arbitraiaPartidu) as arbitraiaguztira FROM taldeak, mailak, partiduak where (diruaPartidu != 0 or arbitraiaPartidu != 0) and idTaldeak = idTaldeakPartidu and idMailaTalde = idMailak and idElkarteakTalde = ? and idDenboraldiaTalde = ? group by idTaldeak order by idMailaTalde asc, akronimoTalde asc',[id,idDenboraldia],function(err,rows) {
+     connection.query('SELECT *, sum(diruaPartidu) as diruaguztira, sum(arbitraiaPartidu) as arbitraiaguztira FROM taldeak, mailak, partiduak where (diruaPartidu != 0 or arbitraiaPartidu != 0 or arbitraiaTalde = 1) and idTaldeak = idTaldeakPartidu and idMailaTalde = idMailak and idElkarteakTalde = ? and idDenboraldiaTalde = ? group by idTaldeak order by idMailaTalde asc, akronimoTalde asc',[id,idDenboraldia],function(err,rows) {
             
         if(err)
            console.log("Error Selecting : %s ",err );
