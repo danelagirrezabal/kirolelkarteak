@@ -944,7 +944,7 @@ var admingfbus, autobusez, kanpokoaPartidu;
 
         for (var i in rows) {
 
-         if (admin || (!admin && rows[i].jardunaldiDataPartidu <= jardunaldiaIkusgai)){
+         if ((admin || gipuzkoa || busa) || (!admin && rows[i].jardunaldiDataPartidu <= jardunaldiaIkusgai)){
           if (rows[i].bidaiaNolaPartidu == null)
              autobusez = ""
           else 
