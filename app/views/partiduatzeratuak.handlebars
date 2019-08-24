@@ -1,23 +1,14 @@
-{{#if admingfbus}}
-
-{{else}}
 {{#if menuadmin}}
     {{> menuadmin}}                
 {{else}}
     {{> menu}}                  
 {{/if}}
-{{/if}}
+
    <div class="jumbotron">
-        <h2>Partiduen ordutegia {{textoa}}
-             {{#if admingfbus}}
-                 - {{jardunaldia}}
-             {{/if}}
-        </h2>
+        <h2>Partidu Atzeratuak</h2>
   </div>
 
-  {{#if admingfbus}}
 
-  {{else}}
       <div class="form-group">
             <label for="denboraldia" class="col-sm-1 control-label">Denboraldia:</label>
             <div class="col-sm-1">
@@ -34,32 +25,6 @@
             </div>
 
         </div>
-       <div class="form-group">
-            <label for="jardunaldia" class="col-sm-1 control-label">Jardunaldia:</label>
-            <div class="col-sm-8">
-            <select name="jardunaldia" id="jardunaldia">
-                <option value="">--Aukeratu jardunaldia--</option>
-                {{#each jardunaldiak}}
-                    {{#if aukeratua}}
-                       <option value="{{jardunaldiDataPartidu}}" selected>{{jardunaldiDataPartidu}}</option>
-                    {{else}}
-                       <option value="{{jardunaldiDataPartidu}}">{{jardunaldiDataPartidu}}</option>
-                    {{/if}}
-                {{/each}}
-            </select>
-            {{#if menuadmin}}
-            <a href="/admin/jardunaldiaikusgai/{{jardunaldia}}" class="btn btn-primary btn-sm" role="button">Jardunaldia ikusgai jarri</a>
-            <a target="_blank" href="/admin/partiduatzeratuak/{{idDenboraldia}}" class="btn btn-primary btn-sm" role="button">ATZERATURIK</a>            
-            <a target="_blank" href="/partiduordutegiakgf/{{idDenboraldia}}/{{jardunaldia}}" class="btn btn-primary btn-sm" role="button">Gipuzkoarrentzat</a>
-            <a target="_blank" href="/partiduordutegiakbus/{{idDenboraldia}}/{{jardunaldia}}" class="btn btn-primary btn-sm" role="button">Autobusentzat</a>
-            <a target="_blank" href="/admin/arbitraiak" class="btn btn-primary btn-sm" role="button">Arbitraiak</a>
-            <a target="_blank" href="/admin/partiduordutegiaktrsf/{{idDenboraldia}}/{{jardunaldia}}" class="btn btn-primary btn-sm" role="button">Transferentziak</a>
-            <p>Ikusgai dagoen jardunaldia: {{jardunaldiaIkusgaiH}}</p>
-            {{/if}}
-
-            </div>
-        </div>
-      {{/if}} 
              
       <div class="row marketing">
         <div class="col-lg-12">
@@ -173,27 +138,7 @@
 <script>
   $(document).ready(function(){   
 
-  var jardunaldia = $('#jardunaldia').val();
   var denboraldia = $('#denboraldia').val();     
-    $('#jardunaldia').change(function(){
-
-     if ($('#jardunaldia').val() =="")
-        alert("Aukeratu jardunaldia");
-     else {
-
-
-      var data = 'id=' + $('#jardunaldia').val();
-
-      //$.get('jardunaldikopartiduak/'+$('#jardunaldia').val());
-      //document.location.href= "jardunaldikopartiduak/" + $('#jardunaldia').val());
-
-      if ($('#admin').val())
-        $(location).attr('href', '/admin/partiduordutegiak/'+$('#denboraldia').val()+'/'+$('#jardunaldia').val());
-      else
-        $(location).attr('href', '/partiduordutegiak/'+$('#denboraldia').val()+'/'+$('#jardunaldia').val());
-     
-     }   
-    });
 
     $('#denboraldia').change(function(){
 
@@ -205,9 +150,9 @@
       var data = 'id=' + $('#denboraldia').val();
 
       if ($('#admin').val())
-        $(location).attr('href', '/admin/partiduordutegiak/'+$('#denboraldia').val()+'/'+$('#jardunaldia').val());
+        $(location).attr('href', '/admin/partiduatzeratuak/'+$('#denboraldia').val());
       else
-        $(location).attr('href', '/partiduordutegiak/'+$('#denboraldia').val()+'/'+$('#jardunaldia').val());
+        $(location).attr('href', '/partiduordutegiak/'+$('#denboraldia').val());
      //}
     });
   });

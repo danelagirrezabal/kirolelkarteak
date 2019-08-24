@@ -820,8 +820,12 @@ exports.taldekideakbilatupartaideargazkiekin = function(req, res){
   req.getConnection(function(err,connection){
 
     connection.query('SELECT * FROM taldeak, mailak where idMailaTalde=idMailak and idTaldeak = ? and idElkarteakTalde = ?',[idTaldeak,id],function(err,rowst) {
-       
-     connection.query('SELECT * FROM taldekideak, partaideMotak, taldeak, denboraldiak, mailak, partaideak where idMotaKide=idPartaideMotak and idTaldeakKide=idTaldeak and idMailak=idMailaTalde and idPartaideakKide=idPartaideak and idDenboraldiaTalde = idDenboraldia and idDenboraldia= ? and idTaldeakKide = ? and idElkarteakTalde = ? order by noiztikDenb desc',[idDenboraldia,idTaldeak,id],function(err,rows) {
+     if(err)
+           console.log("Error Selecting : %s ",err );
+     if (rowst.length == 0){
+           res.redirect('/taldeak/');
+     }else{            
+      connection.query('SELECT * FROM taldekideak, partaideMotak, taldeak, denboraldiak, mailak, partaideak where idMotaKide=idPartaideMotak and idTaldeakKide=idTaldeak and idMailak=idMailaTalde and idPartaideakKide=idPartaideak and idDenboraldiaTalde = idDenboraldia and idDenboraldia= ? and idTaldeakKide = ? and idElkarteakTalde = ? order by noiztikDenb desc',[idDenboraldia,idTaldeak,id],function(err,rows) {
             
         if(err)
            console.log("Error Selecting : %s ",err );
@@ -885,8 +889,9 @@ exports.taldekideakbilatupartaideargazkiekin = function(req, res){
          
          //console.log("Berriak:" +JSON.stringify(rows));
           res.render('taldekideakpartaide.handlebars',{title: "Taldekideak", idTaldeak:idTaldeak, arduradun:arduradun, data:rows, irudiak:argazkiak, talde:rowst, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea: req.session.partaidea, atalak: req.session.atalak, idPartaideak:req.session.idPartaideak, arduraduna:req.session.arduraduna});                       
-      });   
+      });
     });
+   }
   });
 });
 };

@@ -455,7 +455,7 @@ exports.edukiaksortu = function(req,res){
 
           if (input.bidali){
             
-              var status = input.izenburuaEdukia + " - http://zarauzkoeskubaloia.herokuapp.com/";
+              var status = input.izenburuaEdukia + " - http://zarauzkoeskubaloia.herokuapp.com/ \n #GipuzkoaEskubaloia \n #123Zarautz";
 
               twitter.post('statuses/update', { status: status }, function (err, data, response) {
                   if (err) {

@@ -475,6 +475,7 @@ app.get('/admin/partiduordutegiak/:idDenboraldia',adminonartua,authorize2, denbo
 app.get('/partiduordutegiakgf/:idDenboraldia/:jardunaldia',authorize2, denboraldiak.partiduordutegiak);
 app.get('/partiduordutegiakbus/:idDenboraldia/:jardunaldia',authorize2, denboraldiak.partiduordutegiak);
 app.get('/admin/partiduordutegiaktrsf/:idDenboraldia/:jardunaldia',adminonartua,authorize2, denboraldiak.partiduordutegiak);
+app.get('/admin/partiduatzeratuak/:idDenboraldia/',adminonartua,authorize2, denboraldiak.partiduatzeratuak);
 
 app.get('/admin/jardunaldiaikusgai/:jardunaldia',adminonartua,authorize2, denboraldiak.jardunaldiaikusgai);
 
@@ -598,17 +599,17 @@ var cliente = mysql.createConnection({
     user: 'root',
     password : 'root',
     port : 8889, //port mysql
-    database:'kirolElkarteak'
+    database:'5771113112b92f3'
 });
             console.log("localhost2" );
 }
 else{
   var cliente = mysql.createConnection({
-    host: 'us-cdbr-iron-east-04.cleardb.net',
-    user: 'b65e4830d842c6',
-    password : 'ff86419e',
-    //  port : 3306, //port mysql
-    database:'heroku_3a7c26fa617acae'
+    host: '',
+    user: '',
+    password : '',
+    //  port : 3306, 
+    database:'kirolElkarteak'
 });
               console.log("heroku2" );
 }
