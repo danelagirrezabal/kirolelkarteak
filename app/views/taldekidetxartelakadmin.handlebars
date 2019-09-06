@@ -29,11 +29,18 @@
 
           <p><pre>KONTU ZKIA:    <i>{{btkontuZenbPart}}</i></pre></p>
 
-              
-          <p><pre>  <a target="_blank" class="a-inside edit" href="/admin/partaideakeditatu/{{btidPartaideak}}">Partaidea ALDATU</a>  </pre></p>
-              
-          <p><b><pre>                              JOKALARIEN DATUAK - {{bazkideZenbKide}}   </pre></b></p>
-            </br>
+        {{#if paper}}
+               <p><b><pre>                                                Bazkidearen Sinadura :</pre></b></p>                
+        {{else}}
+  
+            <a target="_blank" class="a-inside edit" href="/admin/partaideakeditatu/{{btidPartaideak}}">Partaidea ALDATU   </a>
+            <a target="_blank" class="a-inside edit" href="/admin/partaideakeditatu/{{idPartaideak}}">   *****  Jokalaria ALDATU  </a> 
+            <a target="_blank" class="a-inside edit" href="/admin/taldekideakeditatu/{{idTaldekideak}}">    --------  Bazkide Zkia  ALDATU</a>  
+
+        {{/if}} 
+            </br>              
+          <p><b><pre>                           JOKALARIAREN DATUAK - {{bazkideZenbKide}}   </pre></b></p>
+
           <p><pre>KATEGORIA ETA TALDEA:  <i>{{izenaTalde}} - {{izenaMaila}}</i></pre></p>            
           <p><pre>IZEN ABIZENAK:   <i>{{izenaPart}}  {{abizena1Part}}  {{abizena2Part}}</i></pre></p>
             </br>

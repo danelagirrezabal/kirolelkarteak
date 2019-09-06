@@ -1314,6 +1314,7 @@ exports.taldekidetxartelak = function(req, res){
   var idDenboraldia = req.session.idDenboraldia;
   var idTaldeak = req.params.idTaldeak;
   var zenbatgarren = 1;
+  var paper=(req.path.slice(0,24) == "/admin/paperatutxartelak");
   req.getConnection(function(err,connection){
 
     connection.query('SELECT * FROM taldeak, mailak, denboraldiak where idMailaTalde=idMailak and idDenboraldiaTalde = idDenboraldia and  idTaldeak = ? and idElkarteakTalde = ?',[idTaldeak,id],function(err,rowst) {
@@ -1327,6 +1328,7 @@ exports.taldekidetxartelak = function(req, res){
            console.log("Error Selecting : %s ",err );
 
         for(var i in rows){
+          rows[i].paper = paper;
           rows[i].zenbatgarren = zenbatgarren;
           zenbatgarren += 1;
           for(var j in rowsb){
