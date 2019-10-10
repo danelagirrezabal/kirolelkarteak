@@ -1315,6 +1315,7 @@ exports.taldekidetxartelak = function(req, res){
   var idTaldeak = req.params.idTaldeak;
   var zenbatgarren = 1;
   var paper=(req.path.slice(0,24) == "/admin/paperatutxartelak");
+  var emailPart;
   req.getConnection(function(err,connection){
 
     connection.query('SELECT * FROM taldeak, mailak, denboraldiak where idMailaTalde=idMailak and idDenboraldiaTalde = idDenboraldia and  idTaldeak = ? and idElkarteakTalde = ?',[idTaldeak,id],function(err,rowst) {
@@ -1329,6 +1330,23 @@ exports.taldekidetxartelak = function(req, res){
 
         for(var i in rows){
           rows[i].paper = paper;
+          if (paper){
+              if (rows[i].nanPart != "")
+                rows[i].nanPart = rows[i].nanPart.substr(0,3) + "****" + rows[i].nanPart.substr(7,9);
+//              if (rows[i].telefonoaPart != "")
+//                rows[i].telefonoaPart = rows[i].telefonoaPart.substr(0,3) + "****" + rows[i].telefonoaPart.substr(8,9);
+              if (rows[i].emailPart != ""){
+                console.log("email-1 : " + rows[i].emailPart);
+                emailPart = rows[i].emailPart.split("@");
+                rows[i].emailPart = emailPart[0].substr(0,3) + "****" + emailPart[0].substr(7,12) + "****" + emailPart[0].substr(16,20); // + emailPart[1];
+                console.log("email-2 : " + rows[i].emailPart);
+              }  
+              if (rows[i].kontuZenbPart != ""){
+//                console.log("k/K-1 : " + rows[i].kontuZenbPart);
+                rows[i].kontuZenbPart = rows[i].kontuZenbPart.substr(0,10) + "******" + rows[i].kontuZenbPart.substr(16,20);
+//                console.log("k/K-2 : " + rows[i].kontuZenbPart);
+              }
+          }
           rows[i].zenbatgarren = zenbatgarren;
           zenbatgarren += 1;
           for(var j in rowsb){
@@ -1347,8 +1365,20 @@ exports.taldekidetxartelak = function(req, res){
                  rows[i].btemailPart = rowsb[j].emailPart;
                  rows[i].btdeskribapenaOrdainEra = rowsb[j].deskribapenaOrdainEra;
                  rows[i].btkontuZenbPart = rowsb[j].kontuZenbPart;
+                 if (paper){
+                    if (rows[i].btnanPart != "")
+                      rows[i].btnanPart = rows[i].btnanPart.substr(0,3) + "****" + rows[i].btnanPart.substr(7,9);
+                    if (rows[i].btemailPart != ""){
+                      emailPart = rows[i].btemailPart.split("@");
+                      rows[i].btemailPart = emailPart[0].substr(0,3) + "****" + emailPart[0].substr(7,12) + "****" + emailPart[0].substr(16,20); // + emailPart[1];
+                    }  
+                    if (rows[i].btkontuZenbPart != "")
+                      rows[i].btkontuZenbPart = rows[i].btkontuZenbPart.substr(0,10) + "******" + rows[i].btkontuZenbPart.substr(16,20);
 
-  //               console.log("bazkide : " + i + " - " + rows[i].bazkideZenbKide + " - " + rowsb[j].bazkideZenbPart);
+//                  rows[i].bttelefonoaPart = rowsb[j].telefonoaPart;
+
+                 }   
+   //               console.log("bazkide : " + i + " - " + rows[i].bazkideZenbKide + " - " + rowsb[j].bazkideZenbPart);
                  break;
             }
           }

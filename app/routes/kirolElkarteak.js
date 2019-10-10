@@ -2612,7 +2612,7 @@ console.log("nondik: "+ nondik );
                                " - "+rows[i].bidaiEgunaPartidu+"</p>\n";
                      } 
 //                    if (rows[i].arbitraiaTalde != 0)
-                    if (rows[i].federazioTalde == 0 && rows[i].arbitraiaTalde == 1)
+                    if (rows[i].federazioaTalde == 0 && rows[i].arbitraiaTalde == 1)
                      {
                       var subj = rows[i].dataPartidu+ "-ko emaitza eta arbitraia sartzeko: "+ rows[i].izenaTalde;  
                       body += "<h2>Emaitza eta arbitraia eguneratzeko:</h2>\n" +
@@ -2644,7 +2644,7 @@ console.log("nondik: "+ nondik );
 
 //                     if (rows[i].arbitraiaTalde != 0)
 //                      { 
-                      console.log(i + ". mezua1: " + to + " - "  +rows[i].izenaTalde);
+                      console.log(i + ". mezua1: " + to + " - "  +rows[i].izenaTalde + " - "  + rows[i].federazioaTalde + " - "  + rows[i].arbitraiaTalde);
 //                      if(input.bidali){
                          emailService.send(to, subj, body);
                          for (var j = 0; j < 1000; j++) {}  // atseden denbora ADI ADI
