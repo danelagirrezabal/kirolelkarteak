@@ -25,7 +25,7 @@ dbdevelop: {
         host: 'localhost',
         user: 'root',
         password : 'joanaagi',                    //root
-        port : 3306, //port mysql                   //8889 
+        port : 3306, //portmysql                   //8889 
         database: 'heroku_3a7c26fa617acae'      //kirolElkarteak
 },
 dbproduction: {
