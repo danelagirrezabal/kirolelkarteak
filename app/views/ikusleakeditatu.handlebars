@@ -1,0 +1,215 @@
+{{> menuadmin}}
+
+      <div class="jumbotron">
+        <h2>Ikusleak aldatu</h2>
+      </div>
+
+<div class="formContainer col-sm-offset-1">
+{{#each data}}
+    <form class="form-horizontal newsletterForm" role="form" 
+                 action="/admin/ikusleakaldatu/{{idEkitaldiak}}/{{idIkusleak}}" method="POST">
+    <input type="hidden" name="_csrf" value="{{_csrfToken}}">
+        </br>
+        
+    
+        <div class="form-group">
+            <label for="idTaldeakPartidu" class="col-sm-2 control-label">Ekitaldia</label>
+
+                {{izenaTalde}} - {{izenaMaila}} - {{izenaLeku}} - {{etxekoaPartidu}} - {{kanpokoaPartidu}} 
+                    {{txapelketaPartidu}} - {{dataPartidu}} - {{orduaPartidu }}
+        </div>
+
+
+    <input type="hidden" name="_csrf" value="{{_csrfToken}}">
+        </br>
+        <input type="hidden" name="idEkitaldiak" id="admin" value="{{idEkitaldiak}}">
+        <input type="hidden" name="idElkarteak" id="admin" value="{{idElkarteakPartidu}}">
+
+        <div class="form-group">
+            <label for="sortuaaldatua" class="col-sm-2 control-label">Sortua-Aldatua</label>
+            <div class="col-sm-8">
+                {{sortuaIkusle}}  ++++  {{aldatuaIkusle}}
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="bazkidezenbakia" class="col-sm-2 control-label">Arduradunaren Bazkide zenbakia</label>
+            <div class="col-sm-4">
+                <input type="text" class="form-control" id="bakzidezenbakia" name="bazkidezenbakia" placeholder="Bazkideek bakarrik apuntatu leike" value={{bazkidezenbakia}}>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="nanzenbakia" class="col-sm-2 control-label">Arduradunaren NAN zenbakia</label>
+            <div class="col-sm-4">
+                <textarea name="nanzenbakia" rows="1" cols="40" class="form-control" autofocus required>{{nanzenbakia}}</textarea>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="izenabizenak1" class="col-sm-2 control-label">Arduradunaren 1. Izen-abizenak</label>
+            <div class="col-sm-4">
+                <textarea name="izenabizenak1" rows="1" cols="40" class="form-control" autofocus required>{{izenabizenak1}}</textarea>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="ilara" class="col-sm-2 control-label">Ilara</label>
+            <div class="col-sm-2">
+                <input type="num" class="form-control" autofocus required id="ilara" name="ilara" min="1" max="9" value={{ilara}}  >
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="eserlekua1" class="col-sm-2 control-label">1. eserlekua</label>
+            <div class="col-sm-2">
+                <input type="num" class="form-control" autofocus  id="eserlekua1" name="eserlekua1" min="1" max="9" value={{eserlekua1}}  >
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="telefonoa" class="col-sm-2 control-label">Arduradunaren Telefonoa</label>
+            <div class="col-sm-4">
+                <input type="tel" class="form-control" placeholder="0" required id="telefonoa" name="telefonoa" value={{telefonoa}} >
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="emaila" class="col-sm-2 control-label">Arduradunaren Emaila</label>
+            <div class="col-sm-4">
+                <input type="emaila" class="form-control" required id="emaila" name="emaila" placeholder="Sarrera bidaltzeko erabiliko da" value={{emaila}}>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="berezitasunak" class="col-sm-2 control-label">Berezitasunak</label>
+            <div class="col-sm-4">
+                <textarea name="berezitasunak" placeholder="Nahi baldin bada" rows="1" cols="45" class="form-control">{{berezitasunak}}</textarea>
+            </div>
+        </div>       
+
+        <div class="form-group">
+            <label for="izenabizenak2" class="col-sm-2 control-label">2. Izen-abizenak</label>
+            <div class="col-sm-4">
+                <textarea name="izenabizenak2" rows="1" cols="70" class="form-control" 
+                placeholder="2. ikuslea bada" autofocus>{{izenabizenak2}}</textarea>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="eserlekua2" class="col-sm-2 control-label">2. eserlekua</label>
+            <div class="col-sm-2">
+                <input type="num" class="form-control" autofocus id="eserlekua2" name="eserlekua2" min="1" max="9" value={{eserlekua2}}  >
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="bazkidezenbakia2" class="col-sm-2 control-label">2. Bazkide zenbakia</label>
+            <div class="col-sm-4">
+                <textarea name="bazkidezenbakia2" rows="1" cols="10" class="form-control" autofocus>{{bazkidezenbakia2}}</textarea>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="nanzenbakia2" class="col-sm-2 control-label">2. NAN zenbakia</label>
+            <div class="col-sm-4">
+                <textarea name="nanzenbakia2" rows="1" cols="40" class="form-control" autofocus >{{nanzenbakia2}}</textarea>
+            </div>
+        </div>        
+
+        <div class="form-group">
+            <label for="jaiotzedata2" class="col-sm-2 control-label">edo 2. Jaiotze data</label>
+            <div class="col-sm-4">
+                <textarea name="jaiotzedata2" rows="1" cols="12" class="form-control" placeholder="UUUU/HH/EE" autofocus>{{jaiotzedata2}}</textarea>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="izenabizenak3" class="col-sm-2 control-label">3. Izen-abizenak</label>
+            <div class="col-sm-4">
+                <textarea name="izenabizenak3" rows="1" cols="70" class="form-control" 
+                placeholder="2. ikuslea bada" autofocus>{{izenabizenak3}}</textarea>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="eserlekua3" class="col-sm-2 control-label">3. eserlekua</label>
+            <div class="col-sm-4">
+                <input type="num" class="form-control" autofocus id="eserlekua3" name="eserlekua3" min="1" max="9" value={{eserlekua3}}>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="bazkidezenbakia3" class="col-sm-2 control-label">3. Bazkide zenbakia</label>
+            <div class="col-sm-4">
+                <textarea name="bazkidezenbakia3" rows="1" cols="10" class="form-control" autofocus>{{bazkidezenbakia3}}</textarea>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="nanzenbakia3" class="col-sm-2 control-label">3. NAN zenbakia</label>
+            <div class="col-sm-4">
+                <textarea name="nanzenbakia3" rows="1" cols="40" class="form-control" autofocus >{{nanzenbakia3}}</textarea>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="jaiotzedata3" class="col-sm-2 control-label">edo 3. Jaiotze data</label>
+            <div class="col-sm-4">
+                <textarea name="jaiotzedata3" rows="1" cols="12" class="form-control" placeholder="UUUU/HH/EE" autofocus>{{jaiotzedata3}}</textarea>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="izenabizenak4" class="col-sm-2 control-label">4. Izen-abizenak</label>
+            <div class="col-sm-4">
+                <textarea name="izenabizenak4" rows="1" cols="70" class="form-control" 
+                placeholder="4. ikuslea bada" autofocus>{{izenabizenak4}}</textarea>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="eserlekua4" class="col-sm-2 control-label">4. eserlekua</label>
+            <div class="col-sm-2">
+                <input type="num" class="form-control" autofocus id="eserlekua4" name="eserlekua4" min="1" max="9" value={{eserlekua4}}>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="bazkidezenbakia4" class="col-sm-2 control-label">4. Bazkide zenbakia</label>
+            <div class="col-sm-4">
+                <textarea name="bazkidezenbakia4" rows="1" cols="12" class="form-control" autofocus>{{bazkidezenbakia4}}</textarea>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="nanzenbakia4" class="col-sm-2 control-label">4. NAN zenbakia</label>
+            <div class="col-sm-4">
+                <textarea name="nanzenbakia4" rows="1" cols="40" class="form-control" autofocus>{{nanzenbakia4}}</textarea>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="jaiotzedata4" class="col-sm-2 control-label">edo 4. Jaiotze data</label>
+            <div class="col-sm-4">
+                <textarea name="jaiotzedata4" rows="1" cols="12" class="form-control" placeholder="UUUU/HH/EE" autofocus>{{jaiotzedata4}}</textarea>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-2">
+                <button type="submit" class="btn btn-default">Ekitaldia ALDATU</button>
+            </div>
+        </div>
+    </form>
+    {{/each}}
+</div>
+
+      </div>
+
+<script>
+
+Handlebars.registerHelper('mailaBerdina',function(kategoria, idmaila){
+  return kategoria  == idmaila;
+});
+
+
+</script>

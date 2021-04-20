@@ -1,0 +1,20 @@
+{{#if menuadmin}}
+  {{> menuadmin}}
+{{else}}
+  {{> menu}}
+{{/if}}
+
+</br>
+</br>
+{{#each data}}
+	<h3> {{izenabizenak1}} <b> {{nanzenbakia}} - {{bazkidezenbakia}}</b> izenematea osatu duzu. Eserlekua: {{ilara}} - {{eserlekua1}}</h3>
+
+	<ul><h3>
+		<li>Jarraian <b> email bat jasoko duzu  {{emaila}} </b> helbidean. </li>
+		<li>Bertako <b> linkean klikatu </b> sarrerak balidatzeko. </li>
+		<li>Egiaztatu ondoren, <b> sarrerak jasoko dituzu beste emaila batean </b> , ekitaldian sartzeko aurkeztu behar dituzunak</li>
+		<li>eta ikusi <b> http://zarauzkoeskubaloia.herokuapp.com/harmailak/{{idEkitaldiakIkusle}} </b> harmailean zure eserlekuak erreserbaturik. </li>
+		<li>Aldaketak edo etorri ezina baduzue, bidali oharra zuen eserleku erreserba datoekin  <b> zkeskubaloia.partidak@gmail.com </b> -era. </li>
+		<li>Mila esker!</h3></li>
+	</ul>
+{{/each}}

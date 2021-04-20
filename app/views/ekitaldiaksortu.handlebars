@@ -1,0 +1,110 @@
+{{#if arduraduna}}
+{{> menu}}
+{{else}}
+{{> menuadmin}}
+{{/if}}
+
+
+ {{#each data}} 
+
+      <div class="jumbotron">
+         <h2>Ekitaldiak sortu: {{etxekoaPartidu}} - {{kanpokoaPartidu}}</h2>
+             
+         <p>  {{izenaLeku}} - {{dataPartidu}} - {{orduaPartidu }} - {{txapelketaPartidu}} - {{izenaMaila}}</p> 
+      </div>
+
+
+<div class="formContainer col-sm-offset-1">
+{{#if arduraduna}}
+    <form class="form-horizontal newsletterForm" role="form" action="/ekitaldiaksortu" method="POST">
+{{else}}
+    <form class="form-horizontal newsletterForm" role="form" action="/admin/ekitaldiaksortu" method="POST">
+{{/if}}
+    <input type="hidden" name="_csrf" value="{{_csrfToken}}">
+        </br>
+        <input type="hidden" name="idPartiduak" id="admin" value="{{idPartiduak}}">
+        <input type="hidden" name="idElkarteak" id="admin" value="{{idElkarteakPartidu}}">
+       
+        <div class="form-group">
+            <label for="bazkideeguna" class="col-sm-2 control-label">Bazkideak noiz arte</label>
+            <div class="col-sm-2">
+                <textarea name="bazkideeguna" rows="1" cols="12" placeholder="UUUU-HH-EE" required class="form-control" autofocus></textarea>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="bazkideordua" class="col-sm-2 control-label">Bazkide ordua</label>
+            <div class="col-sm-2">
+                <textarea name="bazkideordua" rows="1" cols="10" placeholder="HH:MM" class="form-control"></textarea>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="noizarteeguna" class="col-sm-2 control-label">Noiz arte Eguna</label>
+            <div class="col-sm-2">
+                <textarea name="noizarteeguna" rows="1" cols="12" required class="form-control" placeholder="UUUU-HH-EE" autofocus></textarea>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="noizarteordua" class="col-sm-2 control-label">Noiz arte ordua</label>
+            <div class="col-sm-2">
+                <textarea name="noizarteordua" rows="1" cols="10" placeholder="HH:MM" class="form-control"></textarea>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="zenbatentzat" class="col-sm-2 control-label">Zenbatentzat</label>
+            <div class="col-sm-1">
+                <input type="num" class="form-control" required id="zenbatentzat" autofocus name="zenbatentzat" value={{zenbatentzat}}>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="bakoitzak" class="col-sm-2 control-label">Bakoitzak 1,2,3,4</label>
+            <div class="col-sm-1">
+                <input type="num" class="form-control" required id="bakoitzak" autofocus name="bakoitzak" value={{bakoitzak}}>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="eserlekuak" class="col-sm-2 control-label">Eserlekuak 0,1,2</label>
+            <div class="col-sm-1">
+                <input type="num" class="form-control" required id="eserlekuak" autofocus name="eserlekuak" value={{eserlekuak}}>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="harmailak" class="col-sm-2 control-label">Harmailak mapa</label>
+            <div class="col-sm-4">
+                <textarea name="harmailak" rows="1" cols="100" class="form-control">{{harmailak}}</textarea>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="komentarioa" class="col-sm-2 control-label">Komentarioa</label>
+            <div class="col-sm-4">
+                <textarea name="komentarioa" rows="4" cols="40" class="form-control">{{komentarioa}}</textarea>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-4">
+                <button type="submit" class="btn btn-default">Sortu</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+    {{/each}}
+
+      </div>
+
+<script>
+
+Handlebars.registerHelper('mailaBerdina',function(kategoria, idmaila){
+  return kategoria  == idmaila;
+});
+
+
+</script>

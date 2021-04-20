@@ -1,0 +1,151 @@
+<div class="formContainer">
+    {{#if admin}}
+        <form class="form-horizontal newsletterForm" role="form" action="/admin/ikusleaksortu/{{idEkitaldiak}}" method="POST">
+    {{else}}
+        <form class="form-horizontal newsletterForm" role="form" action="/ikusleaksortu/{{idEkitaldiak}}" method="POST">
+    {{/if}}
+
+    <input type="hidden" name="_csrf" value="{{_csrfToken}}">
+    <input type="hidden" name="tope" id="tope" value="{{tope}}">
+
+        <div class="form-group">
+            <label for="" class="col-sm-2 control-label">Ilara</label>
+            <div class="input-group col-sm-2">
+                <input type="number" class="form-control" placeholder="Sartu ilara" required id="ilara" name="ilara" min="1" max="9" value={{ilara}}  >
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="" class="col-sm-2 control-label">1.Eserlekua</label>
+            <div class="input-group col-sm-2">
+                <input type="number" class="form-control" placeholder="1.eserlekua berdez" required id="eserleku1" name="eserleku1" min="1" max="76" value={{eserleku1}} >
+            </div>
+            <small class="form-text text-muted">Bat baino gehiago : hasierako eserlekua</small>
+        </div>
+
+        <div class="form-group">
+            <label for="" class="col-sm-2 control-label">2.Eserlekua</label>
+            <div class="input-group col-sm-2">
+                <input type="number" class="form-control" placeholder="Bukaerako eserlekua bada" id="eserleku2" name="eserleku2" min="0" max="76" value={{eserleku2}} > 
+            </div>
+            <small class="form-text text-muted">Bat baino gehiago : bukaerako eserlekua</small>
+        </div>
+
+<!--
+  <div class="form-row">
+    <div class="form-group col-md-2">
+      <label for="ilara">Ilara</label>
+      <input type="number" class="form-control" placeholder="Sartu ilara" required id="ilara" name="ilara" min="1" max="9" value={{ilara}}  >
+    </div>
+    <div class="form-group col-md-2">
+      <label for="eserleku1">1.eserlekua</label>
+      <input type="number" class="form-control" placeholder="1.eserlekua berdez" required id="eserleku1" name="eserleku1" min="1" max="76" value={{eserleku1}} >
+    </div>
+    <div class="form-group col-md-2">
+      <label for="eserleku2">2.eserlekua</label>
+      <input type="number" class="form-control" placeholder="2.eserlekua bada" required id="eserleku2" name="eserleku2" min="1" max="76" value={{eserleku2}} >
+    </div>
+    <div class="form-group col-md-2">
+      <label for="eserleku3">3.eserlekua</label>
+      <input type="number" class="form-control" placeholder="3.eserlekua berdez" required id="eserleku3" name="eserleku3" min="1" max="76" value={{eserleku3}} >
+    </div>
+    <div class="form-group col-md-4">
+      <label for="eserleku3">4.eserlekua</label>
+      <input type="number" class="form-control" placeholder="4.eserlekua bada" required id="eserleku4" name="eserleku4" min="1" max="76" value={{eserleku4}} >
+    </div>
+  </div>
+-->
+
+        <div class="form-group row">
+            <label for="bazkidezenbakia" class="col-sm-2 control-label">Arduradunaren Bazkide zenbakia</label>
+            <div class="col-sm-2">
+                <input type="text" class="form-control" {{bazkidezenbakiabai}} id="bakzidezenbakia" name="bazkidezenbakia" placeholder="Bazkide izanez" value={{bazkidezenbakia}}>
+            </div>
+            <small class="form-text text-muted">Bazkide txartela sarreran erakutsi behar da</small>
+        </div>
+
+        <div class="form-group row">
+            <label for="nanzenbakia" class="col-sm-2 control-label">Arduradunaren NAN zenbakia</label>
+            <div class="col-sm-2">
+                <textarea name="nanzenbakia" rows="1" cols="12" class="form-control" required placeholder="NAN zenbakia">{{nanzenbakia}}</textarea>
+            </div>
+            <small class="form-text text-muted">Nortasun agiria sarreran erakutsi behar da</small>
+        </div>
+
+        <div class="form-group">
+            <label for="izenabizenak1" class="col-sm-2 control-label">Arduradunaren 1. Izen-abizenak</label>
+            <div class="col-sm-4">
+                <textarea name="izenabizenak1" rows="1" cols="70" class="form-control"  required placeholder="Arduradunaren Izen-abizenak" >{{izenabizenak1}}</textarea>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="emaila" class="col-sm-2 control-label">Emaila</label>
+            <div class="col-sm-4">
+                <input type="emaila" class="form-control" required id="emaila" name="emaila" 
+                placeholder="Sarrera bidaltzeko erabiliko da" value={{emaila}}>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="telefonoa" class="col-sm-2 control-label">Telefonoa</label>
+            <div class="col-sm-2">
+                <input type="tel" class="form-control" required id="telefonoa" name="telefonoa" 
+                placeholder="zerbait argitu behar bada" value={{telefonoa}} >
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="berezitasunak" class="col-sm-2 control-label">Berezitasunak</label>
+            <div class="col-sm-4">
+                <textarea name="berezitasunak" placeholder="Nahi baldin bada" rows="1" cols="45" class="form-control">{{berezitasunak}}</textarea>
+            </div>
+        </div>
+
+        {{#if izenemate2}}
+                 {{> izenemate2}}
+        {{/if}}
+
+        {{#if izenemate3}}
+                 {{> izenemate3}}
+        {{/if}}
+
+        {{#if izenemate4}}
+                 {{> izenemate4}}
+        {{/if}}
+
+        <div class="col-lg-12 ">
+              Izena-emateko onartu beharreko baldintzak (partaide guztientzat) :
+        </div>
+        <div class="form-group col-lg-12" >
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox"  required id="gridCheck">
+              <label class="form-check-label" for="gridCheck">
+                   Covid19 protokoloa beteko dudala onartzen dut. <a href="https://drive.google.com/file/d/1OJB-9I6Js45Dqt5kFY8req2p2U1g41vA/view?usp=sharing" target="_blank" >Protokoloa ikusi</a>
+              </label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox"  required id="gridCheck">
+              <label class="form-check-label" for="gridCheck">
+                      Nire datuak gordetzea baimentzen dut, izen-emateko kudeaketan erabiltzeko             
+              </label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox"  required id="gridCheck">
+              <label class="form-check-label" for="gridCheck">
+                      Izen-ematearen arauren bat hautsiz gero, ondorioak onartzen ditut
+              </label>
+            </div>
+        </div>
+      
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-4">
+                <button type="submit" class="btn btn-default">Izenematea bukatu</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+      </div>
+
+ 

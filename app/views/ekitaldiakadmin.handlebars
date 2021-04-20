@@ -1,0 +1,81 @@
+{{> menuadmin}}
+
+   <div class="jumbotron">
+        <h2>Ekitaldiak</h2>
+      </div>
+      <a href="/admin/ekitaldiakgehitu" class="btn btn-primary btn-sm" role="button">Ekitaldiak gehitu</a>
+      <a href="/admin/ekitaldiaktaldeka/" class="btn btn-primary btn-bg" role="button">Ekitaldiak TALDEKA</a>
+      <a href="/admin/partiduakmailazka/{{idDenboraldia}}/{{jardunaldia}}" class="btn btn-primary btn-bg" role="button">PARTIDUAK MAILAZKA</a>
+      </br></br>
+       <div class="form-group">
+            <label for="jardunaldia" class="col-sm-2 control-label">Jardunaldia:</label>
+            <div class="col-sm-4">
+            <select name="jardunaldia" id="jardunaldia">
+                <option value="">--Aukeratu jardunaldia--</option>
+                {{#each jardunaldiak}}
+                       <option value="{{jardunaldiDataPartidu}}">{{jardunaldiDataPartidu}}</option>
+                {{/each}}
+            </select>
+            </div>
+        </div>
+      </br></br>
+      <div class="row marketing">
+        <div class="col-lg-12">
+        <table class="table table-condensed">
+            <tr>
+                    <th>Maila</th>
+                    <th>Txapelketa</th>
+                    <th>A ekipoa</th>
+                    <th>B ekipoa</th>
+                    <th>Lekua</th>
+                    <th>Eguna</th> 
+                    <th>Ordua</th>
+                    <th>Bazkideak NoizArte</th>
+                    <th>NoizArte</th>
+                    <th>Topeak</th>
+                    <th>Harmaila</th>
+                    <th>Komentarioa</th>
+                </tr>          
+
+            {{#each data}}
+                  <tr class="active">
+                    <td>{{izenaMaila}} {{akronimoTalde}}</td>
+                    <td>{{txapelketaPartidu}}</td>  
+                    <td>{{etxekoaPartidu}}</td>   
+                    <td>{{kanpokoaPartidu}}</td> 
+                    <td>{{izenaLeku}} - {{herriaLeku}}</td> 
+                    <td>{{dataPartidu}} - {{egunaTexto}}</td>  
+                    <td>{{orduaPartidu}}</td> 
+                    <td>{{bazkideeguna}}</td>
+                    <td>{{noizarteeguna}}</td>
+                    <td>{{zenbatentzat}} - {{bakoitzak}}</td>
+                    <td>{{eserlekuak}}</td> 
+                    <td>{{komentarioa}}</td>
+                    <td><a class="a-inside edit" href="/admin/harmailak/{{idEkitaldiak}}">Harmailak</a></td>
+                    <td><a class="a-inside edit" href="/admin/ekitaldiakeditatu/{{idEkitaldiak}}">Aldatu</a></td>
+                    <td><a class="a-inside edit" href="/admin/ekitaldiakezabatu/{{idEkitaldiak}}">Ezabatu</a></td>
+                </tr>
+            {{/each}}
+          </table>
+
+        </div>
+      </div>
+
+{{#section 'jquery'}}
+<script>
+  $(document).ready(function(){        
+
+    $('#jardunaldia').change(function(){
+
+      var data = 'id=' + $('#jardunaldia').val();
+
+      //$.get('jardunaldikopartiduak/'+$('#jardunaldia').val());
+      //document.location.href= "jardunaldikopartiduak/" + $('#jardunaldia').val());
+      $(location).attr('href', '/admin/jardunaldikoekitaldiak/'+$('#jardunaldia').val());
+
+    });
+  });
+            
+</script> 
+        
+{{/section}}

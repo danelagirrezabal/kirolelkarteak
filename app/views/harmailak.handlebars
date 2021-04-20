@@ -1,0 +1,154 @@
+{{#if menuadmin}}
+  {{> menuadmin}}
+{{else}}
+  {{> menu}}
+{{/if}} 
+
+      {{#each data}}
+        <div class="jumbotron">
+          <h2> {{etxekoaPartidu}} - {{kanpokoaPartidu}}</h2>
+             
+         <p>  {{izenaLeku}} - {{dataPartidu}} - {{orduaPartidu }} - {{txapelketaPartidu}} - {{izenaMaila}}</p> 
+
+          <h2>{{aditestua}}</h2>
+        </div>
+
+      {{/each}} 
+
+      <div class="col-lg-12 ">
+          <h3>
+              <span >KOLOREEN esannahia: </span>
+              <span style="background-color:#FF00FF">Ilarak / Eserlekuak</span>...
+              <span style="background-color:#00F000">Hautagai</span>..
+              <span style="background-color:#FF0000">Ezin hautatuak</span>..
+              <span style="background-color:#3364FF">Hautatuak</span>..
+              <span style="background-color:yellow">Balidatzeko zai</span>
+          </h3>
+      </div>
+      <div>
+          <h2>
+              <span class="col-sm-2" style="color:blue">E</span>
+              <span class="col-sm-2" style="background-color:orange">SARRERA</span>
+              <span class="col-sm-4" style="color:blue">D</span>
+              <span class="col-sm-2" style="color:blue">C</span>
+              <span class="col-sm-1" style="color:blue">B</span>
+              <span class="col-sm-1" style="color:blue">A</span>
+          </h2>
+      </div>
+      <div class="row marketing">
+        <div class="col-lg-12 ">
+         <div class="table-responsive">
+
+          <table class="table table-condensed" >
+            {{#each burua}}
+             <thead>
+              <tr>
+                    {{#each eserlekuak}}
+<!--                        <td style="background-color: {{kolore}}"><b>{{eserleku}}</b></td>    -->
+                        <th style="background-color: {{kolore}}" ><b>{{eserleku}}</b></th>
+                    {{/each}}   
+              </tr> 
+             </thead> 
+            {{/each}}
+
+            </br></br>
+
+            {{#each ilarak}}
+              <tbody>
+                <tr>
+                    {{#each eserlekuak}}
+   
+                         <td style="background-color: {{kolore}}">{{eserleku}}</td>
+
+                    {{/each}}  
+                </tr> 
+              </tbody>
+            {{/each}}
+                  
+          </table>
+         </div>
+        </div>
+      </div>
+      <div class="col-lg-12 ">
+          <h2>
+              <span style="background-color:orange">ESKUBALOIKO PISTA</span>
+          </h2>
+      </div>
+<!--                      {{#if aukeragai}}
+                         <td class="checkbox"><input type="checkbox" id="aukeratua" name="aukeratua[]"   
+                           <value="{{idEkitaldiKide}}-{{ilara}}-{{eserleku}}"></td>
+                      {{else}}   
+                        <td style="background-color: {{kolore}}">{{eserleku}}</td>
+                       {{/if}}    
+-->
+
+      {{#each data}}
+            {{#if admin}}
+                 <a href="/admin/ikusleak/{{idEkitaldiak}}" target="_blank" class="btn btn-primary btn-bg" role="button">Ikusleak ikusi</a>
+                 <a href="/ikusleak/{{idEkitaldiak}}" target="_blank" class="btn btn-primary btn-bg" role="button">Ikusleak Gunez</a>
+            {{/if}}
+            {{#if izenemate1}}
+                 {{> izenemateak}}
+            {{/if}}
+      {{/each}} 
+
+<!--    <input type="hidden" name="mapa" id="mapa" value="{{mapa}}">    -->
+
+{{#section 'jquery'}}
+<script>
+  $(document).ready(function(){  
+
+//    var mapa = $('#mapa').val();
+//    alert ("MAPA "  + mapa[2]);     
+
+    $('#jardunaldia').change(function(){
+
+      if ($('#jardunaldia').val() =="")
+        alert("Aukeratu jardunaldia");
+      else {
+
+        var data = 'id=' + $('#jardunaldia').val();
+
+        //$(location).attr('href', '/jardunaldikopartiduakpartaide/'+$('#jardunaldia').val());
+
+        if ($('#admin').val()){
+          $(location).attr('href', '/admin/ekitaldiak/'+$('#denboraldia').val()+'/'+$('#jardunaldia').val());
+        }
+        else{
+          $(location).attr('href', '/ekitaldiak/'+$('#denboraldia').val()+'/'+$('#jardunaldia').val());
+        }
+      }
+    });
+
+    $('#denboraldia').change(function(){
+
+        var data = 'id=' + $('#denboraldia').val();
+
+        if ($('#admin').val()){
+          $(location).attr('href', '/admin/partiduakmailazka/'+$('#denboraldia').val()+'/'+$('#jardunaldia').val());
+        }
+        else{
+          $(location).attr('href', '/ekitaldiak/'+$('#denboraldia').val()+'/'+$('#jardunaldia').val());
+        }     
+    });
+
+    var taldea = $('#taldea').val();  
+
+    $('#taldea').change(function(){
+
+        var data = 'id=' + $('#taldea').val();
+        
+        if ($('#admin').val()){
+          $(location).attr('href', '/admin/ekitaldiaktaldeka/'+$('#taldea').val());
+        }
+        else{
+          $(location).attr('href', '/ekitaldiaktaldeka/'+$('#taldea').val());
+        }
+     
+    });
+
+  });
+            
+</script> 
+        
+{{/section}}

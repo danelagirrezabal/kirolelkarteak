@@ -1,0 +1,111 @@
+{{> menuadmin}}
+
+      <div class="jumbotron">
+        <h2>Ekitaldiak aldatu</h2>
+      </div>
+
+<div class="formContainer col-sm-offset-1">
+{{#each data}}
+    <form class="form-horizontal newsletterForm" role="form" action="/admin/ekitaldiakaldatu/{{idEkitaldiak}}" method="POST">
+    <input type="hidden" name="_csrf" value="{{_csrfToken}}">
+        </br>
+        
+    
+        <div class="form-group">
+            <label for="idTaldeakPartidu" class="col-sm-2 control-label">Ekitaldia</label>
+
+                {{izenaTalde}} - {{izenaMaila}} - {{izenaLeku}} - {{etxekoaPartidu}} - {{kanpokoaPartidu}} 
+                    {{txapelketaPartidu}} - {{dataPartidu}} - {{orduaPartidu }}
+        </div>
+
+
+    <input type="hidden" name="_csrf" value="{{_csrfToken}}">
+        </br>
+        <input type="hidden" name="idPartiduak" id="admin" value="{{idPartiduak}}">
+        <input type="hidden" name="idElkarteak" id="admin" value="{{idElkarteakPartidu}}">
+       
+        <div class="form-group">
+            <label for="bazkideeguna" class="col-sm-2 control-label">Bazkideak noiz arte</label>
+            <div class="col-sm-4">
+                <textarea name="bazkideeguna" rows="1" cols="12" class="form-control" required>{{bazkideeguna}}</textarea>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="bazkideordua" class="col-sm-2 control-label">Bazkideak ordua</label>
+            <div class="col-sm-2">
+                <textarea name="bazkideordua" rows="1" cols="10" class="form-control"> {{bazkideordua}}</textarea>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="noizarteeguna" class="col-sm-2 control-label">Noiz arte Eguna</label>
+            <div class="col-sm-4">
+                <textarea name="noizarteeguna" rows="1" cols="12" class="form-control" required>{{noizarteeguna}}</textarea>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="noizarteordua" class="col-sm-2 control-label">Noiz arte ordua</label>
+            <div class="col-sm-2">
+                <textarea name="noizarteordua" rows="1" cols="10" class="form-control"> {{noizarteordua}}</textarea>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="zenbatentzat" class="col-sm-2 control-label">Zenbatentzat</label>
+            <div class="col-sm-1">
+                <input type="num" class="form-control" required id="zenbatentzat" autofocus name="zenbatentzat" value={{zenbatentzat}}>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="bakoitzak" class="col-sm-2 control-label">Bakoitzak</label>
+            <div class="col-sm-1">
+                <input type="num" class="form-control" required id="bakoitzak" autofocus name="bakoitzak" value={{bakoitzak}}>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="eserlekuak" class="col-sm-2 control-label">Eserlekuak</label>
+            <div class="col-sm-1">
+                <input type="num" class="form-control" required id="eserlekuak" autofocus name="eserlekuak" value={{eserlekuak}}>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="harmailak" class="col-sm-2 control-label">Harmailak mapa</label>
+            <div class="col-sm-6">
+                <textarea name="harmailak" rows="1" cols="100" class="form-control">{{harmailak}}</textarea>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="komentarioa" class="col-sm-2 control-label">Komentarioa</label>
+            <div class="col-sm-4">
+                <textarea name="komentarioa" rows="4" cols="40" class="form-control"> {{komentarioa}}</textarea>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-2">
+                <button type="submit" class="btn btn-default">Ekitaldia ALDATU</button>
+            </div>
+            <div class="col-sm-2">
+                <button type="submit" formaction="/admin/ekitaldiaksortu" class="btn btn-default">ADI - Ekitaldi BERRIA</button>
+            </div>
+        </div>
+    </form>
+    {{/each}}
+</div>
+
+      </div>
+
+<script>
+
+Handlebars.registerHelper('mailaBerdina',function(kategoria, idmaila){
+  return kategoria  == idmaila;
+});
+
+
+</script>

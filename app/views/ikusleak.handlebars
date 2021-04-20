@@ -1,0 +1,89 @@
+
+  {{#each burua}}
+   <div class="jumbotron">
+        <h2>Ikusleak: {{etxekoaPartidu}} - {{kanpokoaPartidu}}</h2>
+             
+        <p>  {{izenaLeku}} - {{dataPartidu}} - {{orduaPartidu }} - {{txapelketaPartidu}} - {{izenaMaila}}</p> 
+
+        <p>  {{komentarioa}}</p>         
+   </div>
+
+  {{/each}}
+
+      <div class="row marketing">
+        <div class="col-lg-12">
+        <table class="table  table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Sarrera1</th>
+                    <th>Bazkide</th>
+                    <th>NAN-Zkia</th>
+                    <th>izenabizenak1</th>
+
+                    <th>Sarrera2</th>
+                    <th>Bazkide2</th>
+                    <th>NAN-Zkia2</th>
+                    <th>izenabizenak2</th>
+                </tr>  
+            </thead>        
+            <tbody>
+              {{#each data}}
+<!--
+                  <tr class="active">
+                    <td>{{ilara}}-{{eserlekua1}} * {{gunea}}</td>
+                    <td>{{bazkidezenbakia}}</td> 
+                    <td>{{nanzenbakia}}</td>   
+                    <td>{{izenabizenak1}}</td>     
+                    <td>{{telefonoa}}</td> 
+
+                    <td>{{ilara}}-{{eserlekua2}} + {{bazkidezenbakia2}} - {{jaiotzedata2}} </td>  
+                    <td>{{ilara}}-{{eserlekua3}} + {{bazkidezenbakia3}} - {{jaiotzedata3}}</td>
+                    <td>{{ilara}}-{{eserlekua4}} + {{bazkidezenbakia4}} - {{jaiotzedata4}} </td>
+
+                    <td>{{sarrera2}}</td>  
+                    <td>{{sarrera3}}</td>
+                    <td>{{sarrera4}}</td>  
+
+                    <td>{{balidatuta}}</td>   
+                </tr>
+-->
+
+            <tr class="active" >
+
+                    <td>{{ilara}}-{{eserlekua1}} : {{gunea}}</td>
+                    <td>{{bazkidezenbakia}}</td>
+                    <td>{{nanzenbakia}}</td>
+                    <td>{{izenabizenak1}}</td>   
+       
+        
+                    <td>{{sarrera2}}</td>
+                    <td>{{bazkidezenbakia2}}</td>
+                    <td>{{nanzenbakia2}}</td>  
+                    <td>{{izenabizenak2}}</td>
+              
+              </tr>
+
+              <tr class="active" >
+                    <td></td>
+                    <td></td>
+                    <td></td>   
+                    <td></td>
+
+                    <td>{{sarrera3}}</td>
+                    <td>{{bazkidezenbakia3}}</td>
+                    <td>{{nanzenbakia3}}</td>   
+                    <td>{{izenabizenak3}}</td>
+<!--
+                    <td>{{sarrera4}}</td>
+                    <td>{{bazkidezenbakia4}}</td>
+                    <td>{{nanzenbakia4}}</td>   
+                    <td>{{izenabizenak4}}</td>
+-->
+              </tr>
+
+              {{/each}}
+            </tbody>
+          </table>
+
+        </div>
+      </div>
