@@ -1,9 +1,11 @@
 var bcrypt = require('bcrypt-nodejs');
 
 var VALID_EMAIL_REGEX = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$/;
-var VALID_TEL_REGEX = /^[0-9-()+]{3,20}/;
+var VALID_TEL_REGEX = /^[0-9-()+]{9,20}/;
 var VALID_DNI_REGEX = /^\d{8}[a-zA-Z]{1}$/;
 
+var ilarak = [], burua = [];
+var mapa;
 
 exports.denboraldiakbilatu = function(req, res){
   var id = req.session.idKirolElkarteak;
@@ -1901,6 +1903,1411 @@ exports.partiduemaitzakgordeadmin = function(req,res){
                 res.redirect('/partiduemaitzak/'+ rowsp[0].idDenboraldiaPartidu + '/' + rowsp[0].jardunaldiDataPartidu);
          
            });
+        });
+    
+    });
+};
+
+exports.ekitaldiakikusi = function(req, res){
+  var id = req.session.idKirolElkarteak;
+  var jardunaldia = req.params.jardunaldia;
+  var idDenboraldia = req.params.idDenboraldia;
+  req.session.jardunaldia = jardunaldia;
+  req.session.idDenboraldia = idDenboraldia;
+  var admin=(req.path.slice(0,7) == "/admin/");
+  var jardunaldiaIkusgai;
+  req.getConnection(function(err,connection){
+       
+//     connection.query('SELECT *,DATE_FORMAT(dataPartidu,"%Y/%m/%d") AS dataPartidu FROM partiduak, mailak, taldeak, lekuak where idLekuak=idLekuakPartidu and idTaldeakPartidu=idTaldeak and idMailak=idMailaTalde and idElkarteakPartidu = ? and idDenboraldiaPartidu=? and jardunaldiDataPartidu >= ? and jardunaldiDataPartidu <= ? order by zenbakiMaila, izenaTalde asc, dataPartidu, orduaPartidu',[id,idDenboraldia, jardunaldia, jardunaldia],function(err,rows) {
+     connection.query('SELECT *,DATE_FORMAT(dataPartidu,"%Y/%m/%d") AS dataPartidu FROM ekitaldiak, partiduak, mailak, taldeak, lekuak where idPartiduak=idPartiduakEkitaldiak and idLekuak=idLekuakPartidu and idTaldeakPartidu=idTaldeak and idMailak=idMailaTalde and idElkarteakPartidu = ? and idDenboraldiaPartidu = ? and jardunaldiDataPartidu >= ? and jardunaldiDataPartidu <= ? order by dataPartidu desc',[id, idDenboraldia, jardunaldia, jardunaldia],function(err,rows) {
+            
+        if(err)
+           console.log("Error Selecting : %s ",err );
+
+        connection.query('SELECT DISTINCT DATE_FORMAT(jardunaldiDataPartidu,"%Y-%m-%d") AS jardunaldiDataPartidu FROM partiduak where idElkarteakPartidu = ? and idDenboraldiaPartidu = ? order by jardunaldiDataPartidu desc',[id, idDenboraldia],function(err,rowsd) {
+          
+          if(err)
+           console.log("Error Selecting : %s ",err );
+
+              for(var i in rowsd ){
+                if(req.session.jardunaldia == rowsd[i].jardunaldiDataPartidu){
+                    jardunaldiDataPartidu = rowsd[i].jardunaldiDataPartidu;
+                    rowsd[i].aukeratua = true;
+                  }
+                  else
+                    rowsd[i].aukeratua = false;
+                }
+
+            connection.query('SELECT idDenboraldia, deskribapenaDenb, jardunaldiaIkusgai FROM denboraldiak where idElkarteakDenb = ? order by deskribapenaDenb desc',[id],function(err,rowsdenb) {
+          
+             if(err)
+                console.log("Error Selecting : %s ",err );
+
+             for(var i in rowsdenb ){
+                if(req.session.idDenboraldia == rowsdenb[i].idDenboraldia){
+                    idDenboraldia = rowsdenb[i].idDenboraldia;
+                    deskribapenaDenb = rowsdenb[i].deskribapenaDenb;
+                    jardunaldiaIkusgai = rowsdenb[i].jardunaldiaIkusgai;
+                    rowsdenb[i].aukeratua = true;
+                  }
+                  else
+                    rowsdenb[i].aukeratua = false;
+              }
+
+             connection.query('SELECT * FROM taldeak, mailak  where idMailak=idMailaTalde and idElkarteakTalde = ? and idDenboraldiaTalde = ? order by zenbakiMaila desc, izenaTalde asc',[id, idDenboraldia],function(err,rowstalde) {
+          
+              if(err)
+                 console.log("Error Selecting : %s ",err );
+
+/*              for(var i in rowstalde ){
+                if(idTaldeak == rowstalde[i].idTaldeak){
+                    idTaldeak = rowstalde[i].idTaldeak;
+                    rowstalde[i].aukeratua = true;
+                  }
+                  else
+                    rowstalde[i].aukeratua = false;
+                }
+*/
+              for (var i in rows){
+                rows[i].admin = admin;
+                if (rows[i].jardunaldiDataPartidu <= jardunaldiaIkusgai  || admin){
+                    rows[i].jardunaldiaIkusgai = true;
+                    rows[i].egunaTexto = egunatextobihurtu(rows[i].dataPartidu);
+                }else{
+                    rows[i].jardunaldiaIkusgai = false;
+                }
+              }
+
+
+
+          res.render('ekitaldiak.handlebars',{title: "Ekitaldiak", data:rows, denboraldiak:rowsdenb, jardunaldiak:rowsd, taldeak:rowstalde, menuadmin:admin, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia,atalak: req.session.atalak, partaidea: req.session.partaidea, idPartaideak:req.session.idPartaideak, arduraduna:req.session.arduraduna});
+        });
+             });
+          });                  
+      });   
+  });
+};
+
+exports.ekitaldiakbilatu = function(req, res){
+  var id = req.session.idKirolElkarteak;
+  var idDenboraldia = req.session.idDenboraldia;
+  req.session.admin = 0;
+  req.session.idTaldeak = 0;
+  req.getConnection(function(err,connection){
+       
+     connection.query('SELECT *,DATE_FORMAT(dataPartidu,"%Y/%m/%d") AS dataPartidu FROM ekitaldiak, partiduak, mailak, taldeak, lekuak where idPartiduak=idPartiduakEkitaldiak and idLekuak=idLekuakPartidu and idTaldeakPartidu=idTaldeak and idMailak=idMailaTalde and idElkarteakPartidu = ? and idDenboraldiaPartidu = ? order by dataPartidu desc',[id, idDenboraldia],function(err,rows) {
+            
+        if(err)
+           console.log("Error Selecting : %s ",err );
+
+        connection.query('SELECT DISTINCT DATE_FORMAT(jardunaldiDataPartidu,"%Y-%m-%d") AS jardunaldiDataPartidu FROM partiduak where idElkarteakPartidu = ? and idDenboraldiaPartidu = ? order by jardunaldiDataPartidu desc',[id, idDenboraldia],function(err,rowsd) {
+          
+          if(err)
+           console.log("Error Selecting : %s ",err );
+
+          for (var i in rows){
+                rows[i].egunaTexto = egunatextobihurtu(rows[i].dataPartidu);
+          }
+
+          res.render('ekitaldiakadmin.handlebars',{title: "Partiduak", data:rows, jardunaldiak:rowsd,jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia,partaidea: req.session.partaidea});
+        });                   
+      });   
+  });
+};
+
+exports.jardunaldikoekitaldiakbilatu = function(req, res){
+  var id = req.session.idKirolElkarteak;
+  var idDenboraldia = req.session.idDenboraldia;
+  var jardunaldia = req.params.jardunaldia;
+  console.log("Jardunaldia:" + jardunaldia);
+  req.getConnection(function(err,connection){
+//     connection.query('SELECT *,DATE_FORMAT(dataPartidu,"%Y/%m/%d") AS dataPartidu FROM partiduak, mailak, taldeak, lekuak where idLekuak=idLekuakPartidu and idTaldeakPartidu=idTaldeak and idMailak=idMailaTalde and idElkarteakPartidu = ? and jardunaldiDataPartidu >= ? and jardunaldiDataPartidu <= ? order by dataPartidu desc ',[id, jardunaldia, jardunaldia],function(err,rows) {
+      
+     connection.query('SELECT *,DATE_FORMAT(dataPartidu,"%Y/%m/%d") AS dataPartidu FROM ekitaldiak, partiduak, mailak, taldeak, lekuak where idPartiduak=idPartiduakEkitaldiak and idLekuak=idLekuakPartidu and idTaldeakPartidu=idTaldeak and idMailak=idMailaTalde and idElkarteakPartidu = ? and jardunaldiDataPartidu >= ? and jardunaldiDataPartidu <= ? order by herriaLeku, dataPartidu, zenbakiLeku, orduaPartidu, zenbakiMaila, izenaTalde asc',[id, jardunaldia, jardunaldia],function(err,rows) {
+            
+        if(err)
+           console.log("Error Selecting : %s ",err );
+
+        connection.query('SELECT DISTINCT DATE_FORMAT(jardunaldiDataPartidu,"%Y-%m-%d") AS jardunaldiDataPartidu FROM partiduak where idElkarteakPartidu = ? and idDenboraldiaPartidu = ? order by jardunaldiDataPartidu desc',[id, idDenboraldia],function(err,rowsd) {
+          
+          if(err)
+           console.log("Error Selecting : %s ",err );
+
+          for (var i in rows){
+                rows[i].egunaTexto = egunatextobihurtu(rows[i].dataPartidu);
+          }
+
+          res.render('ekitaldiakadmin.handlebars',{title: "Ekitaldiak", data:rows, jardunaldiak:rowsd,jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea: req.session.partaidea});
+        });                   
+      });   
+  });
+};
+
+exports.ekitaldiakpartidu = function(req, res){
+
+  var id = req.session.idKirolElkarteak;
+  var idDenboraldia = req.session.idDenboraldia;
+  var idPartiduak = req.params.idPartiduak;
+    
+  req.getConnection(function(err,connection){
+
+    connection.query('SELECT * FROM ekitaldiak WHERE idElkarteakEkitaldiak = ? and idPartiduakEkitaldiak = ?',[id,idPartiduak],function(err,rowse)
+    {
+      if(err)
+            console.log("Error Selecting : %s ",err );
+      if (rowse.length != 0)
+          res.redirect('/admin/ekitaldiakeditatu/'+ rowse[0].idEkitaldiak);
+      else 
+       {    
+         connection.query('SELECT *,DATE_FORMAT(dataPartidu,"%Y/%m/%d") AS dataPartidu,DATE_FORMAT(jardunaldiDataPartidu,"%Y/%m/%d") AS jardunaldiDataPartidu FROM partiduak, lekuak, taldeak, mailak WHERE idLekuakPartidu=idLekuak and idTaldeak=idTaldeakPartidu and idMailak=idMailaTalde and idElkarteakPartidu = ? and idPartiduak = ?',[id,idPartiduak],function(err,rows)
+         {
+            if(err)
+                console.log("Error Selecting : %s ",err );
+
+            res.render('ekitaldiaksortu.handlebars', {title : 'KirolElkarteak-Ekitaldiak gehitu', data:rows,jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia,  atalak: req.session.atalak, partaidea: req.session.partaidea, idPartaideak:req.session.idPartaideak, arduraduna:req.session.arduraduna});
+           
+          });
+       } 
+    });
+  }); 
+};
+
+exports.ekitaldiakgehitu = function(req, res){
+  var id = req.session.idKirolElkarteak;
+  var idDenboraldia = req.session.idDenboraldia;
+  req.getConnection(function(err,connection){
+       
+     connection.query('SELECT * FROM taldeak,mailak where idMailak=idMailaTalde and idElkarteakTalde = ? and idDenboraldiaTalde = ? order by idMailaTalde asc',[id, idDenboraldia],function(err,rowst) {
+            
+        if(err)
+           console.log("Error Selecting : %s ",err );
+
+        connection.query('SELECT * FROM lekuak where idElkarteakLeku = ? order by zenbakiLeku asc',[id],function(err,rowsl) {
+            if(err)
+            console.log("Error Selecting : %s ",err );
+
+            res.render('ekitaldiaksortu.handlebars', {title : 'KirolElkarteak-Ekitaldiak gehitu', taldeak:rowst, lekuak:rowsl,jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia,  atalak: req.session.atalak, partaidea: req.session.partaidea, idPartaideak:req.session.idPartaideak, arduraduna:req.session.arduraduna});
+        }); 
+      });  
+           
+  });
+};
+
+exports.ekitaldiaksortu = function(req,res){
+    
+    var input = JSON.parse(JSON.stringify(req.body));
+    var id = req.session.idKirolElkarteak;
+    var idDenboraldia = req.session.idDenboraldia;
+    var now= new Date();
+
+    var hosta = req.hostname;
+    if (process.env.NODE_ENV != 'production'){ 
+          hosta += ":"+ (process.env.PORT || 3000);
+    }
+
+    req.getConnection(function (err, connection) {
+        
+        var data = {
+            
+            idElkarteakEkitaldiak    : id,
+            idPartiduakEkitaldiak   : input.idPartiduak,
+            bazkideeguna: input.bazkideeguna,
+            bazkideordua : input.bazkideordua,
+            noizarteeguna: input.noizarteeguna,
+            noizarteordua: input.noizarteordua,
+            zenbatentzat: input.zenbatentzat,
+            bakoitzak: input.bakoitzak,
+            eserlekuak: input.eserlekuak,
+            harmailak: input.harmailak,
+            komentarioa: input.komentarioa
+        };
+        
+  
+        var query = connection.query("INSERT INTO ekitaldiak set ? ",data, function(err, rows)
+        {
+  
+          if (err)
+              console.log("Error inserting : %s ",err );
+         
+         if (req.session.arduraduna){
+            res.redirect('/ekitaldiak');
+         }else{
+            res.redirect('/admin/ekitaldiak');
+         }
+        }); 
+    
+    });
+};
+
+exports.ekitaldiakezabatu = function(req,res){
+
+     var id = req.session.idKirolElkarteak;
+     var idEkitaldiak = req.params.idEkitaldiak;
+    
+     req.getConnection(function (err, connection) {
+        
+        connection.query("DELETE FROM ekitaldiak WHERE idElkarteakEkitaldiak = ? and idEkitaldiak = ?",[id,idEkitaldiak], function(err, rows)
+        {
+            
+             if(err)
+                 console.log("Error deleting : %s ",err );
+
+             if (req.session.admin){
+                res.redirect('/admin/ekitaldiaktaldeka/'+ req.session.idTaldeak);
+             }else{
+               res.redirect('/admin/ekitaldiak');
+             }  
+        });
+        
+     });
+};
+
+exports.ekitaldiakeditatu = function(req, res){
+
+  var id = req.session.idKirolElkarteak;
+  var idDenboraldia = req.session.idDenboraldia;
+  var idEkitaldiak = req.params.idEkitaldiak;
+    
+  req.getConnection(function(err,connection){
+       
+//        connection.query('SELECT *,DATE_FORMAT(dataPartidu,"%Y/%m/%d") AS dataPartidu,DATE_FORMAT(jardunaldiDataPartidu,"%Y/%m/%d") AS jardunaldiDataPartidu FROM partiduak WHERE idElkarteakPartidu = ? and idPartiduak = ?',[id,idPartiduak],function(err,rows)
+     connection.query('SELECT *,DATE_FORMAT(dataPartidu,"%Y/%m/%d") AS dataPartidu FROM ekitaldiak, partiduak, mailak, taldeak, lekuak where idPartiduak=idPartiduakEkitaldiak and idLekuak=idLekuakPartidu and idTaldeakPartidu=idTaldeak and idMailak=idMailaTalde and idElkarteakEkitaldiak = ? and idEkitaldiak = ? order by dataPartidu desc',[id, idEkitaldiak],function(err,rows) 
+        {
+            if(err)
+                console.log("Error Selecting : %s ",err );
+
+            res.render('ekitaldiakeditatu.handlebars', {page_title:"Ekitaldiak aldatu",data:rows, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea: req.session.partaidea});
+              
+         });
+   }); 
+};
+
+exports.ekitaldiakaldatu = function(req,res){
+    
+    var input = JSON.parse(JSON.stringify(req.body));
+    var id = req.session.idKirolElkarteak;
+    var idEkitaldiak = req.params.idEkitaldiak;
+    
+    req.getConnection(function (err, connection) {
+        
+        var data = {
+            
+            bazkideeguna: input.bazkideeguna,
+            bazkideordua : input.bazkideordua,
+            noizarteeguna: input.noizarteeguna,
+            noizarteordua: input.noizarteordua,
+            zenbatentzat: input.zenbatentzat,
+            bakoitzak: input.bakoitzak,
+            eserlekuak: input.eserlekuak,
+            harmailak: input.harmailak,
+            komentarioa: input.komentarioa
+        };
+        
+        connection.query("UPDATE ekitaldiak set ? WHERE idElkarteakEkitaldiak = ? and idEkitaldiak = ? ",[data,id,idEkitaldiak], function(err, rows)
+        {
+  
+          if (err)
+              console.log("Error Updating : %s ",err );
+
+          if (req.session.idTaldeak){
+                res.redirect('/admin/ekitaldiaktaldeka/'+ req.session.idTaldeak);
+          }
+          else
+           if (req.session.admin){ //Administratzaile moduan badago ordutegiak ikustean, editatu ondoren partidu ordutegira bidali
+               res.redirect('/admin/partiduordutegiak/'+ req.session.idDenboraldia + '/' + req.session.jardunaldia);
+           }
+           else
+            if (req.session.jardunaldia){ 
+//                res.redirect('/admin/jardunaldikoekitaldiak/' + req.session.jardunaldia);
+                res.redirect('/admin/ekitaldiak');
+            }
+            else //Partiduak ataletik editatzean partiduak, partiduak orrira bidali 
+                res.redirect('/admin/ekitaldiak');
+        });
+    
+    });
+};
+
+exports.harmailakikusi = function(req, res){
+  var id = req.session.idKirolElkarteak;
+  var idDenboraldia = req.session.idDenboraldia;
+  var idEkitaldiak = req.params.idEkitaldiak;
+  var admin=(req.path.slice(0,7) == "/admin/");
+  req.session.admin = 0;
+  req.session.idTaldeak = 0;
+//  var mapa;
+//  var ilarak = [], burua = []; //multzoak
+  var ilara = {}; //multzoa
+  var eserlekuak = [];
+  var fila, eserleku, kolore, f = 0, h = 0, aukerabaiez, iilara, jeserleku;
+  var izenemate1 = 0, izenemate2 = 0, izenemate3 = 0, izenemate4 = 0, izenematea = {}, izenemateak = [];
+
+  var now= new Date();   // now : UTC +2ordu heroku config:add TZ="Europe/Madrid" 
+/*       
+    if (process.env.NODE_ENV == 'production'){
+      now.setUTCHours(now.getHours());
+      now.setUTCMinutes(now.getMinutes()); 
+    }
+*/    
+  var tope = 1, zenbat = 0;
+  var aditestua = "Aukeratu ilara eta eserleku berdeak harmailan.", bazkidezenbakiabai = "", ertzakEz = 0;
+  var vHasiera,aHasiera,aHasieraOrdua,hasiera,vBukaera,aBukaera,bukaera;
+
+
+  ilarak = [];
+  burua = []; 
+
+//debugger;
+
+  req.getConnection(function(err,connection){
+     
+     connection.query('SELECT *,DATE_FORMAT(dataPartidu,"%Y/%m/%d") AS dataPartidu FROM ekitaldiak, partiduak, mailak, taldeak, lekuak where idPartiduak=idPartiduakEkitaldiak and idLekuak=idLekuakPartidu and idTaldeakPartidu=idTaldeak and idMailak=idMailaTalde and idElkarteakPartidu = ? and idEkitaldiak = ? order by dataPartidu desc',[id, idEkitaldiak],function(err,rows) {
+      if(err)
+           console.log("Error Selecting : %s ",err );
+//        console.log ("rows : " +JSON.stringify(rows));
+      if(rows.length != 0) {
+
+        if (rows[0].bakoitzak != 0)
+        {
+            izenemate1 = 1;
+            if (rows[0].bakoitzak >= 2)
+                       izenemate2 = 1;
+            if (rows[0].bakoitzak >= 3)
+                       izenemate3 = 1;
+            if (rows[0].bakoitzak >= 4)
+                       izenemate4 = 1;
+        }
+
+          vHasiera = new Date();
+          hasiera = rows[0].bazkideeguna;
+          aHasiera = hasiera.split("-");
+          vHasiera.setDate(aHasiera[2]);
+          vHasiera.setMonth(aHasiera[1] - 1);
+          vHasiera.setYear(aHasiera[0]);
+          aHasieraOrdua = rows[0].bazkideordua.split(":");
+          vHasiera.setHours(aHasieraOrdua[0],aHasieraOrdua[1],0);
+
+//          vHasiera.set
+          vBukaera = new Date();
+          bukaera = rows[0].noizarteeguna;
+          aBukaera = bukaera.split("-");
+          vBukaera.setDate(aBukaera[2]);
+          vBukaera.setMonth(aBukaera[1] - 1);
+          vBukaera.setYear(aBukaera[0]);  
+          aBukaeraOrdua = rows[0].noizarteordua.split(":");
+          vBukaera.setHours(aBukaeraOrdua[0],aBukaeraOrdua[1],0);
+
+//        console.log ("egunak : " + vHasiera +" " + vBukaera +" " + now);
+
+        if(vHasiera > now) {
+          aditestua = "Bazkideak apuntatzeko epea. Aukeratu ilara eta eserleku berdeak harmailan. ";
+          bazkidezenbakiabai = 'required';
+          ertzakEz = 1;
+        }
+
+        else if(vBukaera < now) {
+          if(req.xhr) return res.json({ error: 'Invalid bukaera' });
+            res.locals.flash = {
+            type: 'danger',
+            intro: 'Adi!',
+            message: rows[0].noizarteeguna + ' - ' + rows[0].noizarteordua +  ' bukatu zen izen-ematea.',
+          };
+          aditestua = "Apuntatzeko epea bukatuta!";
+          izenemate1 = 0;
+        }
+/*
+        if (rows[0].harmailak)
+            mapa = mapasortu(rows[0].harmailak);
+        else
+            mapa = [];
+*/
+        mapa = mapasortu(rows[0].harmailak, ertzakEz);
+
+        if (rows[0].eserlekuak != 0)
+        {  
+            mapa = mapaegokitu(mapa, rows[0].eserlekuak);
+        }
+
+        connection.query('SELECT * FROM ikusleak WHERE idElkarteakIkusle = ? and idEkitaldiakIkusle = ?',[id,idEkitaldiak],function(err,rowsi)
+        {
+          if(err)
+              console.log("Error Selecting : %s ",err );
+//          console.log ("rowsi : " +JSON.stringify(rowsi));
+
+          for (var k in rowsi){
+//                      console.log ("rowsi : " + k +"-"+JSON.stringify(rowsi[k]);
+//                rows[i].admin = admin;
+            iilara = parseInt(rowsi[k].ilara);
+            jeserleku = parseInt(rowsi[k].eserlekua1);
+            if (iilara != 0 && jeserleku != 0)
+            {
+                if (rowsi[k].balidatuta == 0)
+                         aukerabaiez = 1000;      // balidatu gabe
+                else  
+                         aukerabaiez = 2000;      // balidatuta
+
+                if (mapa[iilara][jeserleku] >= 1 && mapa[iilara][jeserleku] <= 999)   // eserleku hautagai
+                     mapa[iilara][jeserleku] += aukerabaiez;                  // eserleku aukerabaiez
+                else if (admin)
+                   aditestua = "Ilara-eserleku1 gaizki: "+ iilara +"-"+jeserleku +" : "+rowsi[k].izenabizenak1;
+
+                if (rowsi[k].eserlekua2 != 0)                  // 2.eserleku
+                {
+                    jeserleku = parseInt(rowsi[k].eserlekua2);
+                    if (mapa[iilara][jeserleku] >= 1 && mapa[iilara][jeserleku] <= 999)   // eserleku hautagai
+                         mapa[iilara][jeserleku] += aukerabaiez;
+                    else if (admin)
+                          aditestua = "Ilara-eserleku2 gaizki: "+ iilara +"-"+jeserleku +" : "+rowsi[k].izenabizenak2;
+                }
+                if (rowsi[k].eserlekua3 != 0)                  // 3.eserleku
+                {
+                    jeserleku = parseInt(rowsi[k].eserlekua3);
+                    if (mapa[iilara][jeserleku] >= 1 && mapa[iilara][jeserleku] <= 999)   // eserleku hautagai
+                         mapa[iilara][jeserleku] += aukerabaiez;
+                    else if (admin)
+                          aditestua = "Ilara-eserleku3 gaizki: "+ iilara +"-"+jeserleku +" : "+rowsi[k].izenabizenak3;
+                }
+                if (rowsi[k].eserlekua4 != 0)                  // 4.eserleku
+                {
+                    jeserleku = parseInt(rowsi[k].eserlekua4);
+                    if (mapa[iilara][jeserleku] >= 1 && mapa[iilara][jeserleku] <= 999)   // eserleku hautagai
+                         mapa[iilara][jeserleku] += aukerabaiez;
+                    else if (admin)
+                          aditestua = "Ilara-eserleku4 gaizki: "+ iilara +"-"+jeserleku +" : "+rowsi[k].izenabizenak4;
+                }
+            }
+          }
+
+//  console.log ("Mapa : " + mapa);
+
+//          for (var i in mapa){                        // Behetik gora
+          for (var i = 8; i >= 0; i--) {                  // Goitik behera 
+             for (var j = 0; j < 77; j++) {
+                aukeragai = 0;
+                if (mapa[i][j] == 0)
+                {
+                     if (i == 0)
+                     {   eserleku = "#";
+                         kolore = "#FFFFFF";     // txuriz   (0,0)
+                     }
+                     else
+                     {   eserleku = "X";
+                         kolore = "#FF0000";     // gorriz   ezin hautatuak
+                     }
+                }
+                else
+                  if (mapa[i][j] == "_" || mapa[i][j] == "-")   // aldagela sarrera edo eskailera
+                  {
+                      eserleku = mapa[i][j];    
+                      kolore = "#FFFFFF";         // txuriz 
+                  }
+                  else  
+                  {
+                     if (mapa[i][j] > 1000)   // eserleku aukeratuak
+                     {
+                         eserleku = "_";
+                         zenbat += 1;
+                     }      
+                     else
+                         eserleku = mapa[i][j];
+                     if (i == 0 || j == 0)
+                         kolore = "#FF00FF";      // burua   morez
+                     else 
+                       if (mapa[i][j] > 2000)   // eserleku balidatuak
+                             kolore = "#3364FF";     // urdinez    ezin hautatu
+                       else 
+                         if (mapa[i][j] > 1000)   // eserleku balidatu gabeak
+                             kolore = "yellow";     // laranjaz    erdi hautatuak  "#FFBB33"
+                         else 
+                         {
+                             kolore = "#00F000";     // berdez    hautatzeko
+                             aukeragai = 1;
+                             tope = 0;                // tokia dago
+                         }
+                  }
+                
+//             if (i == 1)
+//                  console.log ("eserleku: " + i + " - " + j + " - "+ eserleku);
+
+                eserlekuak[h] = { 
+                  ilara : i,
+                  eserleku : eserleku,
+                  kolore : kolore, 
+                  aukeragai : aukeragai,
+                  admin: admin
+                };
+
+                h++;
+
+                if (j == 10 || j == 29 || j == 48 || j == 66)   // eskailerak sartu
+                {
+                  eserlekuak[h] = { 
+                    ilara : i,
+                    eserleku : "-",
+                    kolore : "#FFFFFF", 
+                    aukeragai : aukeragai,
+                    admin: admin
+                  };
+                  h++;
+                  eserlekuak[h] = eserlekuak[h-1] //  bakoitzean bi
+                  h++;
+                }
+
+             }
+//                          console.log ("Eserlekuak : " + i + " - "+JSON.stringify(eserlekuak));
+             ilara.eserlekuak = eserlekuak;
+
+             if (i == 0)
+                burua[i] = ilara;
+             else
+             { 
+//                ilarak[i] = ilara;       // Behetik gora
+                ilarak[f] = ilara;          // Goitik behera
+                f++;
+             }
+             eserlekuak = [];
+             ilara = {};
+             h = 0;
+//            console.log ("Ilara : " + i + " - "+JSON.stringify(ilara));
+          }
+//          console.log ("zenbat : " + zenbat);
+          if(rows[0].zenbatentzat <= zenbat)  // ekitaldiko topea pasata
+               tope = 1;
+          if(tope == 1) {
+           if(req.xhr) return res.json({ error: 'Invalid beteta' });
+              res.locals.flash = {
+                 type: 'danger',
+                 intro: 'Adi!',
+                 message: 'Ikusle kopurua beteta. Itxaron zerrendan geratu nahi baduzu, ondorengo datuak bete mesedez.',
+              };
+              aditestua = "Ikusle kopurua beteta! Itxaron zerrendan geratu nahi baduzu, ondorengo datuak bete mesedez.";
+          }
+          rows[0].izenemate1 = izenemate1;
+          rows[0].izenemate2 = izenemate2;
+          rows[0].izenemate3 = izenemate3; 
+          rows[0].izenemate4 = izenemate4;
+          rows[0].egunaTexto = egunatextobihurtu(rows[0].dataPartidu);
+          rows[0].bazkidezenbakiabai = bazkidezenbakiabai;
+          rows[0].admin = admin;
+          rows[0].tope = tope;
+          rows[0].aditestua = aditestua;
+
+//                  console.log ("Ilarak : " +JSON.stringify(ilarak));
+   //    }
+//          res.render('harmailak.handlebars',{title: "Harmailak", mapa:mapa, data:rows, burua:burua, ilarak:ilarak, izenemateak:izenemateak, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia,partaidea: req.session.partaidea, menuadmin: admin});
+          res.render('harmailak.handlebars',{title: "Harmailak", data:rows, burua:burua, ilarak:ilarak, izenemateak:izenemateak, tope: tope, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia,partaidea: req.session.partaidea, menuadmin: admin});
+
+        });                   
+     }
+   });   
+  });
+};
+
+function mapasortu (harmaila, ertzakEz){
+
+  var mapa= new Array(9);
+  var mapai;
+  for (var i = 0; i < 9; i++) {
+      mapa[i] = new Array(85);
+  }
+  for (var i in mapa){
+    eserlekuzenbakia = 0;
+    for (var j = 0; j < 85; j++) {
+//      console.log ("j : " + j);
+      if (j == 0)
+        mapa[i][j] = i;
+      else
+//        if (((i>=1 && i<=2) || (i>=5 && i<=8)) && (j>=35 && j<=40))  // aldagela sarrera  // Behetik gora
+        if (((i>=7 && i<=8) || (i>=1 && i<=4)) && (j>=35 && j<=40))  // aldagela sarrera  // Goitik behera
+            mapa[i][j] = "_";
+        else
+          if (ertzakEz == 1 && i !=0 && (j < 11 || j > 66))  // ertzakEz erdikoa bete arte
+               mapa[i][j] = "0";
+          else
+               mapa[i][j] = j;
+    }
+  }
+//  console.log ("Mapa : " + mapa);
+
+  return mapa;
+}
+
+function mapaegokitu (mapa , eserlekuak){
+  var mapai, k, n, jauzi;
+
+  for (var i = 1; i < 9; i++){
+    k = 1;
+
+    
+//    if (i % 2)  {                     // ilara bakoiti edo bikoiti
+    if ((i + 1) % 2) {                      // ilara bakoiti edo bikoiti
+          k += eserlekuak;   
+          jauzi = 2 * eserlekuak;
+    } 
+
+    if (i == 1)                                // 1.lerroa eta  
+          jauzi = 1;                         // ezin dira aukeratu   banaka pasatzeko   
+
+    for (var j = k; j < 85; j = j + jauzi) {
+      if(mapa[i][j] != "_")   // aldagela sarrera ez egokitu
+      {
+
+        for (var m = 0; m < eserlekuak; m++) {
+            n = j + m;
+            mapa[i][n] = 0;   // ezin dira aukeratu   saltoka 1 edo bi edo
+        }
+      }
+    }
+//    console.log ("mapaegokitua : " + i + " - " + mapa[i]);
+  }
+//    console.log ("Mapaegokitua : " + mapa);
+  return mapa;
+}
+
+function eserlekuagune (eserleku){
+//                if (j == 10 || j == 29 || j == 48 || j == 66)   // eskailerak sartu
+  var gunea;
+  if (eserleku > 66)
+        gunea = "A";
+  else
+    if (eserleku > 48)
+          gunea = "B";
+    else
+        if (eserleku > 29)
+              gunea = "C";
+        else
+          if (eserleku > 10)
+                gunea = "D";
+          else
+                gunea = "E";
+
+  return gunea;
+}
+
+exports.ikusleakikusi = function(req, res){
+  var id = req.session.idKirolElkarteak;
+  var idEkitaldiak = req.params.idEkitaldiak;
+  var admin=(req.path.slice(0,7) == "/admin/");
+  var jardunaldiaIkusgai;
+  req.getConnection(function(err,connection){
+       
+/*
+        connection.query('SELECT DISTINCT DATE_FORMAT(jardunaldiDataPartidu,"%Y-%m-%d") AS jardunaldiDataPartidu FROM partiduak where idElkarteakPartidu = ? and idDenboraldiaPartidu = ? order by jardunaldiDataPartidu desc',[id, idDenboraldia],function(err,rowsd) {
+          
+          if(err)
+           console.log("Error Selecting : %s ",err );
+
+              for(var i in rowsd ){
+                if(req.session.jardunaldia == rowsd[i].jardunaldiDataPartidu){
+                    jardunaldiDataPartidu = rowsd[i].jardunaldiDataPartidu;
+                    rowsd[i].aukeratua = true;
+                  }
+                  else
+                    rowsd[i].aukeratua = false;
+                }
+
+            connection.query('SELECT idDenboraldia, deskribapenaDenb, jardunaldiaIkusgai FROM denboraldiak where idElkarteakDenb = ? order by deskribapenaDenb desc',[id],function(err,rowsdenb) {
+          
+             if(err)
+                console.log("Error Selecting : %s ",err );
+
+             for(var i in rowsdenb ){
+                if(req.session.idDenboraldia == rowsdenb[i].idDenboraldia){
+                    idDenboraldia = rowsdenb[i].idDenboraldia;
+                    deskribapenaDenb = rowsdenb[i].deskribapenaDenb;
+                    jardunaldiaIkusgai = rowsdenb[i].jardunaldiaIkusgai;
+                    rowsdenb[i].aukeratua = true;
+                  }
+                  else
+                    rowsdenb[i].aukeratua = false;
+              }
+
+             connection.query('SELECT * FROM taldeak, mailak  where idMailak=idMailaTalde and idElkarteakTalde = ? and idDenboraldiaTalde = ? order by zenbakiMaila desc, izenaTalde asc',[id, idDenboraldia],function(err,rowstalde) {
+          
+              if(err)
+                 console.log("Error Selecting : %s ",err );
+*/
+/*              for(var i in rowstalde ){
+                if(idTaldeak == rowstalde[i].idTaldeak){
+                    idTaldeak = rowstalde[i].idTaldeak;
+                    rowstalde[i].aukeratua = true;
+                  }
+                  else
+                    rowstalde[i].aukeratua = false;
+                }
+*/
+     connection.query('SELECT *,DATE_FORMAT(dataPartidu,"%Y/%m/%d") AS dataPartidu FROM ekitaldiak, partiduak, mailak, taldeak, lekuak where idPartiduak=idPartiduakEkitaldiak and idLekuak=idLekuakPartidu and idTaldeakPartidu=idTaldeak and idMailak=idMailaTalde and idElkarteakEkitaldiak = ? and idEkitaldiak = ? ',[id, idEkitaldiak],function(err,rowse) {
+            
+        if(err)
+           console.log("Error Selecting : %s ",err );
+
+        connection.query('SELECT * FROM ikusleak WHERE balidatuta != 0 and idElkarteakIkusle = ? and idEkitaldiakIkusle = ? order by  eserlekua1, ilara, sortuaIkusle, izenabizenak1, bazkidezenbakia',[id,idEkitaldiak],function(err,rows)
+        {          
+          if(err)
+           console.log("Error Selecting : %s ",err );
+
+          for (var i in rows){
+                rows[i].egunaTexto = egunatextobihurtu(rows[i].dataPartidu);
+                if (rows[i].eserlekua2 != 0)
+                {
+                     gunea = eserlekuagune(rows[i].eserlekua2); 
+                     sarrera2 = rows[i].ilara + "-" + rows[i].eserlekua2 + " : " + gunea;
+                }
+                else sarrera2 = " ";
+                if (rows[i].eserlekua3 != 0) 
+                {
+                     gunea = eserlekuagune(rows[i].eserlekua2); 
+                     sarrera3 = rows[i].ilara + "-" + rows[i].eserlekua3 + " : " + gunea;
+                }
+                else sarrera3 = " ";
+                if (rows[i].eserlekua4 != 0) 
+                {
+                     gunea = eserlekuagune(rows[i].eserlekua2); 
+                     sarrera4 = rows[i].ilara + "-" + rows[i].eserlekua4 + " : " + gunea;
+                }
+                else sarrera4 = " ";
+
+                if (rows[i].eserlekua1 != 0)
+                {
+                     gunea = eserlekuagune(rows[i].eserlekua1); 
+                }
+                else gunea = " ";
+
+                rows[i].gunea = gunea;
+                rows[i].sarrera2 = sarrera2;
+                rows[i].sarrera3 = sarrera3;
+                rows[i].sarrera4 = sarrera4;
+
+          }
+
+          res.render('ikusleak.handlebars',{title: "Ikusleak", data:rows, burua:rowse, menuadmin:admin, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia,atalak: req.session.atalak, partaidea: req.session.partaidea, idPartaideak:req.session.idPartaideak, arduraduna:req.session.arduraduna});
+        });
+     });   
+//             });
+//          });                  
+//      });   
+  });
+};
+
+exports.ikusleakbilatu = function(req, res){
+  var id = req.session.idKirolElkarteak;
+  var idDenboraldia = req.session.idDenboraldia;
+  var idEkitaldiak = req.params.idEkitaldiak;
+  var gunea, sarrera2, sarrera3, sarrera4;
+//  req.session.admin = 0;
+//  req.session.idTaldeak = 0;
+  req.getConnection(function(err,connection){
+       
+//     connection.query('SELECT *,DATE_FORMAT(dataPartidu,"%Y/%m/%d") AS dataPartidu FROM ikusleak, ekitaldiak, partiduak, mailak, taldeak, lekuak where idEkitaldiakIkusle = idEkitaldiak and idPartiduak=idPartiduakEkitaldiak and idLekuak=idLekuakPartidu and idTaldeakPartidu=idTaldeak and idMailak=idMailaTalde and idElkarteakEkitaldiak = ? and idDenboraldiaPartidu = ? and idEkitaldiak = ? order by eserlekua1 , izenabizenak1, bazkidezenbakia',[id, idDenboraldia, idEkitaldiak],function(err,rows) {
+     connection.query('SELECT *,DATE_FORMAT(dataPartidu,"%Y/%m/%d") AS dataPartidu FROM ekitaldiak, partiduak, mailak, taldeak, lekuak where idPartiduak=idPartiduakEkitaldiak and idLekuak=idLekuakPartidu and idTaldeakPartidu=idTaldeak and idMailak=idMailaTalde and idElkarteakEkitaldiak = ? and idDenboraldiaPartidu = ? and idEkitaldiak = ? ',[id, idDenboraldia, idEkitaldiak],function(err,rowse) {
+            
+        if(err)
+           console.log("Error Selecting : %s ",err );
+
+//        connection.query('SELECT DISTINCT DATE_FORMAT(jardunaldiDataPartidu,"%Y-%m-%d") AS jardunaldiDataPartidu FROM partiduak where idElkarteakPartidu = ? and idDenboraldiaPartidu = ? order by jardunaldiDataPartidu desc',[id, idDenboraldia],function(err,rowsd) {
+        connection.query('SELECT * FROM ikusleak WHERE idElkarteakIkusle = ? and idEkitaldiakIkusle = ? order by ilara, eserlekua1 , sortuaIkusle, izenabizenak1, bazkidezenbakia',[id,idEkitaldiak],function(err,rows)
+        {          
+          if(err)
+           console.log("Error Selecting : %s ",err );
+
+          for (var i in rows){
+                rows[i].egunaTexto = egunatextobihurtu(rows[i].dataPartidu);
+                if (rows[i].eserlekua2 != 0)
+                {
+                     gunea = eserlekuagune(rows[i].eserlekua2); 
+                     sarrera2 = rows[i].ilara + "-" + rows[i].eserlekua2 + " * " + gunea + " : " + rows[i].izenabizenak2 + " + " + rows[i].bazkidezenbakia2;
+                }
+                else sarrera2 = " ";
+                if (rows[i].eserlekua3 != 0) 
+                {
+                     gunea = eserlekuagune(rows[i].eserlekua2); 
+                     sarrera3 = rows[i].ilara + "-" + rows[i].eserlekua3 + " * " + gunea + " : " + rows[i].izenabizenak3 + " + " + rows[i].bazkidezenbakia3;
+                }
+                else sarrera3 = " ";
+                if (rows[i].eserlekua4 != 0) 
+                {
+                     gunea = eserlekuagune(rows[i].eserlekua2); 
+                     sarrera4 = rows[i].ilara + "-" + rows[i].eserlekua4 + " * " + gunea + " : " + rows[i].izenabizenak4 + " + " + rows[i].bazkidezenbakia4;
+                }
+                else sarrera4 = " ";
+
+                if (rows[i].eserlekua1 != 0)
+                {
+                     gunea = eserlekuagune(rows[i].eserlekua1); 
+                }
+                else gunea = " ";
+
+                rows[i].gunea = gunea;
+                rows[i].sarrera2 = sarrera2;
+                rows[i].sarrera3 = sarrera3;
+                rows[i].sarrera4 = sarrera4;
+
+                rows[i].ikusleZenbakia = rows[i].idIkusleak * 3456789;
+                rows[i].ekitaldiZenbakia = rows[i].idEkitaldiakIkusle * 9876543;
+          }
+
+          res.render('ikusleakadmin.handlebars',{title: "Ikuslea", burua: rowse, data:rows,jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia,partaidea: req.session.partaidea});
+        });                   
+      });   
+  });
+};
+
+exports.ikusleakekitaldi = function(req, res){
+
+  var id = req.session.idKirolElkarteak;
+  var idDenboraldia = req.session.idDenboraldia;
+  var idEkitaldiak = req.params.idEkitaldiak;
+    
+  req.getConnection(function(err,connection){
+
+    connection.query('SELECT * FROM ekitaldiak WHERE idElkarteakEkitaldiak = ? and idEkitaldiak = ?',[id,idEkitaldiak],function(err,rowse)
+    {
+      if(err)
+            console.log("Error Selecting : %s ",err );
+      if (rowse.length != 0)
+          res.redirect('/admin/ekitaldiakeditatu/'+ rowse[0].idEkitaldiak);
+      else 
+       {    
+         connection.query('SELECT *,DATE_FORMAT(dataPartidu,"%Y/%m/%d") AS dataPartidu,DATE_FORMAT(jardunaldiDataPartidu,"%Y/%m/%d") AS jardunaldiDataPartidu FROM partiduak, lekuak, taldeak, mailak WHERE idLekuakPartidu=idLekuak and idTaldeak=idTaldeakPartidu and idMailak=idMailaTalde and idElkarteakPartidu = ? and idPartiduak = ?',[id,idPartiduak],function(err,rows)
+         {
+            if(err)
+                console.log("Error Selecting : %s ",err );
+
+            res.render('ikusleakadmin.handlebars', {title : 'KirolElkarteak-Ikusleak', data:rows,jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia,  atalak: req.session.atalak, partaidea: req.session.partaidea, idPartaideak:req.session.idPartaideak, arduraduna:req.session.arduraduna});
+           
+          });
+       } 
+    });
+  }); 
+};
+
+exports.ikusleakgehitu = function(req, res){
+  var id = req.session.idKirolElkarteak;
+  var idDenboraldia = req.session.idDenboraldia;
+  req.getConnection(function(err,connection){
+       
+     connection.query('SELECT * FROM taldeak,mailak where idMailak=idMailaTalde and idElkarteakTalde = ? and idDenboraldiaTalde = ? order by idMailaTalde asc',[id, idDenboraldia],function(err,rowst) {
+            
+        if(err)
+           console.log("Error Selecting : %s ",err );
+
+        connection.query('SELECT * FROM lekuak where idElkarteakLeku = ? order by zenbakiLeku asc',[id],function(err,rowsl) {
+            if(err)
+            console.log("Error Selecting : %s ",err );
+
+            res.render('ikusleaksortu.handlebars', {title : 'KirolElkarteak-Ekitaldiak gehitu', taldeak:rowst, lekuak:rowsl,jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia,  atalak: req.session.atalak, partaidea: req.session.partaidea, idPartaideak:req.session.idPartaideak, arduraduna:req.session.arduraduna});
+        }); 
+      });  
+           
+  });
+};
+
+exports.ikusleaksortu = function(req,res){
+    
+    var input = JSON.parse(JSON.stringify(req.body));
+    var id = req.session.idKirolElkarteak;
+    var idDenboraldia = req.session.idDenboraldia;
+    var idEkitaldiak = req.params.idEkitaldiak;
+    var admin=(req.path.slice(0,7) == "/admin/");
+    var now= new Date();
+    var ilara = 0, eserlekua1 = 0, eserlekua2 = 0, eserlekua3 = 0, eserlekua4 = 0;
+    var izenemate1 = 0, izenemate2 = 0, izenemate3 = 0, izenemate4 = 0;
+    var datak = [], erroremezua = "";
+    var aditestua = "";
+    var hosta = req.hostname;
+    if (process.env.NODE_ENV != 'production'){ 
+          hosta += ":"+ (process.env.PORT || 3000);
+    }
+
+//console.log ("Mapaegokitua : " + mapa);
+
+    res.locals.flash = null;
+
+    //Errore kontrolak
+    if(!req.body.nanzenbakia.match(VALID_DNI_REGEX)) {
+      if(req.xhr) return res.json({ error: 'Invalid DNI' });
+        res.locals.flash = {
+          type: 'danger',
+          intro: 'Adi!',
+          message: 'N.A.N.-a ez da zuzena',
+        };
+        erroremezua += "N.A.N.-a ez da zuzena ";
+    }
+    if(!req.body.telefonoa.match(VALID_TEL_REGEX)) {
+      if(req.xhr) return res.json({ error: 'Invalid telefono' });
+        res.locals.flash = {
+          type: 'danger',
+          intro: 'Adi!',
+          message: 'Telefonoa ez da zuzena',
+        };
+        erroremezua += "Telefonoa ez da zuzena ";
+    }
+    if(!req.body.emaila.match(VALID_EMAIL_REGEX)) {
+      if(req.xhr) return res.json({ error: 'Invalid mail' });
+        res.locals.flash = {
+          type: 'danger',
+          intro: 'Adi!',
+          message: 'Emaila ez da zuzena',
+        };
+        erroremezua += "Emaila ez da zuzena ";
+    }
+// eserleku zenbakien azterketa
+    eserlekua1 = (parseInt(input.eserleku1));
+    if (req.body.izenabizenak2 && req.body.izenabizenak2 != "" && req.body.izenabizenak2 != " ")
+    {
+        eserlekua2 = (parseInt(input.eserleku2));
+        if (eserlekua1 > eserlekua2)
+        {
+            eserlekua1 = eserlekua2;
+            eserlekua2 = (parseInt(input.eserleku1));
+        }  
+        if (req.body.izenabizenak4 && req.body.izenabizenak4 != "" && req.body.izenabizenak4 != " ")
+        {
+             eserlekua4 = eserlekua2;
+             eserlekua2 = (eserlekua1 + 2);  //   - 1
+             eserlekua3 = (eserlekua4 - 2);   //   + 1
+        }
+        else if (req.body.izenabizenak3 && req.body.izenabizenak3 != "" && req.body.izenabizenak3 != " ")
+        {
+             eserlekua3 = eserlekua2;
+             eserlekua2 = (eserlekua3 - 2);    //    - 1
+        }     
+    }
+
+    if ((eserlekua4 != 0 && (eserlekua2 + 2) != eserlekua3) ||
+         (eserlekua3 != 0 && (eserlekua1 + 2) != eserlekua2) ||
+          (eserlekua2 != 0 && (eserlekua1 + 2) != eserlekua2)) 
+      erroremezua += "Eserleku zenbakiak ez daude ondo ";
+
+    ilara = (parseInt(input.ilara));
+//    console.log("Eserlekuak : " +ilara +"-"+eserlekua1+"-"+eserlekua2 +"-"+eserlekua3 +"-"+ eserlekua4 );
+
+    if ((mapa[ilara][eserlekua1] < 1 || mapa[ilara][eserlekua1] > 999) ||
+         (eserlekua2 != 0 && (mapa[ilara][eserlekua2] < 1 || mapa[ilara][eserlekua2] > 999)) ||
+         (eserlekua3 != 0 && (mapa[ilara][eserlekua3] < 1 || mapa[ilara][eserlekua3] > 999)) ||
+         (eserlekua4 != 0 && (mapa[ilara][eserlekua3] < 1 || mapa[ilara][eserlekua4] > 999)))
+      erroremezua += "Eserlekuak ez daude libre ";
+//    console.log("harmaila : " +mapa[ilara][eserlekua1] + mapa[ilara]);
+
+    req.getConnection(function (err, connection) {
+//      connection.query('SELECT * FROM ikusleak where idEkitaldiakIkusle = ? and (izenabizenak1 = ? or emaila = ?)',[idEkitaldiak, req.body.izenabizenak1, req.body.emaila],function(err,rows)  {
+      connection.query('SELECT * FROM ikusleak where idEkitaldiakIkusle = ? and (izenabizenak1 = ? or emaila = ? or nanzenbakia = ? or bazkidezenbakia = ?)',[idEkitaldiak, req.body.izenabizenak1, req.body.emaila, req.body.nanzenbakia, req.body.bazkidezenbakia],function(err,rows)  {
+
+        if(err)
+          console.log("Error Selecting : %s ",err );
+
+        if (rows.length != 0){
+         var izenaberdin = 0, emailaberdin = 0, nanzenbakiaberdin = 0, bazkidezenbakiaberdin = 0; 
+         for(var i in rows ){
+           if(rows[i].izenabizenak1 == req.body.izenabizenak1){
+                izenaberdin++;
+            }
+            if(rows[i].emaila == req.body.emaila){
+                emailaberdin++;
+            }
+            if(rows[i].nanzenbakia == req.body.nanzenbakia){
+                nanzenbakiaberdin++;
+            }
+            if(rows[i].bazkidezenbakia == req.body.bazkidezenbakia){
+                bazkidezenbakiaberdin++;
+            }
+         } 
+         if ( !admin && (izenaberdin >= 1 || emailaberdin >= 2 || nanzenbakiaberdin >= 1 || bazkidezenbakiaberdin >= 1))
+         { 
+          if (izenaberdin >= 1)
+          {
+           res.locals.flash = {
+            type: 'danger',
+            intro: 'Adi!',
+            message: 'Beste izen-abizen bat sartu behar duzu! Dagoenekoz, izen-abizen hori erabilita dago eta.',
+           };
+           erroremezua += "Beste izen-abizen bat sartu behar duzu! ";
+          }
+          else if (emailaberdin >= 2) 
+          {
+           res.locals.flash = {
+            type: 'danger',
+            intro: 'Adi!',
+            message: 'Beste email batekin izen-eman behar duzu! Dagoenekoz email horrekin 2 izen-emate sortuta daude eta. Email batekin 2 izen-emate bakarrik sor daiteke!',
+           };
+           erroremezua += "Beste email batekin izen-eman behar duzu ";
+          }
+          else if (nanzenbakiaberdin >= 1)
+          {
+           res.locals.flash = {
+            type: 'danger',
+            intro: 'Adi!',
+            message: 'Beste N.A.N bat sartu behar duzu! Dagoenekoz, NAN zenbaki hori erabilita dago eta.',
+           };
+           erroremezua += "Beste N.A.N bat sartu behar duzu! ";
+          }
+          else 
+          {
+           res.locals.flash = {
+            type: 'danger',
+            intro: 'Adi!',
+            message: 'Beste bazkide zenbakia behar duzu! Dagoenekoz, bazkide zenbaki hori erabilita dago eta.',
+           };
+           erroremezua += "Beste bazkide zenbakia behar duzu!  ";
+          }
+
+         }
+        }    
+
+// erroreak baldi badaude
+    izenemate1 = 1;
+    if (req.body.izenabizenak2 && req.body.izenabizenak2 != "" && req.body.izenabizenak2 != " ")
+          izenemate2 = 1;
+    if (req.body.izenabizenak3 && req.body.izenabizenak3 != "" && req.body.izenabizenak3 != " ")
+                       izenemate3 = 1;
+    if (req.body.izenabizenak4 && req.body.izenabizenak4 != "" && req.body.izenabizenak4 != " ")
+                       izenemate4 = 1;
+    req.body.izenemate1 = izenemate1;
+    req.body.izenemate2 = izenemate2;
+    req.body.izenemate3 = izenemate3; 
+    req.body.izenemate4 = izenemate4;
+    req.body.admin = admin;
+    req.body.idEkitaldiak = idEkitaldiak;
+    datak[0] = req.body;
+// erroreak baldi badaude
+//    if(res.locals.flash != null){
+    if(erroremezua != ''){  
+//Erroreak badaude "local.flash" aldagaian gordeak, itzuli balioak errorearekin
+        res.locals.flash = {
+          type: 'danger',
+          intro: 'ADI ERROREAK DAUDE!',
+          message: erroremezua,
+        };
+        aditestua = erroremezua;
+        datak[0].aditestua = aditestua;
+        return res.render('harmailak.handlebars',{title: "Harmailak", data:datak, burua:burua, ilarak:ilarak, aditestua: aditestua,jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia,partaidea: req.session.partaidea, menuadmin: admin});
+    }
+  
+//        if (input.eserleku2 != "")
+     
+        var data = {
+            
+            idElkarteakIkusle    : id,
+            idEkitaldiakIkusle   : idEkitaldiak,
+//            idPartaideakIkusle   : idEkitaldiak,
+
+            bazkidezenbakia: input.bazkidezenbakia,
+            nanzenbakia : input.nanzenbakia,
+            izenabizenak1: input.izenabizenak1,
+            ilara: (parseInt(input.ilara)),
+            eserlekua1: eserlekua1,
+            telefonoa: input.telefonoa,
+            emaila: input.emaila,
+            berezitasunak: input.berezitasunak,
+            izenabizenak2: input.izenabizenak2,
+            eserlekua2: eserlekua2,
+            bazkidezenbakia2: input.bazkidezenbakia2,
+            nanzenbakia2 : input.nanzenbakia2,
+            izenabizenak3: input.izenabizenak3,
+            eserlekua3: eserlekua3,
+            bazkidezenbakia3: input.bazkidezenbakia3,
+            nanzenbakia3 : input.nanzenbakia3,
+            izenabizenak4: input.izenabizenak4,
+            eserlekua4: eserlekua4,
+            bazkidezenbakia4: input.bazkidezenbakia4,
+            nanzenbakia4 : input.nanzenbakia4,
+            balidatuta    : "0",
+            sortuaIkusle : now,
+            aldatuaIkusle : now
+        };
+
+//         console.log ("data : " +JSON.stringify(data));
+
+        datak[0] = data;
+        
+  
+        var query = connection.query("INSERT INTO ikusleak set ? ",data, function(err, rowsi)
+        {
+  
+         if (err)
+              console.log("Error inserting : %s ",err );
+
+
+
+          if(input.tope == 1) {
+                  if(req.xhr) return res.json({ error: 'Invalid beteta' });
+                  res.locals.flash = {
+                      type: 'danger',
+                      intro: 'Adi!',
+                      message: 'Ikusle kopurua beteta. Itxaron zerrendan sartu dugu zure eskaera',
+                  };
+                aditestua = "Ikusle kopurua beteta. Itxaron zerrendan sartu dugu zure eskaera, ekitaldia ikusteko aukerarik izanez gero, mezu bat jasoko duzue. Adi egon!";
+          }
+                
+
+
+          if(res.locals.flash != null){
+//                   var mailaizena;   
+              var to = input.emaila;
+              var subj = "Itxaron zerrendan " + data.izenabizenak1 +" sartua ";
+
+              var body = "<p style='color:#FF0000'><b>"+data.izenabizenak1+"</b> izenean egindako eskaera itxaron zerrendan dago. </p>";
+                  body += "<p style='color:#0000FF'> Aukerarik sortu ezkero, emaila baten bidez, adieraziko zaizue. Mila esker!</p> \n \n";
+                  body += "<h3> P.D: Mesedez ez erantzun helbide honetara, mezuak zkeskubaloia.partidak@gmail.com -era bidali</h3>" ;
+
+              emailService.send(to, subj, body);
+
+              res.render('ikusleakitxaron.handlebars', {title: "Itxaron zerrendan", taldeizena:data.taldeizena, txapelketaizena:req.session.txapelketaizena, idtxapelketa: req.session.idtxapelketa, aditestua:aditestua, emaila:data.emaila, izenaard: data.izenaard, menuadmin: admin});
+
+//                   res.render('kontaktua.handlebars', {title : 'Txaparrotan-Kontaktua', taldeizena: req.session.taldeizena, idtxapelketa: req.session.idtxapelketa, aditestua:aditestua});
+          }
+          else{
+
+                  //Enkriptatu partaide zenbakia. Zenbaki hau aldatuz gero, partaidea balidatu ere aldatu!
+         var ekitaldiZenbakia = parseInt(idEkitaldiak) * 9876543;
+         var ikusleZenbakia = rowsi.insertId * 3456789;
+         //var mailaizena;   
+         var to = input.emaila;
+         var subj = "Sarrerak balidatu ahal izateko " + data.izenabizenak1 +". Sarrera: "+ data.ilara + " - " + data.eserlekua1;
+         var hosta = req.hostname;
+         if (process.env.NODE_ENV != 'production'){ 
+          hosta += ":"+ (process.env.PORT || 3000);
+         }
+         //Ikusleak sortzeko bidaliko den mezua BALIDAZIO LINKAREKIN
+         var body = "<p> Sarrerak lortzeko "+input.emaila+" emaila balidatu behar da : </p>";
+         body += "<h3> klik egin: <b>  http://"+hosta+"/sarrerakbalidatu/" + ekitaldiZenbakia + "/" + ikusleZenbakia + ". </b> </h3>";
+         body += "<p> Ez bazaizu klikatzeko link moduan agertzen, kopiatu eta pegatu nabigatzailean. </p>";
+         body += "<p><b> Aldaketak edo etorri ezina baduzue</b> , bidali oharra zuen eserleku erreserba datoekin <b> zkeskubaloia.partidak@gmail.com </b> -era</p>";
+         body += "<p>Mila esker!</p>";
+//          req.session.idPartaideak = rows.insertId;
+          emailService.send(to, subj, body);
+         
+          res.render('ikusleakeskerrak.handlebars', {title: "Mila esker!", data:datak, atalak: req.session.atalak, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia,idPartaideak:req.session.idPartaideak, arduraduna:req.session.arduraduna, menuadmin: admin});
+/* 
+         if (req.session.arduraduna){
+            res.redirect('/ekitaldiak');
+         }else{
+            res.redirect('/admin/ekitaldiak');
+         }
+*/
+         }
+        }); 
+     });
+    });
+};
+
+exports.sarrerakbalidatu = function(req,res){
+
+    var ekitaldiZenbakia = req.params.ekitaldiZenbakia;    
+    var ikusleZenbakia = req.params.ikusleZenbakia;
+
+    //ADI! partaideasortu-n aldatu balio hau aldatuz gero
+    var idIkusleak = ikusleZenbakia / 3456789;
+    var idEkitaldiak = ekitaldiZenbakia / 9876543;
+    
+    req.getConnection(function (err, connection) {
+
+     connection.query('SELECT * FROM ikusleak where idEkitaldiakIkusle = ? and idIkusleak = ?',[idEkitaldiak, idIkusleak],function(err,rows)  {
+
+      if(err)
+          console.log("Error Selecting : %s ",err );
+        
+      if (rows.length != 0)  
+      {  
+        var data = {
+            
+            balidatuta    : 1
+      
+        };
+        
+        connection.query("UPDATE ikusleak set ? WHERE idEkitaldiakIkusle = ? and idIkusleak = ? and balidatuta = 0" ,[data, idEkitaldiak,idIkusleak], function(err, rowsu)
+        {
+  
+          if (err)
+              console.log("Error Updating : %s ",err );
+
+//         var ikusleZenbakia= rows.insertId * 3456789;
+         //var mailaizena;   
+         var ekitaldiZenbakia = idEkitaldiak * 3456789;
+         var ikusleZenbakia = idIkusleak * 9876543;
+         var to = rows[0].emaila;
+         var subj = "Sarrerak ekitaldian sartzeko " + rows[0].izenabizenak1 +". Sarrera : "+ rows[0].ilara + " - " + rows[0].eserlekua1;
+         var hosta = req.hostname;
+         if (process.env.NODE_ENV != 'production'){ 
+          hosta += ":"+ (process.env.PORT || 3000);
+         }
+         //Ikusleak sortzeko bidaliko den mezua BALIDAZIO LINKAREKIN
+         var body = "<p> Ekitaldirako sarrerak ikusteko, </p>";
+         body += "<h3> klik egin: http://"+hosta+"/sarrerakikusi/" + ekitaldiZenbakia + "/" + ikusleZenbakia + " </h3>";
+         body += "<p> Ez bazaizu klikatzeko link moduan agertzen, kopiatu eta pegatu nabigatzailean. </p>";
+         body += "<p>Ondoren, gorde pantailan agertzen diren sarrerak edo sarreran pantailaratu berriro.</p>";
+         body += "<p>Ekitaldira arte!</p>";
+//          req.session.idPartaideak = rows.insertId;
+          emailService.send(to, subj, body);
+       
+         res.redirect('/sarrerakikusi/'+ ekitaldiZenbakia + '/' + ikusleZenbakia);
+          
+        });
+      }
+     });    
+    });
+};
+
+exports.sarrerakikusi = function(req, res){
+
+  var id = req.session.idKirolElkarteak;
+  var idDenboraldia = req.session.idDenboraldia;
+  var ekitaldiZenbakia = req.params.ekitaldiZenbakia;    
+  var ikusleZenbakia = req.params.ikusleZenbakia;
+
+    //ADI! partaideasortu-n aldatu balio hau aldatuz gero
+  var idEkitaldiak = ekitaldiZenbakia / 3456789;
+  var idIkusleak = ikusleZenbakia / 9876543;
+
+    var sarrera2, sarrera3, sarrera4;
+    
+  req.getConnection(function(err,connection){
+       
+//        connection.query('SELECT *,DATE_FORMAT(dataPartidu,"%Y/%m/%d") AS dataPartidu,DATE_FORMAT(jardunaldiDataPartidu,"%Y/%m/%d") AS jardunaldiDataPartidu FROM partiduak WHERE idElkarteakPartidu = ? and idPartiduak = ?',[id,idPartiduak],function(err,rows)
+     connection.query('SELECT *,DATE_FORMAT(dataPartidu,"%Y/%m/%d") AS dataPartidu FROM ikusleak, ekitaldiak, partiduak, mailak, taldeak, lekuak where idEkitaldiak=idEkitaldiakIkusle and idPartiduak=idPartiduakEkitaldiak and idLekuak=idLekuakPartidu and idTaldeakPartidu=idTaldeak and idMailak=idMailaTalde and idEkitaldiakIkusle = ? and idIkusleak = ? order by dataPartidu desc',[idEkitaldiak, idIkusleak],function(err,rows) 
+        {
+            if(err)
+                console.log("Error Selecting : %s ",err );
+            for (var i in rows){
+                rows[i].egunaTexto = egunatextobihurtu(rows[i].dataPartidu);
+                if (rows[i].eserlekua2 != 0)
+                {
+                     gunea = eserlekuagune(rows[i].eserlekua2); 
+                     sarrera2 = rows[i].ilara + "-" + rows[i].eserlekua2 + " : " + gunea;
+                }
+                else sarrera2 = " ";
+                if (rows[i].eserlekua3 != 0) 
+                {
+                     gunea = eserlekuagune(rows[i].eserlekua2); 
+                     sarrera3 = rows[i].ilara + "-" + rows[i].eserlekua3 + " : " + gunea;
+                }
+                else sarrera3 = " ";
+                if (rows[i].eserlekua4 != 0) 
+                {
+                     gunea = eserlekuagune(rows[i].eserlekua2); 
+                     sarrera4 = rows[i].ilara + "-" + rows[i].eserlekua4 + " : " + gunea;
+                }
+                else sarrera4 = " ";
+
+                if (rows[i].eserlekua1 != 0)
+                {
+                     gunea = eserlekuagune(rows[i].eserlekua1); 
+                }
+                else gunea = " ";
+
+                rows[i].gunea = gunea;
+                rows[i].sarrera2 = sarrera2;
+                rows[i].sarrera3 = sarrera3;
+                rows[i].sarrera4 = sarrera4;
+            }
+            res.render('ikusleaksarrerak.handlebars', {title: "Sarrerak",data:rows, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea: req.session.partaidea});
+              
+         });
+   }); 
+};
+
+exports.ikusleakezabatu = function(req,res){
+
+     var id = req.session.idKirolElkarteak;
+     var idEkitaldiak = req.params.idEkitaldiak;
+     var idIkusleak = req.params.idIkusleak;
+    
+     req.getConnection(function (err, connection) {
+        
+        connection.query("DELETE FROM ikusleak WHERE idElkarteakIkusle = ? and idIkusleak = ?",[id,idIkusleak], function(err, rows)
+        {
+            
+             if(err)
+                 console.log("Error deleting : %s ",err );
+
+             if (req.session.admin){
+                res.redirect('/admin/ikusleak/'+ idEkitaldiak);
+             }else{
+               res.redirect('/admin/ikusleak/'+ idEkitaldiak);
+             }  
+        });
+        
+     });
+};
+
+exports.ikusleakeditatu = function(req, res){
+
+  var id = req.session.idKirolElkarteak;
+  var idDenboraldia = req.session.idDenboraldia;
+  var idEkitaldiak = req.params.idEkitaldiak;
+  var idIkusleak = req.params.idIkusleak;
+    
+  req.getConnection(function(err,connection){
+       
+//        connection.query('SELECT *,DATE_FORMAT(dataPartidu,"%Y/%m/%d") AS dataPartidu,DATE_FORMAT(jardunaldiDataPartidu,"%Y/%m/%d") AS jardunaldiDataPartidu FROM partiduak WHERE idElkarteakPartidu = ? and idPartiduak = ?',[id,idPartiduak],function(err,rows)
+     connection.query('SELECT *,DATE_FORMAT(dataPartidu,"%Y/%m/%d") AS dataPartidu FROM ikusleak, ekitaldiak, partiduak, mailak, taldeak, lekuak where idEkitaldiak=idEkitaldiakIkusle and idPartiduak=idPartiduakEkitaldiak and idLekuak=idLekuakPartidu and idTaldeakPartidu=idTaldeak and idMailak=idMailaTalde and idElkarteakIkusle = ? and idIkusleak = ? order by dataPartidu desc',[id, idIkusleak],function(err,rows) 
+        {
+            if(err)
+                console.log("Error Selecting : %s ",err );
+
+            res.render('ikusleakeditatu.handlebars', {page_title:"Ekitaldiak aldatu",data:rows, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea: req.session.partaidea});
+              
+         });
+   }); 
+};
+
+exports.ikusleakaldatu = function(req,res){
+    
+    var input = JSON.parse(JSON.stringify(req.body));
+    var id = req.session.idKirolElkarteak;
+    var idEkitaldiak = req.params.idEkitaldiak;
+    var idIkusleak = req.params.idIkusleak;
+    var now= new Date();  
+    
+    req.getConnection(function (err, connection) {
+       
+        var data = {
+            
+            bazkidezenbakia: input.bazkidezenbakia,
+            nanzenbakia : input.nanzenbakia,
+            izenabizenak1: input.izenabizenak1,
+            ilara: (parseInt(input.ilara)),
+            eserlekua1: (parseInt(input.eserlekua1)),
+            telefonoa: input.telefonoa,
+            emaila: input.emaila,
+            berezitasunak: input.berezitasunak,
+            izenabizenak2: input.izenabizenak2,
+            eserlekua2: (parseInt(input.eserlekua2)),
+            bazkidezenbakia2: input.bazkidezenbakia2,
+            nanzenbakia2 : input.nanzenbakia2,
+            izenabizenak3: input.izenabizenak3,
+            eserlekua3: (parseInt(input.eserlekua3)),
+            bazkidezenbakia3: input.bazkidezenbakia3,
+            nanzenbakia3 : input.nanzenbakia3,
+            izenabizenak4: input.izenabizenak4,
+            eserlekua4: (parseInt(input.eserlekua4)),
+            bazkidezenbakia4: input.bazkidezenbakia4,
+            nanzenbakia4 : input.nanzenbakia4,
+            aldatuaIkusle : now
+        };
+
+//        console.log ("dataU : " +JSON.stringify(data));
+        
+        connection.query("UPDATE ikusleak set ? WHERE idElkarteakIkusle = ? and idIkusleak = ? ",[data,id,idIkusleak], function(err, rows)
+        {
+  
+          if (err)
+              console.log("Error Updating : %s ",err );
+
+          if (req.session.idTaldeak){
+                res.redirect('/admin/ekitaldiaktaldeka/'+ req.session.idTaldeak);
+          }
+          else
+           if (req.session.admin){ //Administratzaile moduan badago ordutegiak ikustean, editatu ondoren partidu ordutegira bidali
+               res.redirect('/admin/ikusleak/'+ idEkitaldiak);
+           }
+           else
+            if (req.session.jardunaldia){ 
+//                res.redirect('/admin/jardunaldikoekitaldiak/' + req.session.jardunaldia);
+                res.redirect('/admin/ikusleak/'+ idEkitaldiak);
+            }
+            else //Partiduak ataletik editatzean partiduak, partiduak orrira bidali 
+                res.redirect('/admin/ikusleak/'+ idEkitaldiak);
         });
     
     });

@@ -740,7 +740,7 @@ exports.taldekideakbilatu = function(req, res){
          
          //console.log("Berriak:" +JSON.stringify(rows));
 
-
+/*
             var path = require('path'),
             fs = require('fs'),
             formidable = require('formidable');
@@ -772,6 +772,9 @@ exports.taldekideakbilatu = function(req, res){
               argazkiak[i] = argazkia;
             };
           });
+*/
+
+var argazkiak = [];
 
           for (var i in rows){
               j++;
@@ -829,7 +832,7 @@ exports.taldekideakbilatupartaideargazkiekin = function(req, res){
             
         if(err)
            console.log("Error Selecting : %s ",err );
-            
+/*
             var path = require('path'),
             fs = require('fs'),
             formidable = require('formidable');
@@ -860,6 +863,9 @@ exports.taldekideakbilatupartaideargazkiekin = function(req, res){
     
               argazkiak[i] = argazkia;
             };
+*/
+
+var argazkiak = [];
 
             if (rows.length != 0){
                 for(var i in rows ){
@@ -889,7 +895,7 @@ exports.taldekideakbilatupartaideargazkiekin = function(req, res){
          
          //console.log("Berriak:" +JSON.stringify(rows));
           res.render('taldekideakpartaide.handlebars',{title: "Taldekideak", idTaldeak:idTaldeak, arduradun:arduradun, data:rows, irudiak:argazkiak, talde:rowst, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea: req.session.partaidea, atalak: req.session.atalak, idPartaideak:req.session.idPartaideak, arduraduna:req.session.arduraduna});                       
-      });
+//      });
     });
    }
   });

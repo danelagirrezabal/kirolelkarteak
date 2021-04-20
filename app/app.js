@@ -34,6 +34,8 @@ app.set('port', process.env.PORT || 3000);
 app.set('views', path.join(__dirname, 'views'));
 // set up handlebars view engine
 var handlebars = require('express3-handlebars').create({
+//var handlebars = require('express-handlebars').create({
+
     defaultLayout:'main',
     layoutsDir: "app/views/layouts/",
     partialsDir: "app/views/partials/",
@@ -535,6 +537,7 @@ app.post('/admin/taldeargazkiaigo/:idTaldeak', adminonartua, taldeak.taldeargazk
 
 app.get('/admin/taldekopurua', adminonartua, kudeaketa.taldekopurua);
 app.get('/admin/jokalarikopurua', adminonartua, kudeaketa.jokalarikopurua);
+app.get('/admin/jokalariakurteka', adminonartua, kudeaketa.jokalariakurteka);
 
 app.get('/admin/kudeaketa', adminonartua, kudeaketa.kudeaketamenu);
 
@@ -588,6 +591,47 @@ app.get('/partiduemaitzaktalde/', authorize2, denboraldiak.partiduemaitzaktalde)
 
 app.get('/admin/partiduemaitzaktalde/:idTaldeak', authorize2, denboraldiak.partiduemaitzaktalde);
 app.get('/admin/partiduemaitzaktalde/', authorize2, denboraldiak.partiduemaitzaktalde);
+
+app.get('/ekitaldiak/:idDenboraldia/:jardunaldia',authorize2, denboraldiak.ekitaldiakikusi);
+app.get('/harmailak/:idEkitaldiak',authorize2, denboraldiak.harmailakikusi);
+
+app.get('/admin/ekitaldiak/:idDenboraldia/:jardunaldia',adminonartua, denboraldiak.ekitaldiakikusi);
+app.get('/admin/ekitaldiak', adminonartua, denboraldiak.ekitaldiakbilatu);
+app.get('/admin/jardunaldikoekitaldiak/:jardunaldia', denboraldiak.jardunaldikoekitaldiakbilatu);
+app.get('/admin/ekitaldiakpartidu/:idPartiduak', adminonartua, denboraldiak.ekitaldiakpartidu);
+app.post('/admin/ekitaldiaksortu', adminonartua, denboraldiak.ekitaldiaksortu);
+app.get('/admin/ekitaldiakgehitu', adminonartua, denboraldiak.ekitaldiakgehitu);
+
+app.post('/ekitaldiaksortu', authorizeArduradun, denboraldiak.ekitaldiaksortu);
+app.get('/ekitaldiakgehitu',authorizeArduradun, denboraldiak.ekitaldiakgehitu);
+
+//app.post('/admin/partiduakgehitu', adminonartua, function(req, res){
+//    res.render('partiduaksortu.handlebars', {title : 'KirolElkarteak-Partiduak gehitu', taldeizena: req.session.taldeizena});
+//});
+app.get('/admin/ekitaldiakezabatu/:idEkitaldiak', adminonartua, denboraldiak.ekitaldiakezabatu);
+app.get('/admin/ekitaldiakeditatu/:idEkitaldiak', adminonartua, denboraldiak.ekitaldiakeditatu);
+app.post('/admin/ekitaldiakaldatu/:idEkitaldiak', adminonartua, denboraldiak.ekitaldiakaldatu);
+
+app.get('/admin/harmailak/:idEkitaldiak',adminonartua, denboraldiak.harmailakikusi);
+
+app.get('/ikusleak/:idEkitaldiak', authorize2, denboraldiak.ikusleakikusi);
+app.get('/admin/ikusleak/:idEkitaldiak', adminonartua, denboraldiak.ikusleakbilatu);
+app.get('/admin/ikusleakekitaldi/:idEkitaldiak', adminonartua, denboraldiak.ikusleakekitaldi);
+app.post('/admin/ikusleaksortu/:idEkitaldiak', adminonartua, denboraldiak.ikusleaksortu);
+app.get('/admin/ikusleakgehitu', adminonartua, denboraldiak.ikusleakgehitu);
+
+app.post('/ikusleaksortu/:idEkitaldiak', authorize2, denboraldiak.ikusleaksortu);
+app.get('/ikusleakgehitu',authorizeArduradun, denboraldiak.ikusleakgehitu);
+app.get('/sarrerakbalidatu/:ekitaldiZenbakia/:ikusleZenbakia', denboraldiak.sarrerakbalidatu);
+app.get('/sarrerakikusi/:ekitaldiZenbakia/:ikusleZenbakia', denboraldiak.sarrerakikusi);
+
+//app.post('/admin/partiduakgehitu', adminonartua, function(req, res){
+//    res.render('partiduaksortu.handlebars', {title : 'KirolElkarteak-Partiduak gehitu', taldeizena: req.session.taldeizena});
+//});
+app.get('/admin/ikusleakezabatu/:idEkitaldiak/:idIkusleak', adminonartua, denboraldiak.ikusleakezabatu);
+app.get('/admin/ikusleakeditatu/:idEkitaldiak/:idIkusleak', adminonartua, denboraldiak.ikusleakeditatu);
+app.post('/admin/ikusleakaldatu/:idEkitaldiak/:idIkusleak', adminonartua, denboraldiak.ikusleakaldatu);
+
 
 var server = http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));

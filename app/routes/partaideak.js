@@ -22,7 +22,7 @@ var VALID_DNI_REGEX = /^\d{8}[a-zA-Z]{1}$/;
     return res.redirect(303, '/login');
   }
   debugger;
-  console.log(req.body.emailaard);
+//  console.log(req.body.emailaard);
   if(req.body.emailaard == "admin@kirolelkarteak.eus") {
     req.session.erabiltzaile = "admin@kirolelkarteak.eus";
     req.session.partaidea = "admin@kirolelkarteak.eus";
@@ -351,8 +351,8 @@ exports.historiala = function(req, res){
 exports.partaidemail = function(req, res){
 
   var id = req.params.emaila;
-console.log("Elkartea:"+req.session.idKirolElkarteak);
-console.log("Email:"+id);
+// console.log("Elkartea:"+req.session.idKirolElkarteak);
+// console.log("Email:"+id);
   req.getConnection(function(err,connection){
        
      connection.query('SELECT idPartaideak, izenaPart FROM partaideak where (balidatutaPart = "admin" or balidatutaPart >= 1) and emailPart = ? and idElkarteakPart = ?',[id,req.session.idKirolElkarteak],function(err,rows)     
@@ -362,7 +362,9 @@ console.log("Email:"+id);
                 console.log("Error Selecting : %s ",err );
 
             //res.render('forgot.handlebars', {title : 'Txaparrotan-Forgot', emailaard : id, taldeak : rows });
-            console.log("filak:"+JSON.stringify(rows));
+//            console.log("filak:"+JSON.stringify(rows));
+            if(rows.lenght != 0)
+                console.log("Nor dabil : "+ rows[0].izenaPart);
             res.json(rows);
 
          });
