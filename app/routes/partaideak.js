@@ -363,7 +363,7 @@ exports.partaidemail = function(req, res){
 
             //res.render('forgot.handlebars', {title : 'Txaparrotan-Forgot', emailaard : id, taldeak : rows });
 //            console.log("filak:"+JSON.stringify(rows));
-            if(rows.lenght != 0)
+            if(rows.length != 0)
                 console.log("Nor dabil : "+ rows[0].izenaPart);
             res.json(rows);
 
