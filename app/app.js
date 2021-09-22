@@ -267,7 +267,9 @@ app.get('/partaidemail/:emaila', partaideak.partaidemail);
 app.get('/partaideak',adminonartua, authorize2, partaideak.ikusi);
 app.get('/admin/partaideak',adminonartua, partaideak.ikusi);
 app.get('/admin/partaideak/:mota',adminonartua, partaideak.ikusimotaz);
+/*  ADI : login.hbs  izena-eman
 app.get('/izenematea',authorize2, partaideak.partaideakgehitu);
+*/  
 //app.post('/partaideakgehitu', authorize2, partaideak.partaideakgehitu);
 app.post('/partaideaksortu', partaideak.sortu);
 app.get('/partaideakbalidatu/:id', partaideak.balidatu);
@@ -306,10 +308,12 @@ app.get('/logout', function(req, res){
 
   res.redirect('/');
 });
+/*  ADI : login.hbs  pasahitza
 app.get('/forgot', function(req, res){
     res.render('forgot.handlebars', {title : 'KirolElkarteak-Forgot'});
 });
 app.post('/forgot', partaideak.forgot);
+*/
 app.get('/reset/:idPartaideak', function(req, res){
     res.render('reset.handlebars', {title : 'KirolElkarteak-Reset', partaidea: req.session.partaidea, idPartaideak: req.params.idPartaideak});
 });
@@ -317,12 +321,12 @@ app.post('/reset/:idPartaideak', partaideak.reset);
 app.get('/arauak', function(req, res){
     res.render('arauak.handlebars', {title : 'KirolElkarteak-Arauak', partaidea: req.session.partaidea});
 });
-
+/*
 app.get('/kontaktua', function(req, res){
     res.render('kontaktua.handlebars', {title : 'kirolElkarteak-Kontaktua', partaidea: req.session.partaidea, aditestua: "Kontaktua", atalak: req.session.atalak, idPartaideak:req.session.idPartaideak, arduraduna:req.session.arduraduna});
 });
 app.post('/kontaktuabidali',kirolElkarteak.kontaktuabidali); 
-
+*/
 app.get('/sailkapenak',authorize2, kudeaketa.sailkapenak);
 app.get('/admin/sailkapenak', adminonartua, kudeaketa.sailkapenakadmin);
 app.post('/admin/sailkapenakaldatu/:idTaldeak', adminonartua, kudeaketa.sailkapenakaldatu);

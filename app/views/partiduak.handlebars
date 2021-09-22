@@ -95,18 +95,20 @@
                 <!--<td>{{txapelketaPartidu}}</td>-->  
                     <td>{{etxekoaPartidu}}</td>   
                     <td>{{kanpokoaPartidu}}</td> 
-                  {{#if jardunaldiaIkusgai}}
+
                     <td>{{dataPartidu}} - {{egunaTexto}}</td> 
-                    <td>{{izenaLeku}} - {{herriaLeku}}</td>  
+                    <td>{{izenaLeku}}</td>  
                     <td>{{orduaPartidu}}</td> 
                     <td>{{nonPartidu}}</td>
                     <td>{{bidaiOrduaPartidu}}</td>
                     <td>{{bidaiaNolaPartidu}}</td>
                     <td style="color: red">{{bidaiEgunaPartidu}}</td>
                     <td>{{emaitzaPartidu}}</td>
+<!--                {{#if jardunaldiaIkusgai}}
                   {{else}}
-                    <td>{{dataPartidu}}</td>   
+                    <td>{{dataPartidu}} - {{egunaTexto}}</td> 
                   {{/if}}
+-->
                 </tr>
             {{/each}}
           </table>
@@ -131,7 +133,7 @@
 
         //$(location).attr('href', '/jardunaldikopartiduakpartaide/'+$('#jardunaldia').val());
 
-        if ($('#admin').val()){
+        if ($('#admin').val() != "false"){
           $(location).attr('href', '/admin/partiduakmailazka/'+$('#denboraldia').val()+'/'+$('#jardunaldia').val());
         }
         else{
@@ -144,7 +146,7 @@
 
         var data = 'id=' + $('#denboraldia').val();
 
-        if ($('#admin').val()){
+        if ($('#admin').val() != "false"){
           $(location).attr('href', '/admin/partiduakmailazka/'+$('#denboraldia').val()+'/'+$('#jardunaldia').val());
         }
         else{
@@ -158,7 +160,7 @@
 
         var data = 'id=' + $('#taldea').val();
         
-        if ($('#admin').val()){
+        if ($('#admin').val() != "false"){
           $(location).attr('href', '/admin/partiduaktaldeka/'+$('#taldea').val());
         }
         else{

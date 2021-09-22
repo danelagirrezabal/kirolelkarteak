@@ -96,7 +96,7 @@
 
         var data = 'id=' + $('#taldea').val();
         
-        if ($('#admin').val()){
+        if ($('#admin').val() != "false"){
           $(location).attr('href', '/admin/partiduaktaldeka/'+$('#taldea').val());
         }
         else{

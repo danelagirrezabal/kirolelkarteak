@@ -447,12 +447,16 @@ exports.jardunaldikopartiduakbilatupartaide = function(req, res){
                 }
 */
               for (var i in rows){
+                rows[i].egunaTexto = egunatextobihurtu(rows[i].dataPartidu);
                 if (rows[i].jardunaldiDataPartidu <= jardunaldiaIkusgai){
                     rows[i].jardunaldiaIkusgai = true;
-                    rows[i].egunaTexto = egunatextobihurtu(rows[i].dataPartidu);
                 }else{
                     rows[i].jardunaldiaIkusgai = false;
                 }
+                if (rows[i].orduaPartidu == "00:00:00")
+                    rows[i].orduaPartidu = "";
+                if (rows[i].bidaiOrduaPartidu == "00:00:00")
+                    rows[i].bidaiOrduaPartidu = "";
               }
 
 
@@ -1396,7 +1400,7 @@ exports.partiduakkargatuegin = function(req, res){
     var partiduak = input.partiduakCSV.split("\n"); //CSV-a zatitu lerroka (partiduka)
     var partidua = [];
     var idLekuak;
-    var kanpoPosizio, etxePosizio, partiduanoiz, aOrdua, vEguna, vBukaera;
+    var kanpoPosizio, etxePosizio, atsedenaPosizio, partiduanoiz, aOrdua, vEguna, vBukaera, bidaiaNola;
 //    var vEguna = new Date(); 
 //    var vBukaera = new Date();
     var ordua = input.hasierakoordua;
@@ -1409,7 +1413,7 @@ exports.partiduakkargatuegin = function(req, res){
           console.log("Error Selecting : %s ",err );
       kanpoPosizio = rowsl.length-1;
       etxePosizio = input.etxekoaknon;
-
+      atsedenaPosizio = 6;
 
       var  aBukaera = input.bukaerakoordua.split(":");
       var  vDenbora= input.partidudenbora * 60 * 1000;
@@ -1418,10 +1422,16 @@ exports.partiduakkargatuegin = function(req, res){
           partidua = partiduak[i].split(",");
           console.log(partiduak[i]);
 //debugger;
-
+          bidaiaNola = "";
           if (partidua[1] != input.federazioTaldeIzena) //Federazioko taldearen izenean sartu duten datua ezberdina bada CSV-ko 2. zutabearekin (etxeko taldea), kanpokoa dela adierazi
            {
-            idLekuak = rowsl[kanpoPosizio].idLekuak; //Kanpoko taldearen lekua datu-baseko azkena dagoena izango da (zenbakiLeku aldagaia handiena duena)
+            if (partidua[1] == "ATSEDENA")
+                idLekuak = rowsl[atsedenaPosizio].idLekuak; //Atsedena lekua  ADI zenbatgarrena ? 5 edo 6
+            else
+            {
+                idLekuak = rowsl[kanpoPosizio].idLekuak; //Kanpoko taldearen lekua datu-baseko azkena dagoena izango da (zenbakiLeku aldagaia handiena duena)
+                bidaiaNola = "AUTOBUSEZ";
+            }
             partiduanoiz = partidua[0];
             vOrdua = "00:00";
            }
@@ -1484,7 +1494,8 @@ exports.partiduakkargatuegin = function(req, res){
             txapelketaPartidu : input.txapelketa,
             dataPartidu: partiduanoiz,               // partidua[0],
             orduaPartidu: vOrdua,
-            bidaiOrduaPartidu : '00:00:00'  
+            bidaiOrduaPartidu : '00:00:00',
+            bidaiaNolaPartidu : bidaiaNola  
           };
         
   
