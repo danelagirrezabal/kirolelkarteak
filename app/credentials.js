@@ -29,10 +29,16 @@ dbdevelop: {
         database: 'heroku_3a7c26fa617acae'      //kirolElkarteak
 },
 dbproduction: {
-        host: 'us-cdbr-iron-east-04.cleardb.net',
-        user: 'b65e4830d842c6',
-        password : '5771113112b92f3',                   //'ff86419e'
+//        host: 'us-cdbr-iron-east-04.cleardb.net',
+//        user: 'b65e4830d842c6',
+//        password : '5771113112b92f3',                   //'ff86419e'
       //  port : 3306, //port mysql
-        database:'heroku_3a7c26fa617acae'
+//        database:'heroku_3a7c26fa617acae'
+
+        host: 'us-cluster-east-01.k8s.cleardb.net',
+        user: 'b900c630a65f0c',
+        password : '8b68512656cdcf3',                   //'ff86419e'
+      //  port : 3306, //port mysql
+        database:'heroku_73bb959756e3c82'
 }
 };

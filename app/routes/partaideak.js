@@ -1647,7 +1647,7 @@ exports.reset = function(req,res){
     var id = idEnkript / 2345678;
 
     if(input.pasahitza != input.pasahitza2){
-      res.redirect('/reset/' +id);
+      res.redirect('/reset/' + idEnkript);
     }
     
     else{
