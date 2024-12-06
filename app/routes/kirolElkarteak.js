@@ -34,17 +34,20 @@ fs.existsSync(agiriakDir) || fs.mkdirSync(agiriakDir);
 
 exports.aukeratzeko = function(req, res){
 
-  req.getConnection(function (err, connection) {
+//postgres  req.getConnection(function(err,connection){
+//postgresConnect  req.connection.connect(function(err,connection){                //postgres
       if (err)
               console.log("Error connection : %s ",err );
       //Txapelketa bat pruebetako ixkutatuta idKirolElkarteak != 42
-      connection.query('SELECT idElkarteak, izenaElk FROM elkarteak',function(err,rows)  {
+//postgres      connection.query('SELECT idElkarteak, izenaElk FROM elkarteak',function(err,rows)  {
+      req.connection.query('SELECT "idElkarteak", "izenaElk" FROM elkarteak',function(err,wrows)  {        
         if (err)
                 console.log("Error query : %s ",err ); 
+        rows = wrows.rows;     //postgres
         console.log("kirolElkarteak : " + JSON.stringify(rows)); 
         res.render('kirolElkarteakaukeratzeko.handlebars', {title : 'kirolElkarteak-Elkartea aukeratzeko', kirolElkarteak : rows, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia});
       });   
-  });  
+//postgresConnect  });  
 };
 
 exports.aukeratu = function(req, res){
@@ -85,14 +88,16 @@ exports.sortu = function(req,res){
           } );
   };
 */
-    req.getConnection(function (err, connection) {
+//postgres  req.getConnection(function(err,connection){
+//postgresConnect  req.connection.connect(function(err,connection){                //postgres
       //2016-05-31
       if (err)
               console.log("Error connection : %s ",err ); 
             //
+//postgres      connection.query('SELECT * FROM elkarteak where izenaElk = ?',[req.body.izenaElk],function(err,rows)  {
+      req.connection.query('SELECT * FROM elkarteak where "izenaElk" = $1',[req.body.izenaElk],function(err,wrows)  {
+        rows = wrows.rows;     //postgres
 
-      connection.query('SELECT * FROM elkarteak where izenaElk = ?',[req.body.izenaElk],function(err,rows)  {
-          
         if(err || rows.length != 0){
         //  res.redirect('/izenematea');
 
@@ -123,12 +128,12 @@ exports.sortu = function(req,res){
             emailElk : input.emailElk
 
         };
-        
-        var query = connection.query("INSERT INTO elkarteak set ? ",data, function(err, rows)
+//postgres        var query = connection.query("INSERT INTO elkarteak set ? ",data, function(err, rows)        
+        var query = req.connection.query("INSERT INTO elkarteak set $1 ",data, function(err, wrows)
         {
           if (err)
               console.log("Error inserting : %s ",err ); 
-
+          rows = wrows.rows;     //postgres
           idKirolElkarteak = rows.insertId;
 
           // Generate password hash
@@ -150,9 +155,10 @@ exports.sortu = function(req,res){
         };
         debugger;
         console.log(data);
-        var query = connection.query("INSERT INTO partaideak set ? ",data, function(err, rows)
+//postgres        var query = connection.query("INSERT INTO partaideak set ? ",data, function(err, rows)
+        var query = req.connection.query("INSERT INTO partaideak set $1 ",data, function(err, wrows)          
         {
-  
+         rows = wrows.rows;     //postgres
           if (err)
               console.log("Error inserting : %s ",err );
          else{
@@ -167,21 +173,22 @@ exports.sortu = function(req,res){
          //res.redirect(303, '/admin/kirolElkarteak');
         });
       });
-    });    
+//postgresConnect    });    
 };
 
 exports.editatu = function(req,res){
     
     var input = JSON.parse(JSON.stringify(req.body));
     var id= req.session.idKirolElkarteak;
-    req.getConnection(function (err, connection) {
- 
-        var query = connection.query('SELECT * FROM elkarteak where idElkarteak = ?',[id],function(err,rows)
+//postgres  req.getConnection(function(err,connection){
+//postgresConnect  req.connection.connect(function(err,connection){                //postgres
+//postgres        var query = connection.query('SELECT * FROM elkarteak where idElkarteak = ?',[id],function(err,rows) 
+        var query = req.connection.query('SELECT * FROM elkarteak where "idElkarteak" = $1',[id],function(err,wrows)
         {
-  
+          
           if (err)
               console.log("Error inserting : %s ",err );
-          
+          rows = wrows.rows;     //postgres
           req.session.idKirolElkarteak = rows[0].idElkarteak;
           res.render('kirolElkarteakeditatu.handlebars', {title: "KirolElkarteak-Elkarteak editatu",
             idKirolElkarteak : id,
@@ -200,14 +207,15 @@ exports.editatu = function(req,res){
         
        // console.log(query.sql); 
     
-    });
+//postgresConnect    });
 };
 
 exports.aldatu = function(req,res){
     
     var input = JSON.parse(JSON.stringify(req.body));
     var id= req.session.idKirolElkarteak;
-    req.getConnection(function (err, connection) {
+//postgres  req.getConnection(function(err,connection){
+//postgresConnect    req.connection.connect(function(err,connection){                //postgres
         
         var data = {
             
@@ -221,19 +229,20 @@ exports.aldatu = function(req,res){
         };
         
         console.log(data);
-        var query = connection.query("UPDATE elkarteak set ? WHERE idElkarteak = ? ",[data,id], function(err, rows)
+  //postgres      var query = connection.query("UPDATE elkarteak set ? WHERE idElkarteak = ? ",[data,id], function(err, rows)
+        var query = req.connection.query('UPDATE elkarteak set $1 WHERE "idElkarteak" = $2 ',[data,id], function(err, rows)
         {
   
           if (err)
               console.log("Error inserting : %s ",err );
-         
+          
           res.redirect('/kirolElkarteakeditatu');
           
         });
         
        // console.log(query.sql); 
     
-    });
+//postgresConnect    });
 };
 
 //////////////  BERRIAK  ////////////////
@@ -250,7 +259,8 @@ exports.berriaksortu = function(req,res){
           hosta += ":"+ (process.env.PORT || 3000);
     }
 
-    req.getConnection(function (err, connection) {
+//postgres  req.getConnection(function(err,connection){
+//postgresConnect    req.connection.connect(function(err,connection){                //postgres
         
         var data = {
             
@@ -261,8 +271,8 @@ exports.berriaksortu = function(req,res){
             zenbakiBerria: 0
         };
         
-  
-        var query = connection.query("INSERT INTO berriak set ? ",data, function(err, rows)
+//postgres        var query = connection.query("INSERT INTO berriak set ? ",data, function(err, rows)  
+        var query = req.connection.query("INSERT INTO berriak set $1 ",data, function(err, rows)
         {
   
           if (err)
@@ -286,23 +296,25 @@ exports.berriaksortu = function(req,res){
         
        // console.log(query.sql); 
     
-    });
+//postgresConnect    });
 };
 
 exports.berriakikusi = function(req, res){
   var id = req.session.idKirolElkarteak;
 
-  req.getConnection(function(err,connection){
-       
-     connection.query('SELECT * FROM berriak where idElkarteakBerria = ? order by dataBerria desc',[id],function(err,rows)     {
+//postgres  req.getConnection(function(err,connection){
+//postgresConnect  req.connection.connect(function(err,connection){                //postgres
+//postgres     connection.query('SELECT * FROM berriak where idElkarteakBerria = ? order by dataBerria desc',[id],function(err,rows)     {       
+     req.connection.query('SELECT * FROM berriak where "idElkarteakBerria" = $1 order by "dataBerria" desc',[id],function(err,wrows)     {
             
         if(err)
            console.log("Error Selecting : %s ",err );
-     
-        connection.query('SELECT * FROM elkarteak where idElkarteak = ? ',[id],function(err,rowst)     {
+        rows = wrows.rows;     //postgres
+//postgres        connection.query('SELECT * FROM elkarteak where idElkarteak = ? ',[id],function(err,rowst)     {
+        req.connection.query('SELECT * FROM elkarteak where "idElkarteak" = $1 ',[id],function(err,wrows)     {          
           if(err)
            console.log("Error Selecting : %s ",err );
-
+          rowst = wrows.rows;     //postgres
           //for (var i in rows){
             //rows[i].testuaBerria=rows[i].testuaBerria.replace(/\r?\n/g, "<br>");
 
@@ -310,28 +322,30 @@ exports.berriakikusi = function(req, res){
           res.render('index.handlebars',{title: "kirolElkarteak", data:rows, data2: rowst, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, atalak: req.session.atalak, idPartaideak:req.session.idPartaideak, arduraduna:req.session.arduraduna});
         });                        
       });   
-  });
+//postgresConnect  });
 };
 
 
 exports.berriakbilatu = function(req, res){
   var id = req.session.idKirolElkarteak;
-  req.getConnection(function(err,connection){
-       
-     connection.query('SELECT * FROM berriak where idElkarteakBerria = ? order by dataBerria desc',[id],function(err,rows) {
+//postgres  req.getConnection(function(err,connection){
+//postgresConnect  req.connection.connect(function(err,connection){                //postgres
+//postgres     connection.query('SELECT * FROM berriak where idElkarteakBerria = ? order by dataBerria desc',[id],function(err,rows) {       
+     req.connection.query('SELECT * FROM berriak where "idElkarteakBerria" = $1 order by "dataBerria" desc',[id],function(err,wrows) {
             
         if(err)
            console.log("Error Selecting : %s ",err );
-     
-        connection.query('SELECT * FROM elkarteak where idElkarteak = ? ',[id],function(err,rowst)     {
+        rows = wrows.rows;     //postgres 
+//postgres        connection.query('SELECT * FROM elkarteak where idElkarteak = ? ',[id],function(err,rowst)     {     
+        req.connection.query('SELECT * FROM elkarteak where "idElkarteak" = $1 ',[id],function(err,wrows)     {
           if(err)
            console.log("Error Selecting : %s ",err );
-         
+          rowst = wrows.rows;     //postgres
          console.log("Berriak:" +JSON.stringify(rows));
           res.render('berriak.handlebars',{title: "Berriak", data:rows, data2: rowst, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea: req.session.partaidea});
         });                        
       });   
-  });
+//postgresConnect  });
 };
 
 exports.berriakeditatu = function(req, res){
@@ -339,19 +353,20 @@ exports.berriakeditatu = function(req, res){
   var id = req.session.idKirolElkarteak;
   var idBerriak = req.params.idBerriak;
     
-  req.getConnection(function(err,connection){
-       
-     connection.query('SELECT * FROM berriak WHERE idElkarteakBerria = ? and idBerriak = ?',[id,idBerriak],function(err,rows)
+//postgres  req.getConnection(function(err,connection){
+//postgresConnect  req.connection.connect(function(err,connection){                //postgres
+//postgres     connection.query('SELECT * FROM berriak WHERE idElkarteakBerria = ? and idBerriak = ?',[id,idBerriak],function(err,rows)
+     req.connection.query('SELECT * FROM berriak WHERE "idElkarteakBerria" = $1 and "idBerriak" = $2',[id,idBerriak],function(err,wrows)
         {
             
             if(err)
                 console.log("Error Selecting : %s ",err );
-
+            rows = wrows.rows;     //postgres 
             res.render('berriakeditatu.handlebars', {page_title:"Berriak aldatu",data:rows, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea: req.session.partaidea});
                            
          });
                  
-    }); 
+//postgresConnect    }); 
 };
 
 exports.berriakaldatu = function(req,res){
@@ -361,7 +376,8 @@ exports.berriakaldatu = function(req,res){
     var id = req.session.idKirolElkarteak;
     var idBerriak = req.params.idBerriak;
     
-    req.getConnection(function (err, connection) {
+//postgres  req.getConnection(function(err,connection){
+//postgresConnect    req.connection.connect(function(err,connection){                //postgres
         
         var data = {
             
@@ -372,8 +388,8 @@ exports.berriakaldatu = function(req,res){
             //zenbakiBerria: input.zenbakiBerria
             //argazkia
         };
-        
-        connection.query("UPDATE berriak set ? WHERE idElkarteakBerria = ? and idBerriak = ? ",[data,id,idBerriak], function(err, rows)
+//postgres        connection.query("UPDATE berriak set ? WHERE idElkarteakBerria = ? and idBerriak = ? ",[data,id,idBerriak], function(err, rows)
+        req.connection.query('UPDATE berriak set $1 WHERE "idElkarteakBerria" = $2 and "idBerriak" = $3',[data,id,idBerriak], function(err, rows) 
         {
   
           if (err)
@@ -383,7 +399,7 @@ exports.berriakaldatu = function(req,res){
           
         });
     
-    });
+//postgresConnect    });
 };
 
 exports.berriakezabatu = function(req,res){
@@ -392,10 +408,11 @@ exports.berriakezabatu = function(req,res){
      var id = req.session.idKirolElkarteak;
      var idBerriak = req.params.idBerriak;
     
-     req.getConnection(function (err, connection) {
-        
-        connection.query("DELETE FROM berriak  WHERE idElkarteakBerria = ? and idBerriak = ?",[id,idBerriak], function(err, rows)
-        {
+//postgres  req.getConnection(function(err,connection){
+//postgresConnect     req.connection.connect(function(err,connection){                //postgres
+//postgres        connection.query("DELETE FROM berriak  WHERE idElkarteakBerria = ? and idBerriak = ?",[id,idBerriak], function(err, rows)
+        req.connection.query('DELETE FROM berriak  WHERE "idElkarteakBerria" = $1 and "idBerriak" = $2',[id,idBerriak], function(err, rows) {
+//        {
             
              if(err)
                  console.log("Error deleting : %s ",err );
@@ -404,7 +421,7 @@ exports.berriakezabatu = function(req,res){
              
         });
         
-     });
+//postgresConnect     });
 };
 
 //////////////  EDUKIAK  ////////////////
@@ -421,7 +438,8 @@ exports.edukiaksortu = function(req,res){
           hosta += ":"+ (process.env.PORT || 3000);
     }
 
-    req.getConnection(function (err, connection) {
+//postgres  req.getConnection(function(err,connection){
+//postgresConnect    req.connection.connect(function(err,connection){                //postgres
         
         var data = {
             
@@ -432,8 +450,8 @@ exports.edukiaksortu = function(req,res){
             idAzpiAtalakEdukia: idAzpiAtalak,
             zenbakiEdukia: input.zenbakiEdukia
         };
-        
-        var query = connection.query("INSERT INTO edukiak set ? ",data, function(err, rows)
+//postgres        var query = connection.query("INSERT INTO edukiak set ? ",data, function(err, rows)        
+        var query = req.connection.query("INSERT INTO edukiak set $1 ",data, function(err, rows)
         {
   
           if (err)
@@ -471,7 +489,7 @@ exports.edukiaksortu = function(req,res){
         
        // console.log(query.sql); 
     
-    });
+//postgresConnect    });
 };
 
 exports.edukiakosoriksortu = function(req,res){
@@ -487,7 +505,8 @@ exports.edukiakosoriksortu = function(req,res){
     }else{
 
   
-    req.getConnection(function (err, connection) {
+//postgres  req.getConnection(function(err,connection){
+//postgresConnect    req.connection.connect(function(err,connection){                //postgres
             console.log("redirect ez da pasa");
 
 
@@ -499,14 +518,14 @@ exports.edukiakosoriksortu = function(req,res){
             idElkarteakAtala : id,
             zenbakiAtala: 0
         };  
-  
-        var query = connection.query("INSERT INTO atalak set ? ",dataatala, function(err, rows)
+//postgres        var query = connection.query("INSERT INTO atalak set ? ",dataatala, function(err, rows)  
+        var query = req.connection.query("INSERT INTO atalak set $1 ",dataatala, function(err, rows)
         {
   
           if (err)
               console.log("Error inserting : %s ",err );
 
-
+          rows = wrows.rows;     //postgres
           var dataazpiatala = {
             
             izenaAzpiAtala    : input.izenaAzpiAtala,
@@ -514,13 +533,13 @@ exports.edukiakosoriksortu = function(req,res){
             idAtalakAzpiAtala: rows.insertId, //Hemen aurreko atalaren id jarri behar da!!!
             zenbakiAzpiAtala: 0
           };
-
-          var query = connection.query("INSERT INTO azpiAtalak set ? ",dataazpiatala, function(err, rows)
+//postgres          var query = connection.query("INSERT INTO azpiAtalak set ? ",dataazpiatala, function(err, rows)
+          var query = req.connection.query("INSERT INTO azpiAtalak set $1 ",dataazpiatala, function(err, rows)
           {
   
                 if (err)
                     console.log("Error inserting : %s ",err );
-
+                rows = wrows.rows;     //postgres
                 var dataedukia = {
             
                     izenburuaEdukia    : input.izenburuaEdukia,
@@ -530,8 +549,8 @@ exports.edukiakosoriksortu = function(req,res){
                     idAzpiAtalakEdukia: rows.insertId, //Hemen aurreko azpiatalaren id jarri behar da!!!
                     zenbakiEdukia: 0
                 };
-
-                var query = connection.query("INSERT INTO edukiak set ? ",dataedukia, function(err, rows)
+//postgres                var query = connection.query("INSERT INTO edukiak set ? ",dataedukia, function(err, rows)
+                var query = req.connection.query("INSERT INTO edukiak set $1 ",dataedukia, function(err, rows)
                 {
   
                   if (err)
@@ -572,7 +591,8 @@ exports.edukiakosoriksortu = function(req,res){
                     zenbakiEdukia: 0
 
             }
-            var query = connection.query("INSERT INTO edukiak set ? ",dataedukia, function(err, rows)
+//postgres            var query = connection.query("INSERT INTO edukiak set ? ",dataedukia, function(err, rows)
+            var query = req.connection.query("INSERT INTO edukiak set $1 ",dataedukia, function(err, rows)
             {
   
                 if (err)
@@ -599,7 +619,7 @@ exports.edukiakosoriksortu = function(req,res){
         }
        // console.log(query.sql); 
     
-    });
+//postgresConnect    });
 }
 };
 
@@ -607,38 +627,40 @@ exports.edukiakosorikgehitu = function(req,res){
     var input = JSON.parse(JSON.stringify(req.body));
     var id = req.session.idKirolElkarteak;
 
-    req.getConnection(function(err,connection){
-       
-     connection.query('SELECT * from atalak where idElkarteakAtala = ? order by zenbakiAtala desc',[id],function(err,rowsa) {
+//postgres  req.getConnection(function(err,connection){
+//postgresConnect  req.connection.connect(function(err,connection){                //postgres
+//postgres     connection.query('SELECT * from atalak where idElkarteakAtala = ? order by zenbakiAtala desc',[id],function(err,rowsa) {
+     req.connection.query('SELECT * from atalak where "idElkarteakAtala" = $1 order by "zenbakiAtala" desc',[id],function(err,wrows) {
             
         if(err)
            console.log("Error Selecting : %s ",err );
     
-
+        rowsa = wrows.rows;     //postgres
 
     res.render('edukiaksortuosorik.handlebars', {title : 'KirolElkarteak-Edukiak gehitu', atalakeduki:rowsa, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, atalak: req.session.atalak, partaidea: req.session.partaidea, idPartaideak:req.session.idPartaideak, arduraduna:req.session.arduraduna});
 
 
   });
-   });
+//postgresConnect   });
 };
 
 exports.edukietarakoazpiatalaklortu = function(req, res){
 
   var atala = req.params.atala;
-  req.getConnection(function(err,connection){
-       
-     connection.query('SELECT idAzpiAtalak, izenaAzpiAtala FROM azpiAtalak where idElkarteakAzpiAtala = ? and idAtalakAzpiAtala = ?',[req.session.idKirolElkarteak, atala],function(err,rows)     
+//postgres  req.getConnection(function(err,connection){
+//postgresConnect  req.connection.connect(function(err,connection){                //postgres
+//postgres     connection.query('SELECT idAzpiAtalak, izenaAzpiAtala FROM azpiAtalak where idElkarteakAzpiAtala = ? and idAtalakAzpiAtala = ?',[req.session.idKirolElkarteak, atala],function(err,rows)     
+     req.connection.query('SELECT "idAzpiAtalak", "izenaAzpiAtala" FROM azpiAtalak where "idElkarteakAzpiAtala" = $1 and "idAtalakAzpiAtala" = $2',[req.session.idKirolElkarteak, atala],function(err,wrows)     
      
         {
             if(err)
                 console.log("Error Selecting : %s ",err );
-
+            rows = wrows.rows;     //postgres
             res.json(rows);
 
          });
                   
-  }); 
+//postgresConnect  }); 
 };
 
 exports.edukiakhasiera = function(req, res){
@@ -657,16 +679,17 @@ exports.edukiakhasiera = function(req, res){
   //var k = 0;
   var vAtalak, vAzpiAtalak;
  
-  req.getConnection(function(err,connection){
-       
+//postgres  req.getConnection(function(err,connection){
+//postgresConnect  req.connection.connect(function(err,connection){                //postgres       
      
-     connection.query('SELECT * FROM edukiak, azpiAtalak, atalak where zenbakiAtala > 0 AND zenbakiAtala <= 10 AND idElkarteakEdukia = ? and idAzpiAtalakEdukia = idAzpiAtalak and idAtalakAzpiAtala = idAtalak and zenbakiAzpiAtala != ? and zenbakiEdukia != ? order by zenbakiEdukia asc,  dataEdukia desc',[id, 0, 0],function(err,rows)     {
+//postgres     connection.query('SELECT * FROM edukiak, azpiAtalak, atalak where zenbakiAtala > 0 AND zenbakiAtala <= 10 AND idElkarteakEdukia = ? and idAzpiAtalakEdukia = idAzpiAtalak and idAtalakAzpiAtala = idAtalak and zenbakiAzpiAtala != ? and zenbakiEdukia != ? order by zenbakiEdukia asc,  dataEdukia desc',[id, 0, 0],function(err,rows)     {
+     req.connection.query('SELECT * FROM edukiak, azpiAtalak, atalak where "zenbakiAtala" > \'0\' AND "zenbakiAtala" <= \'10\' AND "idElkarteakEdukia" = $1 and "idAzpiAtalakEdukia" = "idAzpiAtalak" and "idAtalakAzpiAtala" = "idAtalak" and "zenbakiAzpiAtala" != $2 and "zenbakiEdukia" != $3 order by "zenbakiEdukia" asc,  "dataEdukia" desc',[id, 0, 0],function(err,wrows)     {
             
         if(err)
            console.log("Error Selecting : %s ",err );
-         
-     
-        connection.query('SELECT * FROM elkarteak where idElkarteak = ? ',[id],function(err,rowst)     {
+        rows = wrows.rows;     //postgres 
+//postgres        connection.query('SELECT * FROM elkarteak where idElkarteak = ? ',[id],function(err,rowst)     {     
+        req.connection.query('SELECT * FROM elkarteak where "idElkarteak" = $1 ',[id],function(err,wrows)     {
           
           if(err)
            console.log("Error Selecting : %s ",err );
@@ -677,6 +700,7 @@ exports.edukiakhasiera = function(req, res){
 
           //}
 
+          rowst = wrows.rows;   //postgres
 
           for (var i in rows) {
   
@@ -736,7 +760,7 @@ exports.edukiakhasiera = function(req, res){
 
       });   
 
-  });
+//postgresConnect  });
            //res.render('edukiakikusi.handlebars',{title: "kirolElkarteak", jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, atalak: req.session.atalak, partaidea: req.session.partaidea});
 
 };
@@ -757,20 +781,21 @@ exports.atalakikusi = function(req, res){
   //var k = 0;
   var vAtalak, vAzpiAtalak;
 
-   req.getConnection(function(err,connection){
+//postgres  req.getConnection(function(err,connection){
+//postgresConnect  req.connection.connect(function(err,connection){                //postgres 
        
-      connection.query('SELECT * FROM edukiak, azpiAtalak where idElkarteakEdukia = ? and idAzpiAtalakEdukia = idAzpiAtalak and idAtalakAzpiAtala = ? and zenbakiAzpiAtala != ? and zenbakiEdukia != ? order by zenbakiAzpiAtala asc, zenbakiEdukia asc,  dataEdukia desc',[id, idAtalak, 0, 0],function(err,rows)     {
-            
+//postgres      connection.query('SELECT * FROM edukiak, azpiAtalak where idElkarteakEdukia = ? and idAzpiAtalakEdukia = idAzpiAtalak and idAtalakAzpiAtala = ? and zenbakiAzpiAtala != ? and zenbakiEdukia != ? order by zenbakiAzpiAtala asc, zenbakiEdukia asc,  dataEdukia desc',[id, idAtalak, 0, 0],function(err,rows)     {
+      req.connection.query('SELECT * FROM edukiak, azpiAtalak where "idElkarteakEdukia" = $1 and "idAzpiAtalakEdukia" = "idAzpiAtalak" and "idAtalakAzpiAtala" = $2 and "zenbakiAzpiAtala" != $3 and "zenbakiEdukia" != $4 order by "zenbakiAzpiAtala" asc, "zenbakiEdukia" asc,  "dataEdukia" desc',[id, idAtalak, 0, 0],function(err,wrows)     {            
         if(err)
            console.log("Error Selecting : %s ",err );
-         
+        rows = wrows.rows;     //postgres        
      
-        connection.query('SELECT * FROM elkarteak where idElkarteak = ? ',[id],function(err,rowst)     {
-          
+//postgres        connection.query('SELECT * FROM elkarteak where idElkarteak = ? ',[id],function(err,rowst)     {
+        req.connection.query('SELECT * FROM elkarteak where "idElkarteak" = $1 ',[id],function(err,wrows)     {          
           if(err)
            console.log("Error Selecting : %s ",err );
           
-
+          rowst = wrows.rows;     //postgres
           for (var i in rows) {
   
           
@@ -814,7 +839,7 @@ exports.atalakikusi = function(req, res){
 
       });   
 
-  });
+//postgresConnect  });
 
 };
 
@@ -834,21 +859,23 @@ exports.azpiatalakikusi = function(req, res){
   //var k = 0;
   var vAtalak, vAzpiAtalak;
  
-  req.getConnection(function(err,connection){
+//postgres  req.getConnection(function(err,connection){
+//postgresConnect  req.connection.connect(function(err,connection){                //postgres
        
-     
-     connection.query('SELECT * FROM edukiak, azpiAtalak where idElkarteakEdukia = ? and idAzpiAtalakEdukia = idAzpiAtalak and idAzpiAtalak = ? and zenbakiEdukia != ? order by zenbakiAzpiAtala asc, zenbakiEdukia asc,  dataEdukia desc',[id, idAzpiAtalak, 0],function(err,rows)     {
+//postgres     connection.query('SELECT * FROM edukiak, azpiAtalak where idElkarteakEdukia = ? and idAzpiAtalakEdukia = idAzpiAtalak and idAzpiAtalak = ? and zenbakiEdukia != ? order by zenbakiAzpiAtala asc, zenbakiEdukia asc,  dataEdukia desc',[id, idAzpiAtalak, 0],function(err,rows)     {
+     req.connection.query('SELECT * FROM edukiak, azpiAtalak where "idElkarteakEdukia" = $1 and "idAzpiAtalakEdukia" = "idAzpiAtalak" and "idAzpiAtalak" = $2 and "zenbakiEdukia" != $3 order by "zenbakiAzpiAtala" asc, "zenbakiEdukia" asc,  "dataEdukia" desc',[id, idAzpiAtalak, 0],function(err,wrows)     {
             
         if(err)
            console.log("Error Selecting : %s ",err );
          
-     
-        connection.query('SELECT * FROM elkarteak where idElkarteak = ? ',[id],function(err,rowst)     {
+        rows = wrows.rows;     //postgres
+//postgres        connection.query('SELECT * FROM elkarteak where idElkarteak = ? ',[id],function(err,rowst)     {
+        req.connection.query('SELECT * FROM elkarteak where "idElkarteak" = $1 ',[id],function(err,wrows)     {
           
           if(err)
            console.log("Error Selecting : %s ",err );
           
-
+          rowst = wrows.rows;     //postgres
           for (var i in rows) {
   
           
@@ -892,7 +919,7 @@ exports.azpiatalakikusi = function(req, res){
 
       });   
 
-  });
+//postgresConnect  });
 
 };
 
@@ -912,21 +939,23 @@ exports.edukiakikusi = function(req, res){
   //var k = 0;
   var vAtalak, vAzpiAtalak;
  
-  req.getConnection(function(err,connection){
+//postgres  req.getConnection(function(err,connection){
+//postgresConnect  req.connection.connect(function(err,connection){                //postgres
        
-     
-     connection.query('SELECT * FROM edukiak, azpiAtalak where idElkarteakEdukia = ? and idAzpiAtalakEdukia = idAzpiAtalak and idEdukiak = ? and zenbakiEdukia != ? order by zenbakiAzpiAtala asc, zenbakiEdukia asc,  dataEdukia desc',[id, idEdukiak, 0],function(err,rows)     {
+//postgres     connection.query('SELECT * FROM edukiak, azpiAtalak where idElkarteakEdukia = ? and idAzpiAtalakEdukia = idAzpiAtalak and idEdukiak = ? and zenbakiEdukia != ? order by zenbakiAzpiAtala asc, zenbakiEdukia asc,  dataEdukia desc',[id, idEdukiak, 0],function(err,rows)     {
+     req.connection.query('SELECT * FROM edukiak, azpiAtalak where "idElkarteakEdukia" = $1 and "idAzpiAtalakEdukia" = "idAzpiAtalak" and "idEdukiak" = $2 and "zenbakiEdukia" != $3 order by "zenbakiAzpiAtala" asc, "zenbakiEdukia" asc,  "dataEdukia" desc',[id, idEdukiak, 0],function(err,wrows)     {
             
         if(err)
            console.log("Error Selecting : %s ",err );
          
-     
-        connection.query('SELECT * FROM elkarteak where idElkarteak = ? ',[id],function(err,rowst)     {
+        rows = wrows.rows;     //postgres
+//postgres      connection.query('SELECT * FROM elkarteak where idElkarteak = ? ',[id],function(err,rowst)     {  
+        req.connection.query('SELECT * FROM elkarteak where "idElkarteak" = $1 ',[id],function(err,wrows)     {
           
           if(err)
            console.log("Error Selecting : %s ",err );
           
-
+          rowst = wrows.rows;     //postgres
           //for (var i in rows){
             //rows[i].testuaBerria=rows[i].testuaBerria.replace(/\r?\n/g, "<br>");
 
@@ -988,7 +1017,7 @@ exports.edukiakikusi = function(req, res){
 
       });   
 
-  });
+//postgresConnect  });
            //res.render('edukiakikusi.handlebars',{title: "kirolElkarteak", jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, atalak: req.session.atalak, partaidea: req.session.partaidea});
 
 };   
@@ -1007,26 +1036,26 @@ exports.edukiakbilatu = function(req, res){
   var j,t;
   var k = 0;
   var vAtalak, vAzpiAtalak;
-  req.getConnection(function(err,connection){
-       
-     connection.query('SELECT *,DATE_FORMAT(dataEdukia,"%Y-%m-%d") AS dataEdukia FROM (atalak LEFT JOIN azpiAtalak ON idAtalak=idAtalakAzpiAtala) LEFT JOIN edukiak ON idAzpiAtalak=idAzpiAtalakEdukia where idAtalak=idAtalakAzpiAtala and idAzpiAtalak=idAzpiAtalakEdukia and idElkarteakEdukia = ? order by zenbakiAtala asc, zenbakiAzpiAtala asc, zenbakiEdukia asc, dataEdukia desc',[id],function(err,rows) {
+  //postgres  req.getConnection(function(err,connection){
+//postgresConnect  req.connection.connect(function(err,connection){                //postgres
+//postgres     connection.query('SELECT *,DATE_FORMAT(dataEdukia,"%Y-%m-%d") AS dataEdukia FROM (atalak LEFT JOIN azpiAtalak ON idAtalak=idAtalakAzpiAtala) LEFT JOIN edukiak ON idAzpiAtalak=idAzpiAtalakEdukia where idAtalak=idAtalakAzpiAtala and idAzpiAtalak=idAzpiAtalakEdukia and idElkarteakEdukia = ? order by zenbakiAtala asc, zenbakiAzpiAtala asc, zenbakiEdukia asc, dataEdukia desc',[id],function(err,rows) {
+     req.connection.query('SELECT *,to_char("dataEdukia", \'YYYY-MM-DD\') AS dataEdukiaF FROM (atalak LEFT JOIN azpiAtalak ON "idAtalak"="idAtalakAzpiAtala") LEFT JOIN edukiak ON "idAzpiAtalak"="idAzpiAtalakEdukia" where "idAtalak"="idAtalakAzpiAtala" and "idAzpiAtalak"="idAzpiAtalakEdukia" and "idElkarteakEdukia" = $1 order by "zenbakiAtala" asc, "zenbakiAzpiAtala" asc, "zenbakiEdukia" asc, "dataEdukia" desc',[id],function(err,wrows) {
             
         if(err)
            console.log("Error Selecting : %s ",err );
-     
-        connection.query('SELECT * FROM elkarteak where idElkarteak = ? ',[id],function(err,rowst)     {
+        rows = wrows.rows;     //postgres
+//postgres        connection.query('SELECT * FROM elkarteak where idElkarteak = ? ',[id],function(err,rowst)     {
+        req.connection.query('SELECT * FROM elkarteak where "idElkarteak" = $1 ',[id],function(err,wrows)     {
           if(err)
            console.log("Error Selecting : %s ",err );
-         
+        rowst = wrows.rows;     //postgres 
          //console.log("Edukiak:" +JSON.stringify(rows));
 
 
         // debugger;
 
-
-
         for (var i in rows) {
-  
+          rows[i].dataEdukia = rows[i].dataEdukiaF;     //postgres 
           if(vAtalak != rows[i].idAtalak){
             if(vAtalak !=null){
               azpiAtala.edukiak = edukiak;
@@ -1085,7 +1114,7 @@ exports.edukiakbilatu = function(req, res){
           res.render('edukiak.handlebars',{title: "Edukiak", data:rows, data2: rowst, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, atalak: atalak, partaidea: req.session.partaidea, idPartaideak:req.session.idPartaideak, arduraduna:req.session.arduraduna});
         });                        
       });   
-  });
+//postgresConnect  });
 };
 
 exports.edukiakeditatu = function(req, res){
@@ -1093,19 +1122,20 @@ exports.edukiakeditatu = function(req, res){
   var id = req.session.idKirolElkarteak;
   var idEdukiak = req.params.idEdukiak;
     
-  req.getConnection(function(err,connection){
-       
-     connection.query('SELECT * FROM edukiak WHERE idElkarteakEdukia = ? and idEdukiak = ?',[id,idEdukiak],function(err,rows)
+//postgres  req.getConnection(function(err,connection){
+//postgresConnect  req.connection.connect(function(err,connection){                //postgres
+//postgres     connection.query('SELECT * FROM edukiak WHERE idElkarteakEdukia = ? and idEdukiak = ?',[id,idEdukiak],function(err,rows)
+     req.connection.query('SELECT * FROM edukiak WHERE "idElkarteakEdukia" = $1 and "idEdukiak" = $2',[id,idEdukiak],function(err,wrows)
         {
             
             if(err)
                 console.log("Error Selecting : %s ",err );
-
+            rows = wrows.rows;     //postgres
             res.render('edukiakeditatu.handlebars', {page_title:"Edukiak aldatu",data:rows, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea: req.session.partaidea});
                            
          });
                  
-    }); 
+//postgresConnect    }); 
 };
 
 exports.edukiakaldatu = function(req,res){
@@ -1115,7 +1145,8 @@ exports.edukiakaldatu = function(req,res){
     var id = req.session.idKirolElkarteak;
     var idEdukiak = req.params.idEdukiak;
     
-    req.getConnection(function (err, connection) {
+//postgres  req.getConnection(function(err,connection){
+//postgresConnect    req.connection.connect(function(err,connection){                //postgres
         
         var data = {
             
@@ -1127,8 +1158,8 @@ exports.edukiakaldatu = function(req,res){
 
             //argazkia
         };
-        
-        connection.query("UPDATE edukiak set ? WHERE idElkarteakEdukia = ? and idEdukiak = ? ",[data,id,idEdukiak], function(err, rows)
+//postgres        connection.query("UPDATE edukiak set ? WHERE idElkarteakEdukia = ? and idEdukiak = ? ",[data,id,idEdukiak], function(err, rows)
+        req.connection.query('UPDATE edukiak set "izenburuaEdukia" = $1, "testuaEdukia" = $2, "zenbakiEdukia" = $3 WHERE "idElkarteakEdukia" = $4 and "idEdukiak" = $5 ',[input.izenburuaEdukia, input.testuaEdukia, input.zenbakiEdukia,id,idEdukiak], function(err, rows)
         {
   
           if (err)
@@ -1147,10 +1178,10 @@ exports.edukiakaldatu = function(req,res){
               });
           }
           res.redirect('/admin/edukiak');
-          
+          connection.end();
         });
     
-    });
+//postgresConnect    });
 };
 
 exports.edukiakezabatu = function(req,res){
@@ -1159,19 +1190,20 @@ exports.edukiakezabatu = function(req,res){
      var id = req.session.idKirolElkarteak;
      var idEdukiak = req.params.idEdukiak;
     
-     req.getConnection(function (err, connection) {
-        
-        connection.query("DELETE FROM edukiak  WHERE idElkarteakEdukia = ? and idEdukiak = ?",[id,idEdukiak], function(err, rows)
+//postgres  req.getConnection(function(err,connection){
+//postgresConnect     req.connection.connect(function(err,connection){                //postgres
+//postgres        connection.query("DELETE FROM edukiak  WHERE idElkarteakEdukia = ? and idEdukiak = ?",[id,idEdukiak], function(err, rows)
+        req.connection.query('DELETE FROM edukiak  WHERE "idElkarteakEdukia" = $1 and "idEdukiak" = $2',[id,idEdukiak], function(err, rows)
         {
             
              if(err)
                  console.log("Error deleting : %s ",err );
             
              res.redirect('/admin/edukiak');
-             
+             connection.end();
         });
         
-     });
+//postgresConnect     });
 };
 
 
@@ -1189,7 +1221,8 @@ exports.atalaksortu = function(req,res){
           hosta += ":"+ (process.env.PORT || 3000);
     }
 
-    req.getConnection(function (err, connection) {
+//postgres  req.getConnection(function(err,connection){
+//postgresConnect    req.connection.connect(function(err,connection){                //postgres
         
         var data = {
             
@@ -1198,8 +1231,8 @@ exports.atalaksortu = function(req,res){
             idElkarteakAtala : id,
         };
         
-  
-        var query = connection.query("INSERT INTO atalak set ? ",data, function(err, rows)
+//postgres        var query = connection.query("INSERT INTO atalak set ? ",data, function(err, rows)  
+        var query = req.connection.query("INSERT INTO atalak set $1 ",data, function(err, rows)
         {
   
           if (err)
@@ -1223,23 +1256,25 @@ exports.atalaksortu = function(req,res){
         
        // console.log(query.sql); 
     
-    });
+//postgresConnect    });
 };
 
 exports.atalakikusi2 = function(req, res){
   var id = req.session.idKirolElkarteak;
 
-  req.getConnection(function(err,connection){
-       
-     connection.query('SELECT * FROM atalak where idElkarteakAtala = ? order by zenbakiAtala asc',[id],function(err,rows)     {
+//postgres  req.getConnection(function(err,connection){
+//postgresConnect  req.connection.connect(function(err,connection){                //postgres
+//postgres     connection.query('SELECT * FROM atalak where idElkarteakAtala = ? order by zenbakiAtala asc',[id],function(err,rows)     {
+     req.connection.query('SELECT * FROM atalak where "idElkarteakAtala" = $1 order by "zenbakiAtala" asc',[id],function(err,wrows)     {
             
         if(err)
            console.log("Error Selecting : %s ",err );
-     
-        connection.query('SELECT * FROM elkarteak where idElkarteak = ? ',[id],function(err,rowst)     {
+        rows = wrows.rows;     //postgres
+//postgres        connection.query('SELECT * FROM elkarteak where idElkarteak = ? ',[id],function(err,rowst)     {
+        req.connection.query('SELECT * FROM elkarteak where "idElkarteak" = $1 ',[id],function(err,wrows)     {
           if(err)
            console.log("Error Selecting : %s ",err );
-
+          rowst = wrows.rows;     //postgres
           //for (var i in rows){
             //rows[i].testuaBerria=rows[i].testuaBerria.replace(/\r?\n/g, "<br>");
 
@@ -1247,27 +1282,29 @@ exports.atalakikusi2 = function(req, res){
           res.render('index.handlebars',{title: "kirolElkarteak", data:rows, data2: rowst, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia});
         });                        
       });   
-  });
+//postgresConnect  });
 };
 
 exports.atalakbilatu = function(req, res){
   var id = req.session.idKirolElkarteak;
-  req.getConnection(function(err,connection){
-       
-     connection.query('SELECT * FROM atalak where idElkarteakAtala = ? order by zenbakiAtala asc',[id],function(err,rows) {
+//postgres  req.getConnection(function(err,connection){
+//postgresConnect  req.connection.connect(function(err,connection){                //postgres
+//postgres     connection.query('SELECT * FROM atalak where idElkarteakAtala = ? order by zenbakiAtala asc',[id],function(err,rows) {
+     req.connection.query('SELECT * FROM atalak where "idElkarteakAtala" = $1 order by "zenbakiAtala" asc',[id],function(err,wrows) {
             
         if(err)
            console.log("Error Selecting : %s ",err );
-     
-        connection.query('SELECT * FROM elkarteak where idElkarteak = ? ',[id],function(err,rowst)     {
+        rows = wrows.rows;     //postgres    
+//postgres        connection.query('SELECT * FROM elkarteak where idElkarteak = ? ',[id],function(err,rowst)     {
+        req.connection.query('SELECT * FROM elkarteak where "idElkarteak" = $1 ',[id],function(err,wrows)     {
           if(err)
            console.log("Error Selecting : %s ",err );
-         
-         console.log("Atalak:" +JSON.stringify(rows));
+          rowst = wrows.rows;     //postgres
+//         console.log("Atalak:" +JSON.stringify(rows));
           res.render('atalak.handlebars',{title: "Atalak", data:rows, data2: rowst, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea:req.session.partaidea});
         });                        
       });   
-  });
+//postgresConnect  });
 };
 
 exports.atalakeditatu = function(req, res){
@@ -1275,19 +1312,20 @@ exports.atalakeditatu = function(req, res){
   var id = req.session.idKirolElkarteak;
   var idAtalak = req.params.idAtalak;
     
-  req.getConnection(function(err,connection){
-       
-     connection.query('SELECT * FROM atalak WHERE idElkarteakAtala = ? and idAtalak = ?',[id,idAtalak],function(err,rows)
+//postgres  req.getConnection(function(err,connection){
+//postgresConnect  req.connection.connect(function(err,connection){                //postgres
+//postgres     connection.query('SELECT * FROM atalak WHERE idElkarteakAtala = ? and idAtalak = ?',[id,idAtalak],function(err,rows)
+     req.connection.query('SELECT * FROM atalak WHERE "idElkarteakAtala" = $1 and "idAtalak" = $2',[id,idAtalak],function(err,wrows)
         {
             
             if(err)
                 console.log("Error Selecting : %s ",err );
-
+            rows = wrows.rows;     //postgres 
             res.render('atalakeditatu.handlebars', {page_title:"Atalak aldatu",data:rows, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea: req.session.partaidea});
                            
          });
                  
-    }); 
+//postgresConnect    }); 
 };
 
 exports.atalakaldatu = function(req,res){
@@ -1297,7 +1335,8 @@ exports.atalakaldatu = function(req,res){
     var id = req.session.idKirolElkarteak;
     var idAtalak = req.params.idAtalak;
     
-    req.getConnection(function (err, connection) {
+//postgres  req.getConnection(function(err,connection){
+//postgresConnect    req.connection.connect(function(err,connection){                //postgres
         
         var data = {
             
@@ -1308,8 +1347,8 @@ exports.atalakaldatu = function(req,res){
             //zenbakiBerria: input.zenbakiBerria
             //argazkia
         };
-        
-        connection.query("UPDATE atalak set ? WHERE idElkarteakAtala = ? and idAtalak = ? ",[data,id,idAtalak], function(err, rows)
+//postgres        connection.query("UPDATE atalak set ? WHERE idElkarteakAtala = ? and idAtalak = ? ",[data,id,idAtalak], function(err, rows)
+        req.connection.query('UPDATE atalak set $1 WHERE "idElkarteakAtala" = $2 and "idAtalak" = $3 ',[data,id,idAtalak], function(err, rows)
         {
   
           if (err)
@@ -1319,7 +1358,7 @@ exports.atalakaldatu = function(req,res){
           
         });
     
-    });
+//postgresConnect    });
 };
 
 exports.atalakezabatu = function(req,res){
@@ -1328,9 +1367,10 @@ exports.atalakezabatu = function(req,res){
      var id = req.session.idKirolElkarteak;
      var idAtalak = req.params.idAtalak;
     
-     req.getConnection(function (err, connection) {
-        
-        connection.query("DELETE FROM atalak  WHERE idElkarteakAtala = ? and idAtalak = ?",[id,idAtalak], function(err, rows)
+//postgres  req.getConnection(function(err,connection){
+//postgresConnect     req.connection.connect(function(err,connection){                //postgres
+//postgres        connection.query("DELETE FROM atalak  WHERE idElkarteakAtala = ? and idAtalak = ?",[id,idAtalak], function(err, rows)        
+        req.connection.query('DELETE FROM atalak  WHERE "idElkarteakAtala" = $1 and "idAtalak" = $2',[id,idAtalak], function(err, rows)
         {
             
              if(err)
@@ -1340,7 +1380,7 @@ exports.atalakezabatu = function(req,res){
              
         });
         
-     });
+//postgresConnect     });
 };
 
 //////////////  AZPIATALAK  ////////////////
@@ -1358,7 +1398,8 @@ exports.azpiAtalaksortu = function(req,res){
           hosta += ":"+ (process.env.PORT || 3000);
     }
 
-    req.getConnection(function (err, connection) {
+//postgres  req.getConnection(function(err,connection){
+//postgresConnect    req.connection.connect(function(err,connection){                //postgres
         
         var data = {
             
@@ -1368,8 +1409,8 @@ exports.azpiAtalaksortu = function(req,res){
             idAtalakAzpiAtala: idAtalak
         };
         
-  
-        var query = connection.query("INSERT INTO azpiAtalak set ? ",data, function(err, rows)
+//postgres        var query = connection.query("INSERT INTO azpiAtalak set ? ",data, function(err, rows)  
+        var query = req.connection.query("INSERT INTO azpiAtalak set $1 ",data, function(err, rows)
         {
   
           if (err)
@@ -1393,23 +1434,25 @@ exports.azpiAtalaksortu = function(req,res){
         
        // console.log(query.sql); 
     
-    });
+//postgresConnect    });
 };
 
 exports.azpiAtalakikusi = function(req, res){
   var id = req.session.idKirolElkarteak;
 
-  req.getConnection(function(err,connection){
-       
-     connection.query('SELECT * FROM azpiAtalak where idElkarteakAzpiAtala = ? order by zenbakiAzpiAtala asc',[id],function(err,rows)     {
+//postgres  req.getConnection(function(err,connection){
+//postgresConnect  req.connection.connect(function(err,connection){                //postgres
+//postgres     connection.query('SELECT * FROM azpiAtalak where idElkarteakAzpiAtala = ? order by zenbakiAzpiAtala asc',[id],function(err,rows)     {
+     req.connection.query('SELECT * FROM azpiAtalak where "idElkarteakAzpiAtala" = $1 order by "zenbakiAzpiAtala" asc',[id],function(err,rows)     {
             
         if(err)
            console.log("Error Selecting : %s ",err );
-     
-        connection.query('SELECT * FROM elkarteak where idElkarteak = ? ',[id],function(err,rowst)     {
+        rows = wrows.rows;     //postgres
+//postgres        connection.query('SELECT * FROM elkarteak where idElkarteak = ? ',[id],function(err,rowst)     {
+        req.connection.query('SELECT * FROM elkarteak where "idElkarteak" = $1 ',[id],function(err,wrows)     {
           if(err)
            console.log("Error Selecting : %s ",err );
-
+         rowst = wrows.rows;     //postgres 
           //for (var i in rows){
             //rows[i].testuaBerria=rows[i].testuaBerria.replace(/\r?\n/g, "<br>");
 
@@ -1417,28 +1460,30 @@ exports.azpiAtalakikusi = function(req, res){
           res.render('index.handlebars',{title: "kirolElkarteak", data:rows, data2: rowst, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia});
         });                        
       });   
-  });
+//postgresConnect  });
 };
 
 exports.azpiAtalakbilatu = function(req, res){
   var id = req.session.idKirolElkarteak;
   var idAtalak = req.params.idAtalak;
-  req.getConnection(function(err,connection){
-       
-     connection.query('SELECT * FROM azpiAtalak where idElkarteakAzpiAtala = ? and idAtalakAzpiAtala = ? order by zenbakiAzpiAtala asc',[id, idAtalak],function(err,rows) {
+//postgres  req.getConnection(function(err,connection){
+//postgresConnect  req.connection.connect(function(err,connection){                //postgres
+//postgres     connection.query('SELECT * FROM azpiAtalak where idElkarteakAzpiAtala = ? and idAtalakAzpiAtala = ? order by zenbakiAzpiAtala asc',[id, idAtalak],function(err,rows) {
+     req.connection.query('SELECT * FROM azpiAtalak where "idElkarteakAzpiAtala" = $1 and "idAtalakAzpiAtala" = $2 order by "zenbakiAzpiAtala" asc',[id, idAtalak],function(err,wrows) {
             
         if(err)
            console.log("Error Selecting : %s ",err );
-     
-        connection.query('SELECT * FROM elkarteak where idElkarteak = ? ',[id],function(err,rowst)     {
+        rows = wrows.rows;     //postgres 
+//postgres        connection.query('SELECT * FROM elkarteak where idElkarteak = ? ',[id],function(err,rowst)     {
+        req.connection.query('SELECT * FROM elkarteak where "idElkarteak" = $1 ',[id],function(err,wrows)     {
           if(err)
            console.log("Error Selecting : %s ",err );
-         
+          rowst = wrows.rows;     //postgres          
          console.log("AzpiAtalak:" +JSON.stringify(rows));
           res.render('azpiatalak.handlebars',{title: "AzpiAtalak", data:rows, data2: rowst, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, idAtalak: idAtalak, partaidea: req.session.partaidea});
         });                        
       });   
-  });
+//postgresConnect  });
 };
 
 exports.azpiAtalakeditatu = function(req, res){
@@ -1446,19 +1491,20 @@ exports.azpiAtalakeditatu = function(req, res){
   var id = req.session.idKirolElkarteak;
   var idAzpiAtalak = req.params.idAzpiAtalak;
     
-  req.getConnection(function(err,connection){
-       
-     connection.query('SELECT * FROM azpiAtalak WHERE idElkarteakAzpiAtala = ? and idAzpiAtalak = ?',[id,idAzpiAtalak],function(err,rows)
+//postgres  req.getConnection(function(err,connection){
+//postgresConnect  req.connection.connect(function(err,connection){                //postgres
+//postgres     connection.query('SELECT * FROM azpiAtalak WHERE idElkarteakAzpiAtala = ? and idAzpiAtalak = ?',[id,idAzpiAtalak],function(err,rows)
+     req.connection.query('SELECT * FROM azpiAtalak WHERE "idElkarteakAzpiAtala" = $1 and "idAzpiAtalak" = $2',[id,idAzpiAtalak],function(err,wrows)
         {
             
             if(err)
                 console.log("Error Selecting : %s ",err );
-
+            rows = wrows.rows;     //postgres   
             res.render('azpiatalakeditatu.handlebars', {page_title:"AzpiAtalak aldatu",data:rows, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea: req.session.partaidea});
                            
          });
                  
-    }); 
+//postgresConnect    }); 
 };
 
 exports.azpiAtalakaldatu = function(req,res){
@@ -1468,7 +1514,8 @@ exports.azpiAtalakaldatu = function(req,res){
     var id = req.session.idKirolElkarteak;
     var idAzpiAtalak = req.params.idAzpiAtalak;
     
-    req.getConnection(function (err, connection) {
+//postgres  req.getConnection(function(err,connection){
+//postgresConnect    req.connection.connect(function(err,connection){                //postgres
         
         var data = {
             
@@ -1480,7 +1527,7 @@ exports.azpiAtalakaldatu = function(req,res){
             //argazkia
         };
         
-        connection.query("UPDATE azpiAtalak set ? WHERE idElkarteakAzpiAtala = ? and idAzpiAtalak = ? ",[data,id,idAzpiAtalak], function(err, rows)
+        req.connection.query("UPDATE azpiAtalak set ? WHERE idElkarteakAzpiAtala = ? and idAzpiAtalak = ? ",[data,id,idAzpiAtalak], function(err, rows)
         {
   
           if (err)
@@ -1490,7 +1537,7 @@ exports.azpiAtalakaldatu = function(req,res){
           
         });
     
-    });
+//postgresConnect    });
 };
 
 exports.azpiAtalakezabatu = function(req,res){
@@ -1499,9 +1546,10 @@ exports.azpiAtalakezabatu = function(req,res){
      var id = req.session.idKirolElkarteak;
      var idAzpiAtalak = req.params.idAzpiAtalak;
     
-     req.getConnection(function (err, connection) {
-        
-        connection.query("DELETE FROM azpiAtalak  WHERE idElkarteakAzpiAtala = ? and idAzpiAtalak = ?",[id,idAzpiAtalak], function(err, rows)
+//postgres  req.getConnection(function(err,connection){
+//postgresConnect     req.connection.connect(function(err,connection){                //postgres
+//postgres        connection.query("DELETE FROM azpiAtalak  WHERE idElkarteakAzpiAtala = ? and idAzpiAtalak = ?",[id,idAzpiAtalak], function(err, rows)
+        req.connection.query("DELETE FROM azpiAtalak  WHERE idElkarteakAzpiAtala = $1 and idAzpiAtalak = $2",[id,idAzpiAtalak], function(err, rows)
         {
             
              if(err)
@@ -1511,7 +1559,7 @@ exports.azpiAtalakezabatu = function(req,res){
              
         });
         
-     });
+//postgresConnect     });
 };
 
 ///////////////// AGIRIAK ///////////////////////////
@@ -1557,7 +1605,8 @@ exports.agiriaksortu = function(req,res){
         publikoa = 1;
     };
 
-    req.getConnection(function (err, connection) {
+//postgres  req.getConnection(function(err,connection){
+//postgresConnect    req.connection.connect(function(err,connection){                //postgres
         
         var data = {
             
@@ -1571,7 +1620,7 @@ exports.agiriaksortu = function(req,res){
         };
         
   
-        var query = connection.query("INSERT INTO agiriak set ? ",[data], function(err, rows)
+        var query = req.connection.query("INSERT INTO agiriak set ? ",[data], function(err, rows)
         {
   
           if (err)
@@ -1584,7 +1633,7 @@ exports.agiriaksortu = function(req,res){
         
        // console.log(query.sql); 
     
-    });
+//postgresConnect    });
 //});
 };
 
@@ -1673,17 +1722,19 @@ exports.agiriakikusi = function(req, res){
 exports.agiriakbilatu = function(req, res){
   var id = req.session.idKirolElkarteak;
   var idDenboraldia = req.session.idDenboraldia;  
-  req.getConnection(function(err,connection){
-       
-     connection.query('SELECT *, DATE_FORMAT(dataAgiria,"%Y/%m/%d") AS dataAgiria FROM agiriak, elkarteak where idElkarteakAgiria = ? and idElkarteak = idElkarteakAgiria and idDenboraldiaAgiria = ? order by publikoAgiria, dataAgiria desc',[id, idDenboraldia],function(err,rows) {
+//postgres  req.getConnection(function(err,connection){
+//postgresConnect  req.connection.connect(function(err,connection){                //postgres
+//postgres     connection.query('SELECT *, DATE_FORMAT(dataAgiria,"%Y/%m/%d") AS dataAgiria FROM agiriak, elkarteak where idElkarteakAgiria = ? and idElkarteak = idElkarteakAgiria and idDenboraldiaAgiria = ? order by publikoAgiria, dataAgiria desc',[id, idDenboraldia],function(err,rows) {
+     req.connection.query('SELECT *, DATE_FORMAT(dataAgiria,"%Y/%m/%d") AS dataAgiria FROM agiriak, elkarteak where "idElkarteakAgiria" = $1 and "idElkarteak" = "idElkarteakAgiria" and "idDenboraldiaAgiria" = $2 order by "publikoAgiria", "dataAgiria" desc',[id, idDenboraldia],function(err,wrows) {
             
         if(err)
            console.log("Error Selecting : %s ",err );
-     
-        connection.query('SELECT * FROM elkarteak where idElkarteak = ? ',[id],function(err,rowst)     {
+        rows = wrows.rows;     //postgres
+//postgres        connection.query('SELECT * FROM elkarteak where idElkarteak = ? ',[id],function(err,rowst)     {
+        req.connection.query('SELECT * FROM elkarteak where "idElkarteak" = $1 ',[id],function(err,wrows)     {
           if(err)
            console.log("Error Selecting : %s ",err );
-          
+          rowst = wrows.rows;     //postgres
           for(var i in rows){
             if (rows[i].publikoAgiria == 1){
                 rows[i].publikoAgiria = "BAI";
@@ -1695,39 +1746,41 @@ exports.agiriakbilatu = function(req, res){
           res.render('agiriakadmin.handlebars',{title: "Agiriak", data:rows, data2: rowst, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea: req.session.partaidea});
         });                        
       });   
-  });
+//postgresConnect  });
 };
 
 exports.agiriakbilatupartaide = function(req, res){
   var id = req.session.idKirolElkarteak;
   var idDenboraldia = req.session.idDenboraldia;   
   var publikoa = 1;
-  req.getConnection(function(err,connection){
-       
-     connection.query('SELECT *, DATE_FORMAT(dataAgiria,"%Y/%m/%d") AS dataAgiria FROM agiriak, elkarteak where idElkarteakAgiria = ? and idElkarteak = idElkarteakAgiria and publikoAgiria = ? and idDenboraldiaAgiria = ? order by dataAgiria desc',[id, publikoa, idDenboraldia],function(err,rows) {
+//postgres  req.getConnection(function(err,connection){
+//postgresConnect  req.connection.connect(function(err,connection){                //postgres
+//postgres     connection.query('SELECT *, DATE_FORMAT(dataAgiria,"%Y/%m/%d") AS dataAgiria FROM agiriak, elkarteak where idElkarteakAgiria = ? and idElkarteak = idElkarteakAgiria and publikoAgiria = ? and idDenboraldiaAgiria = ? order by dataAgiria desc',[id, publikoa, idDenboraldia],function(err,rows) {
+     req.connection.query('SELECT *, to_char("dataAgiria", \'YYYY-MM-DD\')AS "dataAgiriaF" FROM agiriak, elkarteak where "idElkarteakAgiria" = $1 and "idElkarteak" = "idElkarteakAgiria" and "publikoAgiria" = $2 and "idDenboraldiaAgiria" = $3 order by "dataAgiria" desc',[id, publikoa, idDenboraldia],function(err,wrows) {
             
         if(err)
            console.log("Error Selecting : %s ",err );
     
-         
+          rows = wrows.rows;     //postgres    
           res.render('agiriak.handlebars',{title: "Agiriak", data:rows, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea: req.session.partaidea, atalak: req.session.atalak, idPartaideak:req.session.idPartaideak, arduraduna:req.session.arduraduna});
       });                        
         
-  });
+//postgresConnect  });
 };
 
 exports.agiriakeditatu = function(req, res){
   var id = req.session.idKirolElkarteak;
   var idAgiriak = req.params.idAgiriak;
     
-  req.getConnection(function(err,connection){
-       
-     connection.query('SELECT *,DATE_FORMAT(dataAgiria,"%Y/%m/%d") AS dataAgiria FROM agiriak WHERE idElkarteakAgiria = ? and idAgiriak = ?',[id,idAgiriak],function(err,rows)
+//postgres  req.getConnection(function(err,connection){
+//postgresConnect  req.connection.connect(function(err,connection){                //postgres
+//postgres     connection.query('SELECT *,DATE_FORMAT(dataAgiria,"%Y/%m/%d") AS dataAgiria FROM agiriak WHERE idElkarteakAgiria = ? and idAgiriak = ?',[id,idAgiriak],function(err,rows)
+     req.connection.query('SELECT *,DATE_FORMAT(dataAgiria,"%Y/%m/%d") AS dataAgiria FROM agiriak WHERE "idElkarteakAgiria" = $1 and "idAgiriak" = $2',[id,idAgiriak],function(err,rows)
         {
             
             if(err)
                 console.log("Error Selecting : %s ",err );
-
+            rows = wrows.rows;     //postgres  
             for(var i in rows){
               if (rows[i].publikoAgiria == 1){
                 rows[i].publikoaDa = true;
@@ -1740,7 +1793,7 @@ exports.agiriakeditatu = function(req, res){
                            
          });
                  
-    }); 
+//postgresConnect    }); 
 };
 
 exports.agiriakaldatu = function(req,res){
@@ -1753,7 +1806,8 @@ exports.agiriakaldatu = function(req,res){
         publikoa = 1;
     };
     
-    req.getConnection(function (err, connection) {
+//postgres  req.getConnection(function(err,connection){
+//postgresConnect    req.connection.connect(function(err,connection){                //postgres
         
         var data = {  
             atalaAgiria    : input.atalaAgiria,
@@ -1764,7 +1818,7 @@ exports.agiriakaldatu = function(req,res){
 
         };
         
-        connection.query("UPDATE agiriak set ? WHERE idElkarteakAgiria = ? and idAgiriak = ? ",[data,id,idAgiriak], function(err, rows)
+        req.connection.query("UPDATE agiriak set ? WHERE idElkarteakAgiria = ? and idAgiriak = ? ",[data,id,idAgiriak], function(err, rows)
         {
   
           if (err)
@@ -1774,7 +1828,7 @@ exports.agiriakaldatu = function(req,res){
           
         });
     
-    });
+//postgresConnect    });
 };
 
 exports.agiriakaldatufitxategi = function(req,res){
@@ -1823,13 +1877,14 @@ exports.agiriakaldatufitxategi = function(req,res){
               message: 'Agiria igo da.',
             };
     
-    req.getConnection(function (err, connection) {
+//postgres  req.getConnection(function(err,connection){
+//postgresConnect    req.connection.connect(function(err,connection){                //postgres
         
         var data = {  
             urlAgiria : fitxategiIzena,
         };
         
-        connection.query("UPDATE agiriak set ? WHERE idElkarteakAgiria = ? and idAgiriak = ? ",[data,id,idAgiriak], function(err, rows)
+        req.connection.query("UPDATE agiriak set ? WHERE idElkarteakAgiria = ? and idAgiriak = ? ",[data,id,idAgiriak], function(err, rows)
         {
   
           if (err)
@@ -1840,16 +1895,17 @@ exports.agiriakaldatufitxategi = function(req,res){
         });
     
     });
-  });
+//postgresConnect  });
 };
 
 exports.agiriakezabatu = function(req,res){
      var id = req.session.idKirolElkarteak;
      var idAgiriak = req.params.idAgiriak;
     
-     req.getConnection(function (err, connection) {
-        
-        connection.query("DELETE FROM agiriak  WHERE idElkarteakAgiria = ? and idAgiriak = ?",[id,idAgiriak], function(err, rows)
+//postgres  req.getConnection(function(err,connection){
+//postgresConnect     req.connection.connect(function(err,connection){                //postgres
+//postgres        connection.query("DELETE FROM agiriak  WHERE idElkarteakAgiria = ? and idAgiriak = ?",[id,idAgiriak], function(err, rows)
+        req.connection.query('DELETE FROM agiriak  WHERE "idElkarteakAgiria" = $1 and "idAgiriak" = $2',[id,idAgiriak], function(err, rows)
         {
             
              if(err)
@@ -1859,7 +1915,7 @@ exports.agiriakezabatu = function(req,res){
              
         });
         
-     });
+//postgresConnect     });
 };
 
 
@@ -1987,12 +2043,14 @@ exports.kontaktuabidali = function(req,res){
   
   else {
 
-    req.getConnection(function(err,connection){
-       
-     connection.query('SELECT * FROM elkarteak where idElkarteak = ?',[req.session.idKirolElkarteak],function(err,rows)     {
+//postgres  req.getConnection(function(err,connection){
+//postgresConnect    req.connection.connect(function(err,connection){                //postgres
+//postgres     connection.query('SELECT * FROM elkarteak where idElkarteak = ?',[req.session.idKirolElkarteak],function(err,rows)     {
+     req.connection.query('SELECT * FROM elkarteak where "idElkarteak" = $1',[req.session.idKirolElkarteak],function(err,wrows)     {
             
         if(err)
            console.log("Error Selecting : %s ",err );
+        rows = wrows.rows;     //postgres
         if(rows.length != 0){    
          var to = rows[0].emailElk;
          var subj = "Web orriko zalantza " +rows[0].izenaElk+":  " + input.izenabizen;
@@ -2012,34 +2070,23 @@ exports.kontaktuabidali = function(req,res){
               
         res.redirect(303,'/');
        });
-     });
+//postgresConnect     });
     }
 };
 
 
-
-exports.jokalariakikusi = function(req,res){
-
-  req.getConnection(function(err,connection){
-      connection.query('SELECT * FROM taldeak, jokalariak WHERE idtaldeak = idtaldej and idtxapeltalde = ? order by jokalariizena, idtaldeak',[req.session.idKirolElkarteak],function(err,rows)     {
-        if(err)
-           console.log("Error Selecting : %s ",err );
-
-        res.render('jokalariakadmin.handlebars', {title : 'Txaparrotan-JokalariakAdmin', data2:rows, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea: req.session.partaidea} );
-    });
-  });
-}
-
 exports.mantenimentu = function(req, res){
   var now= new Date();
 
-  req.getConnection(function(err,connection){
-       
-     connection.query('SELECT * FROM taldeak WHERE idtaldeak > 172',function(err,rows)
+//postgres  req.getConnection(function(err,connection){
+//postgresConnect  req.connection.connect(function(err,connection){                //postgres
+//postgres     connection.query('SELECT * FROM taldeak WHERE idtaldeak > 172',function(err,rows)       
+     req.connection.query('SELECT * FROM taldeak WHERE "idtaldeak" > 172',function(err,wrows)
         {
             
             if(err)
                 console.log("Error Selecting : %s ",err );
+          rows = wrows.rows;     //postgres
           for(var i in rows){
             // Generate password hash
             var salt = bcrypt.genSaltSync();
@@ -2054,7 +2101,7 @@ exports.mantenimentu = function(req, res){
         
             };
         
-            connection.query("UPDATE taldeak set ? WHERE idtaldeak = ?  ",[data,rows[i].idtaldeak], function(err, rows)
+            req.connection.query("UPDATE taldeak set ? WHERE idtaldeak = ?  ",[data,rows[i].idtaldeak], function(err, rows)
             {
                 if(err)
                   console.log("Error Updating : %s ",err );
@@ -2062,7 +2109,7 @@ exports.mantenimentu = function(req, res){
           }
           res.redirect('/kirolElkarteakeditatu');                           
         });
-  }); 
+//postgresConnect  }); 
 };
 
 exports.mantenimentuegin = function(req, res){
@@ -2073,13 +2120,15 @@ exports.mantenimentuegin = function(req, res){
     var taldekideak = input.mantenimentuCSV.split("\n"); //CSV-a zatitu lerroka (partiduka)
     var taldekidea = [];
 
-  req.getConnection(function(err,connection){
+//postgres  req.getConnection(function(err,connection){
+//postgresConnect    req.connection.connect(function(err,connection){                //postgres
    
 //      connection.query('SELECT * FROM taldeak WHERE idtaldeak > 172',function(err,rows)
-     connection.query('SELECT * FROM taldekideak, partaideMotak, taldeak, denboraldiak, mailak, partaideak where idMotaKide=idPartaideMotak and idTaldeakKide=idTaldeak and idMailak=idMailaTalde and idPartaideakKide=idPartaideak and idDenboraldiaTalde = idDenboraldia and idDenboraldia= ? and idElkarteakTalde = ?  order by idTaldekideak',[idDenboraldia,id],function(err,rows) {            
-
+//postgres     connection.query('SELECT * FROM taldekideak, partaideMotak, taldeak, denboraldiak, mailak, partaideak where idMotaKide=idPartaideMotak and idTaldeakKide=idTaldeak and idMailak=idMailaTalde and idPartaideakKide=idPartaideak and idDenboraldiaTalde = idDenboraldia and idDenboraldia= ? and idElkarteakTalde = ?  order by idTaldekideak',[idDenboraldia,id],function(err,rows) {            
+     req.connection.query('SELECT * FROM taldekideak, partaideMotak, taldeak, denboraldiak, mailak, partaideak where "idMotaKide"="idPartaideMotak" and "idTaldeakKide"="idTaldeak" and "idMailak"="idMailaTalde" and "idPartaideakKide"="idPartaideak" and "idDenboraldiaTalde" = "idDenboraldia" and "idDenboraldia"= $1 and "idElkarteakTalde" = $2  order by "idTaldekideak"',[idDenboraldia,id],function(err,wrows) {            
       if(err)
                 console.log("Error Selecting : %s ",err );
+      rows = wrows.rows;     //postgres
       for(var i in rows){
             taldekidea = taldekideak[i].split(";");
             console.log("input : " + i + "-" + rows[i].izenaPart + "-" + taldekidea[0] + "-" + taldekidea[1]);
@@ -2087,8 +2136,8 @@ exports.mantenimentuegin = function(req, res){
             var data = {
                   bazkideZenbKide : taldekidea[1]
             };
-        
-          connection.query("UPDATE taldekideak set ? WHERE idElkarteakKide = ? and idTaldekideak = ?",[data,id, rows[i].idTaldekideak], function(err, rowsu)
+//postgres          connection.query("UPDATE taldekideak set ? WHERE idElkarteakKide = ? and idTaldekideak = ?",[data,id, rows[i].idTaldekideak], function(err, rowsu)
+          req.connection.query('UPDATE taldekideak set $1 WHERE "idElkarteakKide" = $2 and "idTaldekideak" = $3',[data,id, rows[i].idTaldekideak], function(err, rowsu)
           {
   
             if (err)
@@ -2098,24 +2147,25 @@ exports.mantenimentuegin = function(req, res){
       }
       res.redirect('/kirolElkarteakeditatu');
     });
-  }); 
+//postgresConnect  }); 
 };
 
 exports.lekuakbilatu = function(req, res){
   
   var id = req.session.idKirolElkarteak;
 
-  req.getConnection(function(err,connection){     
-   
-        connection.query('SELECT * FROM lekuak where idElkarteakLeku= ?',[id],function(err,rows)     {
+//postgres  req.getConnection(function(err,connection){
+//postgresConnect  req.connection.connect(function(err,connection){                //postgres    
+//postgres        connection.query('SELECT * FROM lekuak where idElkarteakLeku= ?',[id],function(err,rows)     {   
+        req.connection.query('SELECT * FROM lekuak where "idElkarteakLeku" = $1',[id],function(err,wrows)     {
             
           if(err)
            console.log("Error Selecting : %s ",err );
-         
+          rows = wrows.rows;     //postgres
           res.render('lekuak.handlebars', {title : 'KirolElkarteak-Lekuak', data:rows, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea: req.session.partaidea} );
 
        });
-    });
+//postgresConnect    });
   
 };
 
@@ -2125,19 +2175,20 @@ exports.lekuakeditatu = function(req, res){
   var id = req.session.idKirolElkarteak;
   var idLekuak = req.params.idLekuak;
     
-  req.getConnection(function(err,connection){
-       
-     connection.query('SELECT * FROM lekuak WHERE idElkarteakLeku = ? and idLekuak = ?',[id,idLekuak],function(err,rows)
+//postgres  req.getConnection(function(err,connection){
+//postgresConnect  req.connection.connect(function(err,connection){                //postgres
+//postgres     connection.query('SELECT * FROM lekuak WHERE idElkarteakLeku = ? and idLekuak = ?',[id,idLekuak],function(err,rows)
+     req.connection.query('SELECT * FROM lekuak WHERE "idElkarteakLeku" = $1 and "idLekuak" = $2',[id,idLekuak],function(err,wrows)
         {
             
             if(err)
                 console.log("Error Selecting : %s ",err );
-     
+            rows = wrows.rows;     //postgres
             res.render('lekuakeditatu.handlebars', {page_title:"Lekuak aldatu",data:rows, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea: req.session.partaidea});
                            
          });
                  
-    }); 
+//postgresConnect    }); 
 };
 
 exports.lekuaksortu = function(req,res){
@@ -2145,7 +2196,8 @@ exports.lekuaksortu = function(req,res){
     var input = JSON.parse(JSON.stringify(req.body));
     var id = req.session.idKirolElkarteak;
 
-    req.getConnection(function (err, connection) {
+//postgres  req.getConnection(function(err,connection){
+//postgresConnect    req.connection.connect(function(err,connection){                //postgres
         
         var data = {
             
@@ -2157,7 +2209,7 @@ exports.lekuaksortu = function(req,res){
         };
         
         console.log(data);
-        var query = connection.query("INSERT INTO lekuak set ? ",data, function(err, rows)
+        var query = req.connection.query("INSERT INTO lekuak set ? ",data, function(err, rows)
         {
   
           if (err)
@@ -2166,7 +2218,7 @@ exports.lekuaksortu = function(req,res){
           
         });
     
-    });
+//postgresConnect    });
 };
 exports.lekuakaldatu = function(req,res){
     
@@ -2175,7 +2227,8 @@ exports.lekuakaldatu = function(req,res){
     var id = req.session.idKirolElkarteak;
     var idLekuak = req.params.idLekuak;
     
-    req.getConnection(function (err, connection) {
+//postgres  req.getConnection(function(err,connection){
+//postgresConnect    req.connection.connect(function(err,connection){                //postgres
         
         var data = {
             
@@ -2185,8 +2238,8 @@ exports.lekuakaldatu = function(req,res){
             zenbakiLeku : input.zenbakiLeku
 
         };
-        
-        connection.query("UPDATE lekuak set ? WHERE idElkarteakLeku = ? and idLekuak = ? ",[data,id,idLekuak], function(err, rows)
+//postgres        connection.query('UPDATE lekuak set ? WHERE idElkarteakLeku = ? and idLekuak = ? ',[data,id,idLekuak], function(err, rows)
+        req.connection.query('UPDATE lekuak set "izenaLeku"=$1, "zenbakiLeku"=$2, "helbideaLeku"=$3, "herriaLeku"=$4 WHERE "idElkarteakLeku" = $5 and "idLekuak" = $6 ',[input.izenaLeku,input.helbideaLeku,input.herriaLeku,input.zenbakiLeku,id,idLekuak], function(err, rows)
         {
   
           if (err)
@@ -2196,7 +2249,7 @@ exports.lekuakaldatu = function(req,res){
           
         });
     
-    });
+//postgresConnect    });
 };
 
 exports.lekuakezabatu = function(req,res){
@@ -2205,9 +2258,10 @@ exports.lekuakezabatu = function(req,res){
      var id = req.session.idKirolElkarteak;
      var idLekuak = req.params.idLekuak;
     
-     req.getConnection(function (err, connection) {
-        
-        connection.query("DELETE FROM lekuak  WHERE idElkarteakLeku = ? and idLekuak = ?",[id,idLekuak], function(err, rows)
+//postgres  req.getConnection(function(err,connection){
+//postgresConnect     req.connection.connect(function(err,connection){                //postgres
+//postgres        connection.query("DELETE FROM lekuak  WHERE idElkarteakLeku = ? and idLekuak = ?",[id,idLekuak], function(err, rows)
+        req.connection.query('DELETE FROM lekuak  WHERE "idElkarteakLeku" = $1 and "idLekuak" = $2',[id,idLekuak], function(err, rows)
         {
             
              if(err)
@@ -2217,24 +2271,25 @@ exports.lekuakezabatu = function(req,res){
              
         });
         
-     });
+//postgresConnect     });
 };
 
 exports.mailakbilatu = function(req, res){
   
   var id = req.session.idKirolElkarteak;
 
-  req.getConnection(function(err,connection){     
-   
-        connection.query('SELECT * FROM mailak where idElkarteakMaila= ? order by zenbakiMaila, idMailak',[id],function(err,rows)     {
+//postgres  req.getConnection(function(err,connection){
+//postgresConnect  req.connection.connect(function(err,connection){                //postgres     
+//postgres        connection.query('SELECT * FROM mailak where idElkarteakMaila= ? order by zenbakiMaila, idMailak',[id],function(err,rows)     {
+        req.connection.query('SELECT * FROM mailak where "idElkarteakMaila"= $1 order by "zenbakiMaila", "idMailak"',[id],function(err,wrows)     {
             
           if(err)
            console.log("Error Selecting : %s ",err );
-         
+          rows = wrows.rows;     //postgres
           res.render('mailak.handlebars', {title : 'KirolElkarteak-Mailak', data:rows, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea: req.session.partaidea} );
 
        });
-    });
+//postgresConnect    });
   
 };
 
@@ -2244,14 +2299,15 @@ exports.mailakeditatu = function(req, res){
   var idMailak = req.params.idMailak;
   var generoa = [{izena: "Neska", balioa: "N"}, {izena: "Mutila", balioa: "M"}];  
 
-  req.getConnection(function(err,connection){
-       
-     connection.query('SELECT * FROM mailak WHERE idElkarteakMaila = ? and idMailak = ?',[id,idMailak],function(err,rows)
+//postgres  req.getConnection(function(err,connection){
+//postgresConnect  req.connection.connect(function(err,connection){                //postgres
+//postgres     connection.query('SELECT * FROM mailak WHERE idElkarteakMaila = ? and idMailak = ?',[id,idMailak],function(err,rows)
+     req.connection.query('SELECT * FROM mailak WHERE "idElkarteakMaila" = $1 and "idMailak" = $2',[id,idMailak],function(err,wrows)
         {
             
             if(err)
                 console.log("Error Selecting : %s ",err );
-
+            rows = wrows.rows;     //postgres
             for(var i in generoa ){
                   if(rows[0].generoMaila == generoa[i].balioa){
                     generoa[i].aukeratua = true;
@@ -2264,7 +2320,7 @@ exports.mailakeditatu = function(req, res){
             res.render('mailakeditatu.handlebars', {page_title:"Maila aldatu",data:rows, generoa:generoa, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea: req.session.partaidea});
                            
          });
-    }); 
+//postgresConnect    }); 
 };
 
 exports.mailaksortu = function(req,res){
@@ -2272,7 +2328,8 @@ exports.mailaksortu = function(req,res){
     var input = JSON.parse(JSON.stringify(req.body));
     var id = req.session.idKirolElkarteak;
 
-    req.getConnection(function (err, connection) {
+//postgres  req.getConnection(function(err,connection){
+//postgresConnect    req.connection.connect(function(err,connection){                //postgres
         
         var data = {
             
@@ -2284,7 +2341,7 @@ exports.mailaksortu = function(req,res){
         };
         
         console.log(data);
-        var query = connection.query("INSERT INTO mailak set ? ",data, function(err, rows)
+        var query = req.connection.query("INSERT INTO mailak set ? ",data, function(err, rows)
         {
   
           if (err)
@@ -2293,7 +2350,7 @@ exports.mailaksortu = function(req,res){
           
         });
     
-    });
+//postgresConnect    });
 };
 exports.mailakaldatu = function(req,res){
     
@@ -2302,7 +2359,8 @@ exports.mailakaldatu = function(req,res){
     var id = req.session.idKirolElkarteak;
     var idMailak = req.params.idMailak;
     
-    req.getConnection(function (err, connection) {
+//postgres  req.getConnection(function(err,connection){
+//postgresConnect    req.connection.connect(function(err,connection){                //postgres
         
         var data = {
             
@@ -2313,7 +2371,7 @@ exports.mailakaldatu = function(req,res){
 
         };
         
-        connection.query("UPDATE mailak set ? WHERE idElkarteakMaila = ? and idMailak = ? ",[data,id,idMailak], function(err, rows)
+        req.connection.query("UPDATE mailak set ? WHERE idElkarteakMaila = ? and idMailak = ? ",[data,id,idMailak], function(err, rows)
         {
   
           if (err)
@@ -2323,7 +2381,7 @@ exports.mailakaldatu = function(req,res){
           
         });
     
-    });
+//postgresConnect    });
 };
 
 exports.mailakezabatu = function(req,res){
@@ -2332,9 +2390,10 @@ exports.mailakezabatu = function(req,res){
      var id = req.session.idKirolElkarteak;
      var idMailak = req.params.idMailak;
     
-     req.getConnection(function (err, connection) {
-        
-        connection.query("DELETE FROM mailak  WHERE idElkarteakMaila = ? and idMailak = ?",[id,idMailak], function(err, rows)
+//postgres  req.getConnection(function(err,connection){
+//postgresConnect     req.connection.connect(function(err,connection){                //postgres
+//postgres        connection.query("DELETE FROM mailak  WHERE idElkarteakMaila = ? and idMailak = ?",[id,idMailak], function(err, rows)
+        req.connection.query('DELETE FROM mailak  WHERE "idElkarteakMaila" = $1 and "idMailak" = $2',[id,idMailak], function(err, rows)
         {
             
              if(err)
@@ -2344,24 +2403,25 @@ exports.mailakezabatu = function(req,res){
              
         });
         
-     });
+//postgresConnect     });
 };
 
 exports.partaidemotakbilatu = function(req, res){
   
   var id = req.session.idKirolElkarteak;
 
-  req.getConnection(function(err,connection){     
-   
-        connection.query('SELECT * FROM partaideMotak where idElkarteakPartaideMotak= ? order by zenbakiMota',[id],function(err,rows)     {
+//postgres  req.getConnection(function(err,connection){
+//postgresConnect  req.connection.connect(function(err,connection){                //postgres    
+//postgres        connection.query('SELECT * FROM partaideMotak where idElkarteakPartaideMotak= ? order by zenbakiMota',[id],function(err,rows)     {
+        req.connection.query('SELECT * FROM partaideMotak where "idElkarteakPartaideMotak" = $1 order by "zenbakiMota"',[id],function(err,wrows)     {
             
           if(err)
            console.log("Error Selecting : %s ",err );
-         
+          rows = wrows.rows;     //postgres
           res.render('partaidemotak.handlebars', {title : 'KirolElkarteak-Partaide motak', data:rows, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea: req.session.partaidea} );
 
        });
-    });
+//postgresConnect    });
   
 };
 
@@ -2369,20 +2429,21 @@ exports.partaidemotakeditatu = function(req, res){
   var id = req.session.idKirolElkarteak;
   var idPartaideMotak = req.params.idPartaideMotak;
     
-  req.getConnection(function(err,connection){
-       
-     connection.query('SELECT * FROM partaideMotak WHERE idElkarteakPartaideMotak = ? and idPartaideMotak = ?',[id,idPartaideMotak],function(err,rows)
+//postgres  req.getConnection(function(err,connection){
+//postgresConnect  req.connection.connect(function(err,connection){                //postgres
+//postgres     connection.query('SELECT * FROM partaideMotak WHERE idElkarteakPartaideMotak = ? and idPartaideMotak = ?',[id,idPartaideMotak],function(err,rows)
+     req.connection.query('SELECT * FROM partaideMotak WHERE "idElkarteakPartaideMotak" = $1 and "idPartaideMotak" = $2',[id,idPartaideMotak],function(err,wrows)
         {
             
             if(err)
                 console.log("Error Selecting : %s ",err );
    
-
+            rows = wrows.rows;     //postgres
             res.render('partaidemotakeditatu.handlebars', {page_title:"Partaide motak aldatu",data:rows, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea: req.session.partaidea});
                            
          });
                  
-    }); 
+//postgresConnect    }); 
 };
 
 exports.partaidemotaksortu = function(req,res){
@@ -2390,7 +2451,8 @@ exports.partaidemotaksortu = function(req,res){
     var input = JSON.parse(JSON.stringify(req.body));
     var id = req.session.idKirolElkarteak;
 
-    req.getConnection(function (err, connection) {
+//postgres  req.getConnection(function(err,connection){
+//postgresConnect    req.connection.connect(function(err,connection){                //postgres
         
         var data = {
             
@@ -2400,7 +2462,7 @@ exports.partaidemotaksortu = function(req,res){
         };
         
         console.log(data);
-        var query = connection.query("INSERT INTO partaideMotak set ? ",data, function(err, rows)
+        var query = req.connection.query("INSERT INTO partaideMotak set ? ",data, function(err, rows)
         {
   
           if (err)
@@ -2409,7 +2471,7 @@ exports.partaidemotaksortu = function(req,res){
           
         });
     
-    });
+//postgresConnect    });
 };
 exports.partaidemotakaldatu = function(req,res){
     
@@ -2417,7 +2479,8 @@ exports.partaidemotakaldatu = function(req,res){
     var id = req.session.idKirolElkarteak;
     var idPartaideMotak = req.params.idPartaideMotak;
     
-    req.getConnection(function (err, connection) {
+//postgres  req.getConnection(function(err,connection){
+//postgresConnect    req.connection.connect(function(err,connection){                //postgres
         
         var data = {
             
@@ -2425,7 +2488,7 @@ exports.partaidemotakaldatu = function(req,res){
             zenbakiMota : input.zenbakiMota
         };
         
-        connection.query("UPDATE partaideMotak set ? WHERE idElkarteakPartaideMotak = ? and idPartaideMotak = ? ",[data,id,idPartaideMotak], function(err, rows)
+        req.connection.query("UPDATE partaideMotak set ? WHERE idElkarteakPartaideMotak = ? and idPartaideMotak = ? ",[data,id,idPartaideMotak], function(err, rows)
         {
   
           if (err)
@@ -2435,16 +2498,17 @@ exports.partaidemotakaldatu = function(req,res){
           
         });
     
-    });
+//postgresConnect    });
 };
 
 exports.partaidemotakezabatu = function(req,res){
      var id = req.session.idKirolElkarteak;
      var idPartaideMotak = req.params.idPartaideMotak;
     
-     req.getConnection(function (err, connection) {
-        
-        connection.query("DELETE FROM partaideMotak  WHERE idElkarteakPartaideMotak = ? and idPartaideMotak = ?",[id,idPartaideMotak], function(err, rows)
+//postgres  req.getConnection(function(err,connection){
+//postgresConnect     req.connection.connect(function(err,connection){                //postgres
+//postgres        connection.query("DELETE FROM partaideMotak  WHERE idElkarteakPartaideMotak = ? and idPartaideMotak = ?",[id,idPartaideMotak], function(err, rows)
+        req.connection.query('DELETE FROM partaideMotak  WHERE "idElkarteakPartaideMotak" = $1 and "idPartaideMotak" = $2',[id,idPartaideMotak], function(err, rows)
         {
             
              if(err)
@@ -2454,24 +2518,25 @@ exports.partaidemotakezabatu = function(req,res){
              
         });
         
-     });
+//postgresConnect     });
 };
 
 exports.ordaintzekoerakbilatu = function(req, res){
   
   var id = req.session.idKirolElkarteak;
 
-  req.getConnection(function(err,connection){     
-   
-        connection.query('SELECT * FROM ordaintzekoErak where idElkarteakOrdaintzekoErak= ?',[id],function(err,rows)     {
+//postgres  req.getConnection(function(err,connection){
+//postgresConnect  req.connection.connect(function(err,connection){                //postgres     
+//postgres        connection.query('SELECT * FROM ordaintzekoErak where idElkarteakOrdaintzekoErak= ?',[id],function(err,rows)     {
+        req.connection.query('SELECT * FROM ordaintzekoErak where "idElkarteakOrdaintzekoErak"= $1',[id],function(err,wrows)     {
             
           if(err)
            console.log("Error Selecting : %s ",err );
-         
+          rows = wrows.rows;     //postgres
           res.render('ordaintzekoerak.handlebars', {title : 'KirolElkarteak-Ordaintzeko erak', data:rows, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea: req.session.partaidea} );
 
        });
-    });
+//postgresConnect    });
   
 };
 
@@ -2479,20 +2544,21 @@ exports.ordaintzekoerakeditatu = function(req, res){
   var id = req.session.idKirolElkarteak;
   var idOrdaintzekoErak = req.params.idOrdaintzekoErak;
     
-  req.getConnection(function(err,connection){
-       
-     connection.query('SELECT * FROM ordaintzekoErak WHERE idElkarteakOrdaintzekoErak = ? and idOrdaintzekoErak = ?',[id,idOrdaintzekoErak],function(err,rows)
+//postgres  req.getConnection(function(err,connection){
+//postgresConnect  req.connection.connect(function(err,connection){                //postgres 
+//postgres     connection.query('SELECT * FROM ordaintzekoErak WHERE idElkarteakOrdaintzekoErak = ? and idOrdaintzekoErak = ?',[id,idOrdaintzekoErak],function(err,rows)       
+     req.connection.query('SELECT * FROM ordaintzekoErak WHERE "idElkarteakOrdaintzekoErak" = $1 and "idOrdaintzekoErak" = $2',[id,idOrdaintzekoErak],function(err,wrows)
         {
             
             if(err)
                 console.log("Error Selecting : %s ",err );
    
-
+            rows = wrows.rows;     //postgres
             res.render('ordaintzekoerakeditatu.handlebars', {page_title:"Ordaintzeko erak aldatu",data:rows, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea: req.session.partaidea});
                            
          });
                  
-    }); 
+//postgresConnect    }); 
 };
 
 exports.ordaintzekoeraksortu = function(req,res){
@@ -2500,7 +2566,8 @@ exports.ordaintzekoeraksortu = function(req,res){
     var input = JSON.parse(JSON.stringify(req.body));
     var id = req.session.idKirolElkarteak;
 
-    req.getConnection(function (err, connection) {
+//postgres  req.getConnection(function(err,connection){
+//postgresConnect    req.connection.connect(function(err,connection){                //postgres 
         
         var data = {
             
@@ -2509,7 +2576,7 @@ exports.ordaintzekoeraksortu = function(req,res){
         };
         
         console.log(data);
-        var query = connection.query("INSERT INTO ordaintzekoErak set ? ",data, function(err, rows)
+        var query = req.connection.query("INSERT INTO ordaintzekoErak set ? ",data, function(err, rows)
         {
   
           if (err)
@@ -2518,7 +2585,7 @@ exports.ordaintzekoeraksortu = function(req,res){
           
         });
     
-    });
+//postgresConnect    });
 };
 exports.ordaintzekoerakaldatu = function(req,res){
     
@@ -2526,15 +2593,16 @@ exports.ordaintzekoerakaldatu = function(req,res){
     var id = req.session.idKirolElkarteak;
     var idOrdaintzekoErak = req.params.idOrdaintzekoErak;
     
-    req.getConnection(function (err, connection) {
+//postgres  req.getConnection(function(err,connection){
+//postgresConnect  req.connection.connect(function(err,connection){                //postgres 
         
         var data = {
             
             deskribapenaOrdainEra : input.deskribapenaOrdainEra
 
         };
-        
-        connection.query("UPDATE ordaintzekoErak set ? WHERE idElkarteakOrdaintzekoErak = ? and idOrdaintzekoErak = ? ",[data,id,idOrdaintzekoErak], function(err, rows)
+//postgres        connection.query("UPDATE ordaintzekoErak set ? WHERE idElkarteakOrdaintzekoErak = ? and idOrdaintzekoErak = ? ",[data,id,idOrdaintzekoErak], function(err, rows)
+        req.connection.query('UPDATE ordaintzekoErak set "deskribapenaOrdainEra" = $1 WHERE "idElkarteakOrdaintzekoErak" = $2 and "idOrdaintzekoErak" = $3 ',[input.deskribapenaOrdainEra,id,idOrdaintzekoErak], function(err, rows)
         {
   
           if (err)
@@ -2544,26 +2612,27 @@ exports.ordaintzekoerakaldatu = function(req,res){
           
         });
     
-    });
+//postgresConnect    });
 };
 
 exports.ordaintzekoerakezabatu = function(req,res){
      var id = req.session.idKirolElkarteak;
      var idOrdaintzekoErak = req.params.idOrdaintzekoErak;
     
-     req.getConnection(function (err, connection) {
-        
-        connection.query("DELETE FROM ordaintzekoErak WHERE idElkarteakOrdaintzekoErak = ? and idOrdaintzekoErak = ?",[id,idOrdaintzekoErak], function(err, rows)
+//postgres  req.getConnection(function(err,connection){
+//postgresConnect     req.connection.connect(function(err,connection){                //postgres 
+//postgres        connection.query("DELETE FROM ordaintzekoErak WHERE idElkarteakOrdaintzekoErak = ? and idOrdaintzekoErak = ?",[id,idOrdaintzekoErak], function(err, rows)
+        req.connection.query('DELETE FROM ordaintzekoErak WHERE "idElkarteakOrdaintzekoErak" = $1 and "idOrdaintzekoErak" = $2',[id,idOrdaintzekoErak], function(err, rows)
         {
             
              if(err)
                  console.log("Error deleting : %s ",err );
-            
+        //postgres    
              res.redirect('/admin/ordaintzekoerak');
              
         });
         
-     });
+//postgresConnect     });
 };
 
 exports.mezuakbidali = function(req,res){
@@ -2586,15 +2655,16 @@ exports.mezuakbidali = function(req,res){
     var nondik = req.session.nondik;
 debugger;      
 console.log("nondik: "+ nondik );
-    req.getConnection(function (err, connection) {
+//postgres  req.getConnection(function(err,connection){
+//postgresConnect    req.connection.connect(function(err,connection){                //postgres 
          
         if(input.mezumota == "emarbi"){
-
-            connection.query('SELECT *,DATE_FORMAT(dataPartidu,"%Y/%m/%d") AS dataPartidu FROM partiduak, mailak, taldeak, lekuak where federazioaTalde != 9 and zenbakiLeku != 8 and idLekuak=idLekuakPartidu and idTaldeakPartidu=idTaldeak and idTaldeakPartidu=idTaldeak and idMailak=idMailaTalde and idElkarteakPartidu = ? and jardunaldiDataPartidu = ? order by zenbakiMaila, izenaTalde asc ,orduaPartidu',[id, jardunaldia],function(err,rows) {
+    //postgres        connection.query('SELECT *,DATE_FORMAT(dataPartidu,"%Y/%m/%d") AS dataPartidu FROM partiduak, mailak, taldeak, lekuak where federazioaTalde != 9 and zenbakiLeku != 8 and idLekuak=idLekuakPartidu and idTaldeakPartidu=idTaldeak and idTaldeakPartidu=idTaldeak and idMailak=idMailaTalde and idElkarteakPartidu = ? and jardunaldiDataPartidu = ? order by zenbakiMaila, izenaTalde asc ,orduaPartidu',[id, jardunaldia],function(err,rows) {
+            req.connection.query('SELECT *,DATE_FORMAT(dataPartidu,"%Y/%m/%d") AS dataPartidu FROM partiduak, mailak, taldeak, lekuak where "federazioaTalde" != 9 and "zenbakiLeku" != 8 and "idLekuak"="idLekuakPartidu" and "idTaldeakPartidu"="idTaldeak" and "idTaldeakPartidu"="idTaldeak" and "idMailak"="idMailaTalde" and "idElkarteakPartidu" = $1 and "jardunaldiDataPartidu" = $2 order by "zenbakiMaila", "izenaTalde" asc ,"orduaPartidu"',[id, jardunaldia],function(err,wrows) {
             
               if(err) 
                console.log("Error Selecting : %s ",err );
-                  
+              rows = wrows.rows;     //postgres   
               for (var i in rows){
                 if(rows[i].emaitzaPartidu == ""){
                   if(i >= nondik && nora < zenbat){
@@ -2677,13 +2747,13 @@ console.log("nondik: "+ nondik );
         }
 
         else if(input.mezumota == "ordgabe"){
-
-              var query = connection.query('SELECT * FROM taldeak,txapelketa where idtxapeltalde = ? and idKirolElkarteak=idtxapeltalde and balidatuta < 5 and balidatuta > 0',[id],function(err,rows)
+//postgres               var query = connection.query('SELECT * FROM taldeak,txapelketa where idtxapeltalde = ? and idKirolElkarteak=idtxapeltalde and balidatuta < 5 and balidatuta > 0',[id],function(err,rows)
+              var query = req.connection.query('SELECT * FROM taldeak,txapelketa where "idtxapeltalde" = $1 and "idKirolElkarteak"="idtxapeltalde" and "balidatuta" < 5 and "balidatuta" > 0',[id],function(err,wrows)
               {
 
                 if(err)
                   console.log("Error Selecting : %s ",err );
-
+                rows = wrows.rows;     //postgres  
                 var subj = req.session.txapelketaizena+ " txapelketa ordainketa egin mesedez!";
                 var body = "<h2> Ordainketa egin mesedez! </h2>\n" + 
                               "<p>"+ req.session.txapelketaizena+ "</p> \n"+
@@ -2699,7 +2769,7 @@ console.log("nondik: "+ nondik );
 
         else if(input.mezumota == "jokgabe"){
 
-              connection.query('SELECT * FROM taldeak where idtxapeltalde = ? and balidatuta != "admin" and balidatuta > 0 and NOT EXISTS (SELECT * FROM jokalariak where idtaldeak=idtaldej) order by idtaldeak',[req.session.idKirolElkarteak],function(err,rows)     {
+              req.connection.query('SELECT * FROM taldeak where idtxapeltalde = ? and balidatuta != "admin" and balidatuta > 0 and NOT EXISTS (SELECT * FROM jokalariak where idtaldeak=idtaldej) order by idtaldeak',[req.session.idKirolElkarteak],function(err,rows)     {
               if(err)
                 console.log("Error Selecting : %s ",err );
 
@@ -2716,7 +2786,7 @@ console.log("nondik: "+ nondik );
              });
         }
         
-     });   
+//postgresConnect     });   
 };
 
 function emailakbidali(i, nondik, nora, zenbat, to, subj, body){
@@ -2863,12 +2933,14 @@ exports.partiduemaitzaeguneratu = function(req,res){
     //ADI! partaideasortu-n aldatu balio hau aldatuz gero
     var idPartidua = req.params.id / 3456789;
     
-    req.getConnection(function (err, connection) {
-    
-      connection.query('SELECT *,DATE_FORMAT(dataPartidu,"%Y/%m/%d") AS dataPartidu FROM partiduak, mailak, taldeak, denboraldiak where idDenboraldiaPartidu=idDenboraldia and idTaldeakPartidu=idTaldeak and idMailak=idMailaTalde and idPartiduak = ?',[idPartidua],function(err,rows) {
+//postgres  req.getConnection(function(err,connection){
+//postgresConnect    req.connection.connect(function(err,connection){                //postgres 
+//postgres      connection.query('SELECT *,DATE_FORMAT(dataPartidu,"%Y/%m/%d") AS dataPartidu FROM partiduak, mailak, taldeak, denboraldiak where idDenboraldiaPartidu=idDenboraldia and idTaldeakPartidu=idTaldeak and idMailak=idMailaTalde and idPartiduak = ?',[idPartidua],function(err,rows) {    
+      req.connection.query('SELECT *,DATE_FORMAT(dataPartidu,"%Y/%m/%d") AS dataPartidu FROM partiduak, mailak, taldeak, denboraldiak where "idDenboraldiaPartidu"="idDenboraldia" and "idTaldeakPartidu"="idTaldeak" and "idMailak"="idMailaTalde" and "idPartiduak" = $1',[idPartidua],function(err,wrows) {
             
        if(err)
            console.log("Error Selecting : %s ",err );
+       rows = wrows.rows;     //postgres
        console.log("mezua to: " + rows[0].arduradunEmailTalde + " - "  +rows[0].izenaTalde+ " - "  + emaitza + " - "  + arbitraia);
        if (rows.length != 0 && emaitza != "XX-YY" && ((rows[0].jardunaldiDataPartidu = rows[0].jardunaldiaIkusgai) || admin)){
          var data = {};
@@ -2877,7 +2949,7 @@ exports.partiduemaitzaeguneratu = function(req,res){
          if (emaitza) 
              data.emaitzaPartidu = emaitza; 
            
-         connection.query("UPDATE partiduak set ? WHERE idPartiduak = ? ",[data, idPartidua], function(err, rowsu)
+         req.connection.query("UPDATE partiduak set ? WHERE idPartiduak = ? ",[data, idPartidua], function(err, rowsu)
           {
    
           if (err)
@@ -2938,5 +3010,5 @@ exports.partiduemaitzaeguneratu = function(req,res){
            res.sendStatus(404);
       });
 //          connection.release();    
-    });
+//postgresConnect    });
 };

@@ -9,19 +9,21 @@ var VALID_DNI_REGEX = /^\d{8}[a-zA-Z]{1}$/;
 exports.taldeakbilatu = function(req, res){
   var id = req.session.idKirolElkarteak;
   var idDenboraldia = req.session.idDenboraldia;
-  req.getConnection(function(err,connection){
-       
-     connection.query('SELECT * FROM taldeak, denboraldiak, mailak, partaideak where idMailak=idMailaTalde and idArduradunTalde=idPartaideak and idDenboraldiaTalde = idDenboraldia and idDenboraldiaTalde= ? and idElkarteakTalde = ? order by zenbakiMaila desc, izenaTalde asc',[idDenboraldia,id],function(err,rows) {
+//postgres  req.getConnection(function(err,connection){
+//postgresConnect  req.connection.connect(function(err,connection){                //postgres 
+//postgres      connection.query('SELECT * FROM taldeak, denboraldiak, mailak, partaideak where idMailak=idMailaTalde and idArduradunTalde=idPartaideak and idDenboraldiaTalde = idDenboraldia and idDenboraldiaTalde= ? and idElkarteakTalde = ? order by zenbakiMaila desc, izenaTalde asc',[idDenboraldia,id],function(err,rows) {
+     req.connection.query('SELECT * FROM taldeak, denboraldiak, mailak, partaideak where "idMailak"="idMailaTalde" and "idArduradunTalde"="idPartaideak" and "idDenboraldiaTalde" = "idDenboraldia" and "idDenboraldiaTalde"= $1 and "idElkarteakTalde" = $2 order by "zenbakiMaila" desc, "izenaTalde" asc',[idDenboraldia,id],function(err,wrows) {
             
         if(err)
            console.log("Error Selecting : %s ",err );
 
-
-         connection.query('SELECT idDenboraldia, deskribapenaDenb FROM denboraldiak where idElkarteakDenb = ? order by deskribapenaDenb desc',[id],function(err,rowsdenb) {
+        rows = wrows.rows;     //postgres 
+//postgres      connection.query('SELECT idDenboraldia, deskribapenaDenb FROM denboraldiak where idElkarteakDenb = ? order by deskribapenaDenb desc',[id],function(err,rowsdenb) {
+         req.connection.query('SELECT "idDenboraldia", "deskribapenaDenb" FROM denboraldiak where "idElkarteakDenb" = $1 order by "deskribapenaDenb" desc',[id],function(err,wrows) {
           
             if(err)
               console.log("Error Selecting : %s ",err );
-
+            rowsdenb = wrows.rows;     //postgres 
             for(var i in rowsdenb ){
                 if(req.session.idDenboraldia == rowsdenb[i].idDenboraldia){
                     rowsdenb[i].aukeratua = true;
@@ -36,26 +38,28 @@ exports.taldeakbilatu = function(req, res){
           res.render('taldeakadmin.handlebars',{title: "Taldeak", data:rows, denboraldiak: rowsdenb, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea: req.session.partaidea});                       
       });
         });   
-  });
+//postgresConnect  });
 };
 
 exports.taldeakbilatudenboraldiarekin = function(req, res){
   var id = req.session.idKirolElkarteak;
   var idDenboraldia = req.params.idDenboraldia;
   req.session.idDenboraldia = idDenboraldia;
-  req.getConnection(function(err,connection){
-       
-     connection.query('SELECT * FROM taldeak, denboraldiak, mailak, partaideak where idMailak=idMailaTalde and idArduradunTalde=idPartaideak and idDenboraldiaTalde = idDenboraldia and idDenboraldiaTalde= ? and idElkarteakTalde = ? order by zenbakiMaila desc, izenaTalde asc',[idDenboraldia,id],function(err,rows) {
+//postgres  req.getConnection(function(err,connection){
+//postgresConnect  req.connection.connect(function(err,connection){                //postgres 
+//postgres     connection.query('SELECT * FROM taldeak, denboraldiak, mailak, partaideak where idMailak=idMailaTalde and idArduradunTalde=idPartaideak and idDenboraldiaTalde = idDenboraldia and idDenboraldiaTalde= ? and idElkarteakTalde = ? order by zenbakiMaila desc, izenaTalde asc',[idDenboraldia,id],function(err,rows) {
+     req.connection.query('SELECT * FROM taldeak, denboraldiak, mailak, partaideak where "idMailak"="idMailaTalde" and "idArduradunTalde"="idPartaideak" and "idDenboraldiaTalde" = "idDenboraldia" and "idDenboraldiaTalde"= $1 and "idElkarteakTalde" = $2 order by "zenbakiMaila" desc, "izenaTalde" asc',[idDenboraldia,id],function(err,wrows) {
             
         if(err)
            console.log("Error Selecting : %s ",err );
 
-
-         connection.query('SELECT idDenboraldia, deskribapenaDenb FROM denboraldiak where idElkarteakDenb = ? order by deskribapenaDenb desc',[id],function(err,rowsdenb) {
+        rows = wrows.rows;     //postgres 
+//postgres         connection.query('SELECT idDenboraldia, deskribapenaDenb FROM denboraldiak where idElkarteakDenb = ? order by deskribapenaDenb desc',[id],function(err,rowsdenb) {
+         req.connection.query('SELECT "idDenboraldia", "deskribapenaDenb" FROM denboraldiak where "idElkarteakDenb" = $1 order by "deskribapenaDenb" desc',[id],function(err,wrows) {
           
             if(err)
               console.log("Error Selecting : %s ",err );
-
+            rowsdenb = wrows.rows;     //postgres 
             for(var i in rowsdenb ){
                 if(req.session.idDenboraldia == rowsdenb[i].idDenboraldia){
                     rowsdenb[i].aukeratua = true;
@@ -70,49 +74,53 @@ exports.taldeakbilatudenboraldiarekin = function(req, res){
           res.render('taldeakadmin.handlebars',{title: "Taldeak", data:rows, denboraldiak: rowsdenb, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea: req.session.partaidea});                       
       });
         });   
-  });
+//postgresConnect  });
 };
 
 exports.taldeakikusipartaide = function(req, res){
   var id = req.session.idKirolElkarteak;
   var idDenboraldia = req.session.idDenboraldia;
-  req.getConnection(function(err,connection){
-       
-     connection.query('SELECT * FROM taldeak, denboraldiak, mailak, partaideak where federazioaTalde != 9 and idMailak=idMailaTalde and idArduradunTalde=idPartaideak and idDenboraldiaTalde = idDenboraldia and idDenboraldiaTalde= ? and idElkarteakTalde = ? order by zenbakiMaila, izenaTalde asc',[idDenboraldia,id],function(err,rows) {
+//postgres  req.getConnection(function(err,connection){
+//postgresConnect  req.connection.connect(function(err,connection){                //postgres 
+//postgres     connection.query('SELECT * FROM taldeak, denboraldiak, mailak, partaideak where federazioaTalde != 9 and idMailak=idMailaTalde and idArduradunTalde=idPartaideak and idDenboraldiaTalde = idDenboraldia and idDenboraldiaTalde= ? and idElkarteakTalde = ? order by zenbakiMaila, izenaTalde asc',[idDenboraldia,id],function(err,rows) {
+     req.connection.query('SELECT * FROM taldeak, denboraldiak, mailak, partaideak where "federazioaTalde" != 9 and "idMailak"="idMailaTalde" and "idArduradunTalde"="idPartaideak" and "idDenboraldiaTalde" = "idDenboraldia" and "idDenboraldiaTalde"= $1 and "idElkarteakTalde" = $2 order by "zenbakiMaila", "izenaTalde" asc',[idDenboraldia,id],function(err,wrows) {
             
         if(err)
            console.log("Error Selecting : %s ",err );
-         
+        rows = wrows.rows;     //postgres          
          //console.log("Berriak:" +JSON.stringify(rows));
           res.render('taldeakpartaide.handlebars',{title: "Taldeak", data:rows, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, atalak: req.session.atalak, partaidea: req.session.partaidea, idPartaideak:req.session.idPartaideak, arduraduna:req.session.arduraduna});                       
       });   
-  });
+//postgresConnect  });
 };
 
 exports.taldeakgehitu = function(req, res){
   var id = req.session.idKirolElkarteak;
   var idDenboraldia = req.session.idDenboraldia;
-  req.getConnection(function(err,connection){
-       
-     connection.query('SELECT * FROM mailak where idElkarteakMaila = ? order by zenbakiMaila asc',[id],function(err,rowsm) {
+//postgres  req.getConnection(function(err,connection){
+//postgresConnect  req.connection.connect(function(err,connection){                //postgres 
+//postgres     connection.query('SELECT * FROM mailak where idElkarteakMaila = ? order by zenbakiMaila asc',[id],function(err,rowsm) {
+     req.connection.query('SELECT * FROM mailak where "idElkarteakMaila" = $1 order by "zenbakiMaila" asc',[id],function(err,wrows) {
             
         if(err)
            console.log("Error Selecting : %s ",err );
-
-        connection.query('SELECT * FROM partaideak where idElkarteakPart = ? order by izenaPart asc',[id],function(err,rowsp) {
+        rowsm = wrows.rows;     //postgres 
+//postgres        connection.query('SELECT * FROM partaideak where idElkarteakPart = ? order by izenaPart asc',[id],function(err,rowsp) {
+        req.connection.query('SELECT * FROM partaideak where "idElkarteakPart" = $1 order by "izenaPart" asc',[id],function(err,wrows) {
             if(err)
-            console.log("Error Selecting : %s ",err );
-
-            connection.query('SELECT * FROM denboraldiak where idElkarteakDenb = ? order by idDenboraldia asc',[id],function(err,rowsd) {
+             console.log("Error Selecting : %s ",err );
+            rowsp = wrows.rows;     //postgres 
+//postgres            connection.query('SELECT * FROM denboraldiak where idElkarteakDenb = ? order by idDenboraldia asc',[id],function(err,rowsd) {
+            req.connection.query('SELECT * FROM denboraldiak where "idElkarteakDenb" = $1 order by "idDenboraldia asc',[id],function(err,wrows) {
                if(err)
                 console.log("Error Selecting : %s ",err );
-         
+              rowsd = wrows.rows;     //postgres          
          //console.log("Berriak:" +JSON.stringify(rows));
       res.render('taldeaksortu.handlebars', {title : 'KirolElkarteak-Taldeak gehitu', mailak:rowsm, arduradunak:rowsp, denboraldiak:rowsd, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea: req.session.partaidea});
       }); 
       });  
           });  
-  });
+//postgresConnect  });
 };
 
 exports.taldeaksortu = function(req,res){
@@ -127,7 +135,8 @@ exports.taldeaksortu = function(req,res){
           hosta += ":"+ (process.env.PORT || 3000);
     }
 
-    req.getConnection(function (err, connection) {
+//postgres  req.getConnection(function(err,connection){
+//postgresConnect    req.connection.connect(function(err,connection){                //postgres 
         
         var data = {
             
@@ -144,7 +153,7 @@ exports.taldeaksortu = function(req,res){
         };
         
   
-        var query = connection.query("INSERT INTO taldeak set ? ",data, function(err, rows)
+        var query = req.connection.query("INSERT INTO taldeak set ? ",data, function(err, rows)
         {
   
           if (err)
@@ -155,7 +164,7 @@ exports.taldeaksortu = function(req,res){
         
        // console.log(query.sql); 
     
-    });
+//postgresConnect    });
 };
 
 exports.taldeakezabatu = function(req,res){
@@ -164,9 +173,10 @@ exports.taldeakezabatu = function(req,res){
      //var idDenboraldia = req.session.idDenboraldia;
      var idTaldeak = req.params.idTaldeak;
     
-     req.getConnection(function (err, connection) {
-        
-        connection.query("DELETE FROM taldeak WHERE idElkarteakTalde = ? and idTaldeak = ?",[id, idTaldeak], function(err, rows)
+//postgres  req.getConnection(function(err,connection){
+//postgresConnect     req.connection.connect(function(err,connection){                //postgres 
+//postgres        connection.query("DELETE FROM taldeak WHERE idElkarteakTalde = ? and idTaldeak = ?",[id, idTaldeak], function(err, rows)
+        req.connection.query('DELETE FROM taldeak WHERE "idElkarteakTalde" = $1 and "idTaldeak" = $2',[id, idTaldeak], function(err, rows)
         {
             
              if(err)
@@ -176,7 +186,7 @@ exports.taldeakezabatu = function(req,res){
              
         });
         
-     });
+//postgresConnect     });
 };
 
 exports.taldeakeditatu = function(req, res){
@@ -184,19 +194,21 @@ exports.taldeakeditatu = function(req, res){
   var idDenboraldia = req.session.idDenboraldia;
   var idTaldeak = req.params.idTaldeak;
     
-  req.getConnection(function(err,connection){
-       
-     connection.query('SELECT * FROM taldeak WHERE idElkarteakTalde = ? and idTaldeak= ?',[id,idTaldeak],function(err,rows)
+//postgres  req.getConnection(function(err,connection){
+//postgresConnect  req.connection.connect(function(err,connection){                //postgres 
+//postgres     connection.query('SELECT * FROM taldeak WHERE idElkarteakTalde = ? and idTaldeak= ?',[id,idTaldeak],function(err,rows)
+     req.connection.query('SELECT * FROM taldeak WHERE "idElkarteakTalde" = $1 and "idTaldeak"= $2',[id,idTaldeak],function(err,wrows)
         {
             
             if(err)
                 console.log("Error Selecting : %s ",err );
-
-              connection.query('SELECT * FROM mailak where idElkarteakMaila = ? order by zenbakiMaila asc',[id],function(err,rowsm) {
+            rows = wrows.rows;     //postgres 
+//postgres              connection.query('SELECT * FROM mailak where idElkarteakMaila = ? order by zenbakiMaila asc',[id],function(err,rowsm) {
+              req.connection.query('SELECT * FROM mailak where "idElkarteakMaila" = $1 order by "zenbakiMaila" asc',[id],function(err,wrows) {
             
                 if(err)
                   console.log("Error Selecting : %s ",err );
-                
+                rowsm = wrows.rows;     //postgres                 
                 for(var i in rowsm ){
                   if(rows[0].idMailaTalde == rowsm[i].idMailak){
                     izenaMaila = rowsm[i].izenaMaila;
@@ -207,11 +219,11 @@ exports.taldeakeditatu = function(req, res){
                 }
 
                 rows[0].mailak = rowsm;
-
-                connection.query('SELECT * FROM partaideak where idElkarteakPart = ? order by abizena1Part, abizena2Part, izenaPart',[id],function(err,rowsp) {
+//postgres                connection.query('SELECT * FROM partaideak where idElkarteakPart = ? order by abizena1Part, abizena2Part, izenaPart',[id],function(err,rowsp) {
+                req.connection.query('SELECT * FROM partaideak where "idElkarteakPart" = $1 order by "abizena1Part", "abizena2Part", "izenaPart"',[id],function(err,wrows) {
                   if(err)
                     console.log("Error Selecting : %s ",err );
-
+                  rowsp = wrows.rows;     //postgres 
                   for(var i in rowsp ){
                     if(rows[0].idArduradunTalde == rowsp[i].idPartaideak){
                       izenaPart = rowsp[i].izenaPart;
@@ -223,11 +235,11 @@ exports.taldeakeditatu = function(req, res){
                   }
 
                   rows[0].arduradunak = rowsp;
-
-                  connection.query('SELECT * FROM denboraldiak where idElkarteakDenb = ? order by idDenboraldia asc',[id],function(err,rowse) {
+//postgres                  connection.query('SELECT * FROM denboraldiak where idElkarteakDenb = ? order by idDenboraldia asc',[id],function(err,rowse) {
+                  req.connection.query('SELECT * FROM denboraldiak where "idElkarteakDenb" = $1 order by "idDenboraldia" asc',[id],function(err,wrows) {
                     if(err)
                       console.log("Error Selecting : %s ",err );
-                    
+                    rowse = wrows.rows;     //postgres                    
                     for(var i in rowse ){
                       if(rows[0].idDenboraldiaTalde == rowse[i].idDenboraldia){
                         rowse[i].aukeratua = true;
@@ -245,7 +257,7 @@ exports.taldeakeditatu = function(req, res){
                 });
             });
                  
-    }); 
+//postgresConnect    }); 
 };
 
 
@@ -256,7 +268,8 @@ exports.taldeakaldatu = function(req,res){
     var idDenboraldia = req.session.idDenboraldia;
     var idTaldeak = req.params.idTaldeak;
     
-    req.getConnection(function (err, connection) {
+//postgres  req.getConnection(function(err,connection){
+//postgresConnect    req.connection.connect(function(err,connection){                //postgres 
         
         var data = {
             
@@ -271,7 +284,7 @@ exports.taldeakaldatu = function(req,res){
             arbitraiaTalde : input.arbitraiaTalde
         };
         
-        connection.query("UPDATE taldeak set ? WHERE idElkarteakTalde = ? and idTaldeak = ?",[data,id, idTaldeak], function(err, rows)
+        req.connection.query("UPDATE taldeak set ? WHERE idElkarteakTalde = ? and idTaldeak = ?",[data,id, idTaldeak], function(err, rows)
         {
   
           if (err)
@@ -281,21 +294,22 @@ exports.taldeakaldatu = function(req,res){
           
         });
     
-    });
+//postgresConnect    });
 };
 
 
 exports.taldeakkopiatusortu = function(req, res){
   var id = req.session.idKirolElkarteak;
-  var idDenboraldia = req.session.idDenboraldia;
+  var i//postgresConnectdDenboraldia = req.session.idDenboraldia;
   var idDenboraldiNondik = 2;
-  req.getConnection(function(err,connection){
-
-    connection.query('SELECT idDenboraldia, deskribapenaDenb FROM denboraldiak where idElkarteakDenb = ? order by deskribapenaDenb desc',[id],function(err,rowsdenb) {
+//postgres  req.getConnection(function(err,connection){
+//postgresConnect  req.connection.connect(function(err,connection){                //postgres 
+//postgres    connection.query('SELECT idDenboraldia, deskribapenaDenb FROM denboraldiak where idElkarteakDenb = ? order by deskribapenaDenb desc',[id],function(err,rowsdenb) {
+    req.connection.query('SELECT "idDenboraldia", "deskribapenaDenb" FROM denboraldiak where "idElkarteakDenb" = $1 order by "deskribapenaDenb" desc',[id],function(err,wrows) {
           
             if(err)
               console.log("Error Selecting : %s ",err );
-
+            rowsdenb = wrows.rows;     //postgres 
             for(var i in rowsdenb ){
                 if(req.session.idDenboraldia == rowsdenb[i].idDenboraldia){
                     rowsdenb[i].aukeratua = true;
@@ -307,7 +321,7 @@ exports.taldeakkopiatusortu = function(req, res){
           res.render('taldeakkopiatu.handlebars', {page_title:"Taldeak kopiatu", denboraldiak:rowsdenb, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea: req.session.partaidea, partaidea: req.session.partaidea, atalak: req.session.atalak, idPartaideak:req.session.idPartaideak, arduraduna:req.session.arduraduna});
 
           });
-  });
+//postgresConnect  });
 };    
 
 exports.taldeakkopiatuegin = function(req, res){
@@ -317,14 +331,15 @@ exports.taldeakkopiatuegin = function(req, res){
   var idDenboraldiaNondik = input.idDenboraldiaNondik;
   var idDenboraldiaNora = input.idDenboraldiaNora;
 
-   req.getConnection(function(err,connection){
+//postgres  req.getConnection(function(err,connection){
+//postgresConnect  req.connection.connect(function(err,connection){                //postgres 
  
-       
-     connection.query('SELECT * FROM taldeak where idElkarteakTalde = ? and idDenboraldiaTalde = ?',[id, idDenboraldiaNondik],function(err,rowstaldeak) {
+//postgres     connection.query('SELECT * FROM taldeak where idElkarteakTalde = ? and idDenboraldiaTalde = ?',[id, idDenboraldiaNondik],function(err,rowstaldeak) {
+     req.connection.query('SELECT * FROM taldeak where "idElkarteakTalde" = $1 and "idDenboraldiaTalde" = $2',[id, idDenboraldiaNondik],function(err,wrows) {
             
         if(err)
            console.log("Error Selecting : %s ",err );
-         
+        rowstaldeak = wrows.rows;     //postgres          
          //console.log("Berriak:" +JSON.stringify(rows));
         
       for(var i in rowstaldeak ){
@@ -343,7 +358,7 @@ exports.taldeakkopiatuegin = function(req, res){
         };
         
   
-        var query = connection.query("INSERT INTO taldeak set ?",[data], function(err, rows)
+        var query = req.connection.query("INSERT INTO taldeak set ?",[data], function(err, rows)
         {
   
           if (err)
@@ -358,7 +373,7 @@ exports.taldeakkopiatuegin = function(req, res){
        // console.log(query.sql); 
     
     });
-});
+//postgresConnect});
 
 };
 
@@ -377,11 +392,13 @@ var t = 0;
 var vTalde , kolore;
 var date = new Date();
 var ordaintzekoa = 0, ordaindutakoa = 0;
-  req.getConnection(function(err,connection){
-//    connection.query('SELECT * FROM taldeak, mailak, denboraldiak where idMailaTalde=idMailak and idDenboraldiaTalde = idDenboraldia and  idTaldeak = ? and idElkarteakTalde = ?',[idTaldeak,id],function(err,rowst) {
-    connection.query('SELECT * FROM partaideMotak where idElkarteakPartaideMotak = ? order by zenbakiMota, idPartaideMotak asc',[id],function(err,rowsm) {
+//postgres  req.getConnection(function(err,connection){
+//postgresConnect  req.connection.connect(function(err,connection){                //postgres 
+//postgres    connection.query('SELECT * FROM partaideMotak where idElkarteakPartaideMotak = ? order by zenbakiMota, idPartaideMotak asc',[id],function(err,rowsm) {
+    req.connection.query('SELECT * FROM partaideMotak where "idElkarteakPartaideMotak" = $1 order by "zenbakiMota", "idPartaideMotak" asc',[id],function(err,wrows) {
       if(err)
           console.log("Error Selecting : %s ",err ); 
+      rowsm = wrows.rows;     //postgres 
       for(var i in rowsm ){
             if(mota == rowsm[i].idPartaideMotak){
               rowsm[i].aukeratua = true;
@@ -389,10 +406,12 @@ var ordaintzekoa = 0, ordaindutakoa = 0;
             else
                rowsm[i].aukeratua = false;
       }          
-      connection.query('SELECT *,DATE_FORMAT(jaiotzeDataPart,"%Y-%m-%d") AS jaiotzeDataPart FROM taldekideak, partaideMotak, taldeak, denboraldiak, mailak, partaideak LEFT JOIN bazkideak ON idPartaideak=idPartaideakBazk where idMotaKide=idPartaideMotak and idTaldeakKide=idTaldeak and idMailak=idMailaTalde and idPartaideakKide=idPartaideak and idDenboraldiaTalde = idDenboraldia and idDenboraldia= ? and idElkarteakTalde = ? order by zenbakiMaila desc, izenaTalde asc, zenbakiMota, abizena1Part, abizena2Part, izenaPart',[idDenboraldia,id],function(err,rows) {
+//postgres      connection.query('SELECT *,DATE_FORMAT(jaiotzeDataPart,"%Y-%m-%d") AS jaiotzeDataPart FROM taldekideak, partaideMotak, taldeak, denboraldiak, mailak, partaideak LEFT JOIN bazkideak ON idPartaideak=idPartaideakBazk where idMotaKide=idPartaideMotak and idTaldeakKide=idTaldeak and idMailak=idMailaTalde and idPartaideakKide=idPartaideak and idDenboraldiaTalde = idDenboraldia and idDenboraldia= ? and idElkarteakTalde = ? order by zenbakiMaila desc, izenaTalde asc, zenbakiMota, abizena1Part, abizena2Part, izenaPart',[idDenboraldia,id],function(err,rows) {
+      req.connection.query('SELECT *,DATE_FORMAT(jaiotzeDataPart,"%Y-%m-%d") AS jaiotzeDataPart FROM taldekideak, partaideMotak, taldeak, denboraldiak, mailak, partaideak LEFT JOIN bazkideak ON "idPartaideak"="idPartaideakBazk" where "idMotaKide"="idPartaideMotak" and "idTaldeakKide"="idTaldeak" and "idMailak"="idMailaTalde" and "idPartaideakKide"="idPartaideak" and "idDenboraldiaTalde" = "idDenboraldia" and "idDenboraldia"= $1 and "idElkarteakTalde" = $2 order by "zenbakiMaila" desc, "izenaTalde" asc, "zenbakiMota", "abizena1Part", "abizena2Part", "izenaPart"',[idDenboraldia,id],function(err,wrows) {
             
         if(err)
            console.log("Error Selecting : %s ",err );
+        rows = wrows.rows;     //postgres 
         for (var i in rows) {
 
           if(rows[i].idBazkideak || rows[i].zenbakiMaila < 5){     // < 5 kadete, infantil, alebin BAZKIDE EZ
@@ -483,7 +502,7 @@ var ordaintzekoa = 0, ordaindutakoa = 0;
       }); 
     });   
 //    });
-  });
+//postgresConnect  });
 }
 
 exports.urtebetetzeak = function(req,res){
@@ -510,11 +529,13 @@ Date.prototype.getWeek = function() {
 var today = new Date();
 var weekNumber = today.getWeek();
 //console.log(weekNumber);
-  req.getConnection(function(err,connection){
-         
-      connection.query('SELECT *,DATE_FORMAT(jaiotzeDataPart,"%Y-%m-%d") AS jaiotzeDataPart FROM taldekideak, partaideMotak, taldeak, denboraldiak, mailak, partaideak where idMotaKide=idPartaideMotak and idTaldeakKide=idTaldeak and idMailak=idMailaTalde and idPartaideakKide=idPartaideak and idDenboraldiaTalde = idDenboraldia and idDenboraldia= ? and idElkarteakTalde = ? order by zenbakiMaila desc, izenaTalde asc, zenbakiMota, abizena1Part, abizena2Part, izenaPart',[idDenboraldia,id],function(err,rows) {
+//postgres  req.getConnection(function(err,connection){
+//postgresConnect  req.connection.connect(function(err,connection){                //postgres 
+//postgres      connection.query('SELECT *,DATE_FORMAT(jaiotzeDataPart,"%Y-%m-%d") AS jaiotzeDataPart FROM taldekideak, partaideMotak, taldeak, denboraldiak, mailak, partaideak where idMotaKide=idPartaideMotak and idTaldeakKide=idTaldeak and idMailak=idMailaTalde and idPartaideakKide=idPartaideak and idDenboraldiaTalde = idDenboraldia and idDenboraldia= ? and idElkarteakTalde = ? order by zenbakiMaila desc, izenaTalde asc, zenbakiMota, abizena1Part, abizena2Part, izenaPart',[idDenboraldia,id],function(err,rows) {
+      req.connection.query('SELECT *,DATE_FORMAT(jaiotzeDataPart,"%Y-%m-%d") AS jaiotzeDataPart FROM taldekideak, partaideMotak, taldeak, denboraldiak, mailak, partaideak where "idMotaKide"="idPartaideMotak" and "idTaldeakKide"="idTaldeak" and "idMailak"="idMailaTalde" and "idPartaideakKide"="idPartaideak" and "idDenboraldiaTalde" = "idDenboraldia" and "idDenboraldia"= $1 and "idElkarteakTalde" = $2 order by "zenbakiMaila" desc, "izenaTalde" asc, "zenbakiMota", "abizena1Part", "abizena2Part", "izenaPart"',[idDenboraldia,id],function(err,wrows) {
         if(err)
            console.log("Error Selecting : %s ",err );
+        rows = wrows.rows;     //postgres 
         for (var i in rows) {
 
          var date = new Date(rows[i].jaiotzeDataPart);
@@ -578,7 +599,7 @@ var weekNumber = today.getWeek();
 
         res.render('urtebetetzeak.handlebars',{title: "Urtebetetzeak ikusi", data:taldeak, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea: req.session.partaidea});                       
       }); 
-    });   
+//postgresConnect    });   
 }
 
 function getNumberOfWeek() {
@@ -601,15 +622,15 @@ var t = 0, familiko = 1;
 var abizena1Part, abizena2Part, helbideaPart;
 var vabizena1Part, vabizena2Part, vhelbideaPart;
 var date = new Date();
-  req.getConnection(function(err,connection){
-//      connection.query('SELECT * FROM maila,taldeak LEFT JOIN jokalariak ON idtaldeak=idtaldej WHERE kategoria = idmaila and idtxapeltalde = ? and balidatuta != "admin" order by idtaldeak, idjokalari',[req.session.idtxapelketa],function(err,rows)     {
-//    connection.query('SELECT * FROM taldeak, mailak, denboraldiak where idMailaTalde=idMailak and idDenboraldiaTalde = idDenboraldia and  idTaldeak = ? and idElkarteakTalde = ?',[idTaldeak,id],function(err,rowst) {
+//postgres  req.getConnection(function(err,connection){
+//postgresConnect  req.connection.connect(function(err,connection){                //postgres 
        
-     connection.query('SELECT *,DATE_FORMAT(jaiotzeDataPart,"%Y-%m-%d") AS jaiotzeDataPart FROM taldekideak, partaideMotak, taldeak, denboraldiak, mailak, partaideak where idMotaKide=idPartaideMotak and idTaldeakKide=idTaldeak and idMailak=idMailaTalde and idPartaideakKide=idPartaideak and idDenboraldiaTalde = idDenboraldia and idDenboraldia= ? and idElkarteakTalde = ? order by abizena1Part, abizena2Part, izenaPart',[idDenboraldia,id],function(err,rows) {
-//     connection.query('SELECT *,DATE_FORMAT(jaiotzeDataPart,"%Y-%m-%d") AS jaiotzeDataPart FROM denboraldiak,mailak,taldeak LEFT JOIN taldekideak, partaideak, partaideMotak ON idMotaKide=idPartaideMotak and idTaldeakKide=idTaldeak and idPartaideakKide=idPartaideak where federazioaTalde != 9 and idMailak=idMailaTalde and idDenboraldiaTalde = idDenboraldia and idDenboraldia= ? and idElkarteakTalde = ? order by zenbakiMaila desc, izenaTalde asc, deskribapenMota, kamixetaZenbKide, abizena1Part, abizena2Part, izenaPart',[idDenboraldia,id],function(err,rows) {
+//postgres     connection.query('SELECT *,DATE_FORMAT(jaiotzeDataPart,"%Y-%m-%d") AS jaiotzeDataPart FROM taldekideak, partaideMotak, taldeak, denboraldiak, mailak, partaideak where idMotaKide=idPartaideMotak and idTaldeakKide=idTaldeak and idMailak=idMailaTalde and idPartaideakKide=idPartaideak and idDenboraldiaTalde = idDenboraldia and idDenboraldia= ? and idElkarteakTalde = ? order by abizena1Part, abizena2Part, izenaPart',[idDenboraldia,id],function(err,rows) {
+     req.connection.query('SELECT *,DATE_FORMAT(jaiotzeDataPart,"%Y-%m-%d") AS jaiotzeDataPart FROM taldekideak, partaideMotak, taldeak, denboraldiak, mailak, partaideak where "idMotaKide"="idPartaideMotak" and "idTaldeakKide"="idTaldeak" and "idMailak"="idMailaTalde" and "idPartaideakKide"="idPartaideak" and "idDenboraldiaTalde" = "idDenboraldia" and "idDenboraldia"= $1 and "idElkarteakTalde" = $2 order by "abizena1Part", "abizena2Part", "izenaPart"',[idDenboraldia,id],function(err,wrows) {
 
         if(err)
            console.log("Error Selecting : %s ",err );
+        rows = wrows.rows;     //postgres 
         for (var i in rows) { 
           rows[i].familiko = " ";
           rows[i].bgkolore = "#FFFFFF";
@@ -651,7 +672,7 @@ var date = new Date();
         res.render('taldekideakabizenez.handlebars',{title: "Taldekideak abizenez", data:rows, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea: req.session.partaidea});                       
      });    
 //    });
-  });
+//postgresConnect  });
 }
 
 exports.familikoak = function(req,res){
@@ -664,15 +685,15 @@ var f = 0, familiko = 1;
 var abizena1Part, abizena2Part, helbideaPart;
 var vabizena1Part, vabizena2Part, vhelbideaPart, vidTaldekideak;
 var date = new Date();
-  req.getConnection(function(err,connection){
-//      connection.query('SELECT * FROM maila,taldeak LEFT JOIN jokalariak ON idtaldeak=idtaldej WHERE kategoria = idmaila and idtxapeltalde = ? and balidatuta != "admin" order by idtaldeak, idjokalari',[req.session.idtxapelketa],function(err,rows)     {
-//    connection.query('SELECT * FROM taldeak, mailak, denboraldiak where idMailaTalde=idMailak and idDenboraldiaTalde = idDenboraldia and  idTaldeak = ? and idElkarteakTalde = ?',[idTaldeak,id],function(err,rowst) {
-       
-     connection.query('SELECT *,DATE_FORMAT(jaiotzeDataPart,"%Y-%m-%d") AS jaiotzeDataPart FROM taldekideak, partaideMotak, taldeak, denboraldiak, mailak, partaideak where idMotaKide=idPartaideMotak and idTaldeakKide=idTaldeak and idMailak=idMailaTalde and idPartaideakKide=idPartaideak and idDenboraldiaTalde = idDenboraldia and idDenboraldia= ? and idElkarteakTalde = ? order by abizena1Part, abizena2Part, izenaPart',[idDenboraldia,id],function(err,rows) {
-//     connection.query('SELECT *,DATE_FORMAT(jaiotzeDataPart,"%Y-%m-%d") AS jaiotzeDataPart FROM denboraldiak,mailak,taldeak LEFT JOIN taldekideak, partaideak, partaideMotak ON idMotaKide=idPartaideMotak and idTaldeakKide=idTaldeak and idPartaideakKide=idPartaideak where federazioaTalde != 9 and idMailak=idMailaTalde and idDenboraldiaTalde = idDenboraldia and idDenboraldia= ? and idElkarteakTalde = ? order by zenbakiMaila desc, izenaTalde asc, deskribapenMota, kamixetaZenbKide, abizena1Part, abizena2Part, izenaPart',[idDenboraldia,id],function(err,rows) {
+//postgres  req.getConnection(function(err,connection){
+//postgresConnect  req.connection.connect(function(err,connection){                //postgres 
+     
+//postgres     connection.query('SELECT *,DATE_FORMAT(jaiotzeDataPart,"%Y-%m-%d") AS jaiotzeDataPart FROM taldekideak, partaideMotak, taldeak, denboraldiak, mailak, partaideak where idMotaKide=idPartaideMotak and idTaldeakKide=idTaldeak and idMailak=idMailaTalde and idPartaideakKide=idPartaideak and idDenboraldiaTalde = idDenboraldia and idDenboraldia= ? and idElkarteakTalde = ? order by abizena1Part, abizena2Part, izenaPart',[idDenboraldia,id],function(err,rows) {
+     req.connection.query('SELECT *,DATE_FORMAT(jaiotzeDataPart,"%Y-%m-%d") AS jaiotzeDataPart FROM taldekideak, partaideMotak, taldeak, denboraldiak, mailak, partaideak where "idMotaKide"="idPartaideMotak" and "idTaldeakKide"="idTaldeak" and "idMailak"="idMailaTalde" and "idPartaideakKide"="idPartaideak" and "idDenboraldiaTalde" = "idDenboraldia" and "idDenboraldia"= $1 and "idElkarteakTalde" = $2 order by "abizena1Part", "abizena2Part", "izenaPart"',[idDenboraldia,id],function(err,wrows) {
 
         if(err)
            console.log("Error Selecting : %s ",err );
+        rows = wrows.rows;     //postgres 
         for (var i in rows) {
            abizena1Part = rows[i].abizena1Part.toLowerCase();
            abizena2Part = rows[i].abizena2Part.toLowerCase();
@@ -711,7 +732,7 @@ var date = new Date();
             ordaintzekoKide   : req.body.ordainduBerria
           };
         
-          connection.query("UPDATE taldekideak set ? WHERE idElkarteakKide = ? and idTaldekideak = ?",[data,id, vidTaldekideak], function(err, rows)
+          req.connection.query("UPDATE taldekideak set ? WHERE idElkarteakKide = ? and idTaldekideak = ?",[data,id, vidTaldekideak], function(err, rows)
           {
             if (err)
               console.log("Error Updating : %s ",err );
@@ -720,7 +741,7 @@ var date = new Date();
         res.redirect('/admin/taldekideakabizenez');
      });    
 //    });
-  });
+//postgresConnect  });
 }
 
 exports.taldekideakbilatu = function(req, res){
@@ -729,15 +750,19 @@ exports.taldekideakbilatu = function(req, res){
   var idDenboraldia = req.session.idDenboraldia;
   var idTaldeak = req.params.idTaldeak;
   var j = 0 ;
-  req.getConnection(function(err,connection){
-
-    connection.query('SELECT * FROM taldeak, mailak, denboraldiak where idMailaTalde=idMailak and idDenboraldiaTalde = idDenboraldia and  idTaldeak = ? and idElkarteakTalde = ?',[idTaldeak,id],function(err,rowst) {
-       
-     connection.query('SELECT *,DATE_FORMAT(jaiotzeDataPart,"%Y-%m-%d") AS jaiotzeDataPart FROM taldekideak, partaideMotak, taldeak, denboraldiak, mailak, partaideak where idMotaKide=idPartaideMotak and idTaldeakKide=idTaldeak and idMailak=idMailaTalde and idPartaideakKide=idPartaideak and idDenboraldiaTalde = idDenboraldia and idDenboraldia= ? and idTaldeakKide = ? and idElkarteakTalde = ? order by zenbakiMota, abizena1Part, abizena2Part, izenaPart',[idDenboraldia,idTaldeak,id],function(err,rows) {
+//postgres  req.getConnection(function(err,connection){
+//postgresConnect  req.connection.connect(function(err,connection){                //postgres 
+//postgres    connection.query('SELECT * FROM taldeak, mailak, denboraldiak where idMailaTalde=idMailak and idDenboraldiaTalde = idDenboraldia and  idTaldeak = ? and idElkarteakTalde = ?',[idTaldeak,id],function(err,rowst) {
+    req.connection.query('SELECT * FROM taldeak, mailak, denboraldiak where "idMailaTalde"="idMailak" and "idDenboraldiaTalde" = "idDenboraldia" and  "idTaldeak" = $1 and "idElkarteakTalde" = $2',[idTaldeak,id],function(err,wrows) {
+     if(err)
+           console.log("Error Selecting : %s ",err );
+     rowst = wrows.rows;     //postgres        
+//postgres     connection.query('SELECT *,DATE_FORMAT(jaiotzeDataPart,"%Y-%m-%d") AS jaiotzeDataPart FROM taldekideak, partaideMotak, taldeak, denboraldiak, mailak, partaideak where idMotaKide=idPartaideMotak and idTaldeakKide=idTaldeak and idMailak=idMailaTalde and idPartaideakKide=idPartaideak and idDenboraldiaTalde = idDenboraldia and idDenboraldia= ? and idTaldeakKide = ? and idElkarteakTalde = ? order by zenbakiMota, abizena1Part, abizena2Part, izenaPart',[idDenboraldia,idTaldeak,id],function(err,rows) {
+     req.connection.query('SELECT *,DATE_FORMAT(jaiotzeDataPart,"%Y-%m-%d") AS jaiotzeDataPart FROM taldekideak, partaideMotak, taldeak, denboraldiak, mailak, partaideak where "idMotaKide"="idPartaideMotak" and "idTaldeakKide"="idTaldeak" and "idMailak"="idMailaTalde" and "idPartaideakKide"="idPartaideak" and "idDenboraldiaTalde" = "idDenboraldia" and "idDenboraldia"= $ and "idTaldeakKide" = $1 and "idElkarteakTalde" = $2 order by "zenbakiMota", "abizena1Part", "abizena2Part", "izenaPart"',[idDenboraldia,idTaldeak,id],function(err,wrows) {
             
         if(err)
            console.log("Error Selecting : %s ",err );
-         
+        rows = wrows.rows;     //postgres          
          //console.log("Berriak:" +JSON.stringify(rows));
 
 /*
@@ -789,29 +814,32 @@ var argazkiak = [];
 
       });   
     });
-  });
+//postgresConnect  });
 };
 
 exports.taldekideakbilatupartaide = function(req, res){
   var id = req.session.idKirolElkarteak;
   var idDenboraldia = req.session.idDenboraldia;
   var idTaldeak = req.params.idTaldeak;
-  req.getConnection(function(err,connection){
-
-    connection.query('SELECT * FROM taldeak, mailak where idMailaTalde=idMailak and idTaldeak = ? and idElkarteakTalde = ?',[idTaldeak,id],function(err,rowst) {
-       
-     connection.query('SELECT * FROM taldekideak, partaideMotak, taldeak, denboraldiak, mailak, partaideak where idMotaKide=idPartaideMotak and idTaldeakKide=idTaldeak and idMailak=idMailaTalde and idPartaideakKide=idPartaideak and idDenboraldiaTalde = idDenboraldia and idDenboraldia= ? and idTaldeakKide = ? and idElkarteakTalde = ? order by noiztikDenb desc',[idDenboraldia,idTaldeak,id],function(err,rows) {
+//postgres  req.getConnection(function(err,connection){
+//postgresConnect  req.connection.connect(function(err,connection){                //postgres 
+//postgres    connection.query('SELECT * FROM taldeak, mailak where idMailaTalde=idMailak and idTaldeak = ? and idElkarteakTalde = ?',[idTaldeak,id],function(err,rowst) {
+    req.connection.query('SELECT * FROM taldeak, mailak where "idMailaTalde"="idMailak" and "idTaldeak" = $1 and "idElkarteakTalde" = $2',[idTaldeak,id],function(err,wrows) {
+     if(err)
+           console.log("Error Selecting : %s ",err );
+     rowst = wrows.rows;     //postgres       
+//postgres     connection.query('SELECT * FROM taldekideak, partaideMotak, taldeak, denboraldiak, mailak, partaideak where idMotaKide=idPartaideMotak and idTaldeakKide=idTaldeak and idMailak=idMailaTalde and idPartaideakKide=idPartaideak and idDenboraldiaTalde = idDenboraldia and idDenboraldia= ? and idTaldeakKide = ? and idElkarteakTalde = ? order by noiztikDenb desc',[idDenboraldia,idTaldeak,id],function(err,rows) {
+     req.connection.query('SELECT * FROM taldekideak, partaideMotak, taldeak, denboraldiak, mailak, partaideak where "idMotaKide"="idPartaideMotak" and "idTaldeakKide"="idTaldeak" and "idMailak"="idMailaTalde" and "idPartaideakKide"="idPartaideak" and "idDenboraldiaTalde" = "idDenboraldia" and "idDenboraldia"= $1 and "idTaldeakKide" = $2 and "idElkarteakTalde" = $3 order by "noiztikDenb" desc',[idDenboraldia,idTaldeak,id],function(err,wrows) {
             
         if(err)
            console.log("Error Selecting : %s ",err );
-
-
+        rows = wrows.rows;     //postgres 
          
          //console.log("Berriak:" +JSON.stringify(rows));
           res.render('taldekideakpartaide.handlebars',{title: "Taldekideak", data:rows, talde:rowst, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea: req.session.partaidea});                       
       });   
     });
-  });
+//postgresConnect  });
 };
 
 
@@ -820,18 +848,22 @@ exports.taldekideakbilatupartaideargazkiekin = function(req, res){
   var idDenboraldia = req.session.idDenboraldia;
   var idTaldeak = req.params.idTaldeak;
   var arduradun = false;
-  req.getConnection(function(err,connection){
-
-    connection.query('SELECT * FROM taldeak, mailak where idMailaTalde=idMailak and idTaldeak = ? and idElkarteakTalde = ?',[idTaldeak,id],function(err,rowst) {
+//postgres  req.getConnection(function(err,connection){
+//postgresConnect  req.connection.connect(function(err,connection){                //postgres 
+//postgres    connection.query('SELECT * FROM taldeak, mailak where idMailaTalde=idMailak and idTaldeak = ? and idElkarteakTalde = ?',[idTaldeak,id],function(err,rowst) {
+    req.connection.query('SELECT * FROM taldeak, mailak where "idMailaTalde"="idMailak" and "idTaldeak" = $1 and "idElkarteakTalde" = $2',[idTaldeak,id],function(err,wrows) {
      if(err)
            console.log("Error Selecting : %s ",err );
+     rowst = wrows.rows;     //postgres 
      if (rowst.length == 0){
            res.redirect('/taldeak/');
      }else{            
-      connection.query('SELECT * FROM taldekideak, partaideMotak, taldeak, denboraldiak, mailak, partaideak where idMotaKide=idPartaideMotak and idTaldeakKide=idTaldeak and idMailak=idMailaTalde and idPartaideakKide=idPartaideak and idDenboraldiaTalde = idDenboraldia and idDenboraldia= ? and idTaldeakKide = ? and idElkarteakTalde = ? order by noiztikDenb desc',[idDenboraldia,idTaldeak,id],function(err,rows) {
+//postgres      connection.query('SELECT * FROM taldekideak, partaideMotak, taldeak, denboraldiak, mailak, partaideak where idMotaKide=idPartaideMotak and idTaldeakKide=idTaldeak and idMailak=idMailaTalde and idPartaideakKide=idPartaideak and idDenboraldiaTalde = idDenboraldia and idDenboraldia= ? and idTaldeakKide = ? and idElkarteakTalde = ? order by noiztikDenb desc',[idDenboraldia,idTaldeak,id],function(err,rows) {
+      req.connection.query('SELECT * FROM taldekideak, partaideMotak, taldeak, denboraldiak, mailak, partaideak where "idMotaKide"="idPartaideMotak" and "idTaldeakKide"="idTaldeak" and "idMailak"="idMailaTalde" and "idPartaideakKide"="idPartaideak" and "idDenboraldiaTalde" = "idDenboraldia" and "idDenboraldia"= $1 and "idTaldeakKide" = $2 and "idElkarteakTalde" = $3 order by "noiztikDenb" desc',[idDenboraldia,idTaldeak,id],function(err,wrows) {
             
         if(err)
            console.log("Error Selecting : %s ",err );
+        rows = wrows.rows;     //postgres 
 /*
             var path = require('path'),
             fs = require('fs'),
@@ -899,7 +931,7 @@ var argazkiak = [];
     });
    }
   });
-});
+//postgresConnect});
 };
 
 exports.taldekideakgehitu = function(req, res){
@@ -907,26 +939,30 @@ exports.taldekideakgehitu = function(req, res){
   var idDenboraldia = req.session.idDenboraldia;
   var idTaldeak = req.params.idTaldeak;
   var admin=(req.path.slice(0,18) == "/admin/taldekideak");
-  req.getConnection(function(err,connection){
-       
-     connection.query('SELECT * FROM partaideMotak where idElkarteakPartaideMotak = ? order by zenbakiMota, idPartaideMotak asc',[id],function(err,rowsm) {
+//postgres  req.getConnection(function(err,connection){
+//postgresConnect  req.connection.connect(function(err,connection){                //postgres 
+//postgres     connection.query('SELECT * FROM partaideMotak where idElkarteakPartaideMotak = ? order by zenbakiMota, idPartaideMotak asc',[id],function(err,rowsm) {
+     req.connection.query('SELECT * FROM partaideMotak where "idElkarteakPartaideMotak" = $1 order by "zenbakiMota", "idPartaideMotak" asc',[id],function(err,wrows) {
             
       if(err)
            console.log("Error Selecting : %s ",err );
-      connection.query('SELECT * FROM taldeak, mailak, denboraldiak where idMailaTalde=idMailak and idDenboraldiaTalde=idDenboraldia and idTaldeak = ? and idElkarteakTalde = ?',[idTaldeak,id],function(err,rowst) {
+      rowsm = wrows.rows;     //postgres 
+//postgres      connection.query('SELECT * FROM taldeak, mailak, denboraldiak where idMailaTalde=idMailak and idDenboraldiaTalde=idDenboraldia and idTaldeak = ? and idElkarteakTalde = ?',[idTaldeak,id],function(err,rowst) {
+      req.connection.query('SELECT * FROM taldeak, mailak, denboraldiak where "idMailaTalde"="idMailak" and "idDenboraldiaTalde"="idDenboraldia" and "idTaldeak" = $1 and "idElkarteakTalde" = $2',[idTaldeak,id],function(err,wrows) {
         if(err)
            console.log("Error Selecting : %s ",err );
-
-        connection.query('SELECT * FROM partaideak where idElkarteakPart = ? and balidatutaPart != ? order by abizena1Part, abizena2Part, izenaPart',[id, "admin"],function(err,rowsp) {
+        rowst = wrows.rows;     //postgres 
+//postgres        connection.query('SELECT * FROM partaideak where idElkarteakPart = ? and balidatutaPart != ? order by abizena1Part, abizena2Part, izenaPart',[id, "admin"],function(err,rowsp) {
+        req.connection.query('SELECT * FROM partaideak where "idElkarteakPart" = $1 and "balidatutaPart" != $2 order by "abizena1Part", "abizena2Part", "izenaPart"',[id, "admin"],function(err,wrows) {
             if(err)
-            console.log("Error Selecting : %s ",err );
-         
+              console.log("Error Selecting : %s ",err );
+            rowsp = wrows.rows;     //postgres          
          //console.log("Berriak:" +JSON.stringify(rows));
       res.render('taldekideaksortu.handlebars', {title : 'KirolElkarteak-Taldeak gehitu', motak:rowsm, talde:rowst, partaideak:rowsp, idTaldeak:idTaldeak, menuadmin:admin, jardunaldia: req.session.jardunaldia, idDenboraldia: req.session.idDenboraldia, partaidea: req.session.partaidea, partaidea: req.session.partaidea, atalak: req.session.atalak, idPartaideak:req.session.idPartaideak, arduraduna:req.session.arduraduna});
       }); 
      });  
     });    
-  });
+//postgresConnect  });
 };
 
 exports.taldekideaksortu = function(req,res){
@@ -941,7 +977,8 @@ exports.taldekideaksortu = function(req,res){
           hosta += ":"+ (process.env.PORT || 3000);
     }
 
-    req.getConnection(function (err, connection) {
+//postgres  req.getConnection(function(err,connection){
+//postgresConnect    req.connection.connect(function(err,connection){                //postgres 
         
         var data = {
             materialaKide    : input.materialaKide,
@@ -956,7 +993,7 @@ exports.taldekideaksortu = function(req,res){
             idElkarteakKide : id
         };
  
-        var query = connection.query("INSERT INTO taldekideak set ? ",data, function(err, rows)
+        var query = req.connection.query("INSERT INTO taldekideak set ? ",data, function(err, rows)
         {
   
             if (err)
@@ -972,7 +1009,7 @@ exports.taldekideaksortu = function(req,res){
         
        // console.log(query.sql); 
     
-    });
+//postgresConnect    });
 };
 
 exports.taldekideakezabatu = function(req,res){
@@ -981,9 +1018,10 @@ exports.taldekideakezabatu = function(req,res){
      var idTaldeak = req.params.idTaldeak;
      var idTaldekideak = req.params.idTaldekideak;
 
-     req.getConnection(function (err, connection) {
-        
-        connection.query("DELETE FROM taldekideak WHERE idElkarteakKide = ? and idTaldekideak = ?",[id, idTaldekideak], function(err, rows)
+//postgres  req.getConnection(function(err,connection){
+//postgresConnect     req.connection.connect(function(err,connection){                //postgres 
+//postgres        connection.query("DELETE FROM taldekideak WHERE idElkarteakKide = ? and idTaldekideak = ?",[id, idTaldekideak], function(err, rows)
+        req.connection.query('DELETE FROM taldekideak WHERE "idElkarteakKide" = $1 and "idTaldekideak" = $2',[id, idTaldekideak], function(err, rows)
         {
             if(err)
                  console.log("Error deleting : %s ",err );
@@ -994,7 +1032,7 @@ exports.taldekideakezabatu = function(req,res){
               res.redirect('/admin/taldekideak/'+idTaldeak);
             }
         });
-     });
+//postgresConnect     });
 };
 
 exports.taldekideakeditatu = function(req, res){
@@ -1004,18 +1042,20 @@ exports.taldekideakeditatu = function(req, res){
   var baiez = [{ordainduKide:"Bai"}, {ordainduKide:"Ez"}];
   var admin=(req.path.slice(0,18) == "/admin/taldekideak");
     
-  req.getConnection(function(err,connection){
-       
-     connection.query('SELECT * FROM taldekideak WHERE idElkarteakKide = ? and idTaldekideak= ?',[id,idTaldekideak],function(err,rows)
+//postgres  req.getConnection(function(err,connection){
+//postgresConnect  req.connection.connect(function(err,connection){                //postgres 
+//postgres     connection.query('SELECT * FROM taldekideak WHERE idElkarteakKide = ? and idTaldekideak= ?',[id,idTaldekideak],function(err,rows)
+     req.connection.query('SELECT * FROM taldekideak WHERE "idElkarteakKide" = $1 and "idTaldekideak"= $2',[id,idTaldekideak],function(err,wrows)
         {
             if(err)
                 console.log("Error Selecting : %s ",err );
-
-            connection.query('SELECT * FROM partaideMotak where idElkarteakPartaideMotak = ? order by zenbakiMota, idPartaideMotak asc',[id],function(err,rowsm) {
+            rows = wrows.rows;     //postgres 
+//postgres            connection.query('SELECT * FROM partaideMotak where idElkarteakPartaideMotak = ? order by zenbakiMota, idPartaideMotak asc',[id],function(err,rowsm) {
+            req.connection.query('SELECT * FROM partaideMotak where "idElkarteakPartaideMotak" = $1 order by "zenbakiMota", "idPartaideMotak" asc',[id],function(err,wrows) {
             
               if(err)
                   console.log("Error Selecting : %s ",err );
-              
+              rowsm = wrows.rows;     //postgres               
               if (rows.length == 0){
                 res.redirect('/');
               }else{
@@ -1029,11 +1069,11 @@ exports.taldekideakeditatu = function(req, res){
                 }
 
                 rows[0].motak = rowsm;
-
-                connection.query('SELECT * FROM partaideak where idElkarteakPart = ? order by abizena1Part, abizena2Part, izenaPart',[id],function(err,rowsp) {
+//postgres                connection.query('SELECT * FROM partaideak where idElkarteakPart = ? order by abizena1Part, abizena2Part, izenaPart',[id],function(err,rowsp) {
+                req.connection.query('SELECT * FROM partaideak where "idElkarteakPart" = $1 order by "abizena1Part", "abizena2Part", "izenaPart"',[id],function(err,wrows) {
                   if(err)
                     console.log("Error Selecting : %s ",err );
-
+                  rowsp = wrows.rows;     //postgres 
                   for(var i in rowsp ){
                     if(rows[0].idPartaideakKide == rowsp[i].idPartaideak){
                       izenaPart = rowsp[i].izenaPart;
@@ -1066,7 +1106,7 @@ exports.taldekideakeditatu = function(req, res){
                } 
                 });
             });
-    }); 
+//postgresConnect    }); 
 };
 
 
@@ -1077,7 +1117,8 @@ exports.taldekideakaldatu = function(req,res){
     var idTaldekideak = req.params.idTaldekideak;
     var idTaldeak = req.params.idTaldeak;
     
-    req.getConnection(function (err, connection) {
+//postgres  req.getConnection(function(err,connection){
+//postgresConnect    req.connection.connect(function(err,connection){                //postgres 
         
         var data = {
             materialaKide    : input.materialaKide,
@@ -1090,7 +1131,7 @@ exports.taldekideakaldatu = function(req,res){
             bazkideZenbKide : input.bazkideZenbKide,
         };
         
-        connection.query("UPDATE taldekideak set ? WHERE idElkarteakKide = ? and idTaldekideak = ?",[data,id, idTaldekideak], function(err, rows)
+        req.connection.query("UPDATE taldekideak set ? WHERE idElkarteakKide = ? and idTaldekideak = ?",[data,id, idTaldekideak], function(err, rows)
         {
   
           if (err)
@@ -1106,7 +1147,7 @@ exports.taldekideakaldatu = function(req,res){
             res.redirect('/admin/taldekideak/'+idTaldeak);
         });
     
-    });
+//postgresConnect    });
 };
 
 exports.taldekideakkopiatu = function(req, res){
@@ -1118,21 +1159,27 @@ exports.taldekideakkopiatu = function(req, res){
 //  req.session.idDenboraldia = idDenboraldia;
   var admin=(req.path.slice(0,24) == "/admin/partiduakmailazka");
   var jardunaldiaIkusgai;
-  req.getConnection(function(err,connection){
-   connection.query('SELECT * FROM taldeak, mailak where idMailaTalde=idMailak and idTaldeak = ? and idElkarteakTalde = ?',[idTaldeak,id],function(err,rowst) {
+//postgres  req.getConnection(function(err,connection){
+//postgresConnect  req.connection.connect(function(err,connection){                //postgres 
+//postgres   connection.query('SELECT * FROM taldeak, mailak where idMailaTalde=idMailak and idTaldeak = ? and idElkarteakTalde = ?',[idTaldeak,id],function(err,rowst) {
+   req.connection.query('SELECT * FROM taldeak, mailak where "idMailaTalde"="idMailak" and "idTaldeak" = $1 and "idElkarteakTalde" = $2',[idTaldeak,id],function(err,wrows) {
+
+     if(err)
+           console.log("Error Selecting : %s ",err );         
+     rowst = wrows.rows;     //postgres 
 //     console.log("generotaldea : " + rowst[0].generoMaila + "-" + rowst[0].izenaMaila); 
-//     connection.query('SELECT * FROM taldekideak, partaideMotak, taldeak, denboraldiak, mailak, partaideak where idMotaKide=idPartaideMotak and idTaldeakKide=idTaldeak and idMailak=idMailaTalde and idPartaideakKide=idPartaideak and idDenboraldiaTalde = idDenboraldia and idDenboraldia= ? and idTaldeakKide = ? and idElkarteakTalde = ? order by noiztikDenb desc',[idDenboraldia,idTaldeak,id],function(err,rows) {            
-//     connection.query('SELECT * FROM taldekideak, partaideMotak, taldeak, denboraldiak, mailak, partaideak where idMotaKide=idPartaideMotak and idTaldeakKide=idTaldeak and idMailak=idMailaTalde and idPartaideakKide=idPartaideak and idDenboraldiaTalde = idDenboraldia and idDenboraldia= ? and sexuaPartaide = ? and idElkarteakTalde = ? order by noiztikDenb desc',[idDenboraldia,rowst[0].generoMaila,id],function(err,rows) {            
-     connection.query('SELECT * FROM taldekideak, partaideMotak, taldeak, denboraldiak, mailak, partaideak where idMotaKide=idPartaideMotak and idTaldeakKide=idTaldeak and idMailak=idMailaTalde and idPartaideakKide=idPartaideak and idDenboraldiaTalde = idDenboraldia and idDenboraldia= ? and idElkarteakTalde = ?  and generoMaila = ? order by zenbakiMaila desc, izenaTalde, abizena1Part, abizena2Part, izenaPart',[idDenboraldia,id,rowst[0].generoMaila],function(err,rows) {            
+//postgres     connection.query('SELECT * FROM taldekideak, partaideMotak, taldeak, denboraldiak, mailak, partaideak where idMotaKide=idPartaideMotak and idTaldeakKide=idTaldeak and idMailak=idMailaTalde and idPartaideakKide=idPartaideak and idDenboraldiaTalde = idDenboraldia and idDenboraldia= ? and idElkarteakTalde = ?  and generoMaila = ? order by zenbakiMaila desc, izenaTalde, abizena1Part, abizena2Part, izenaPart',[idDenboraldia,id,rowst[0].generoMaila],function(err,rows) {            
+     req.connection.query('SELECT * FROM taldekideak, partaideMotak, taldeak, denboraldiak, mailak, partaideak where "idMotaKide"="idPartaideMotak" and "idTaldeakKide"="idTaldeak" and "idMailak"="idMailaTalde" and "idPartaideakKide"="idPartaideak" and "idDenboraldiaTalde" = "idDenboraldia" and "idDenboraldia"= $1 and "idElkarteakTalde" = $2 and "generoMaila" = $3 order by "zenbakiMaila" desc, "izenaTalde", "abizena1Part", "abizena2Part", "izenaPart"',[idDenboraldia,id,rowst[0].generoMaila],function(err,wrows) {            
 
         if(err)
-           console.log("Error Selecting : %s ",err );
-
-            connection.query('SELECT idDenboraldia, deskribapenaDenb, jardunaldiaIkusgai FROM denboraldiak where idElkarteakDenb = ? order by deskribapenaDenb desc',[id],function(err,rowsdenb) {
+           console.log("Error Selecting : %s ",err );         
+        rows = wrows.rows;     //postgres 
+//postgres            connection.query('SELECT idDenboraldia, deskribapenaDenb, jardunaldiaIkusgai FROM denboraldiak where idElkarteakDenb = ? order by deskribapenaDenb desc',[id],function(err,rowsdenb) {
+            req.connection.query('SELECT "idDenboraldia", "deskribapenaDenb", "jardunaldiaIkusgai" FROM denboraldiak where "idElkarteakDenb" = $1 order by "deskribapenaDenb" desc',[id],function(err,wrows) {
           
              if(err)
                 console.log("Error Selecting : %s ",err );
-
+            rowsdenb = wrows.rows;     //postgres 
              for(var i in rowsdenb ){
                 if(idDenboraldia == rowsdenb[i].idDenboraldia){
                     idDenboraldia = rowsdenb[i].idDenboraldia;
@@ -1144,11 +1191,12 @@ exports.taldekideakkopiatu = function(req, res){
                     rowsdenb[i].aukeratua = false;
               }
 
-             connection.query('SELECT * FROM taldeak, mailak  where idMailak=idMailaTalde and idElkarteakTalde = ? and idDenboraldiaTalde = ? order by zenbakiMaila desc, izenaTalde asc',[id, idDenboraldia],function(err,rowstalde) {
+//postgres             connection.query('SELECT * FROM taldeak, mailak  where idMailak=idMailaTalde and idElkarteakTalde = ? and idDenboraldiaTalde = ? order by zenbakiMaila desc, izenaTalde asc',[id, idDenboraldia],function(err,rowstalde) {
+             req.connection.query('SELECT * FROM taldeak, mailak  where "idMailak"="idMailaTalde" and "idElkarteakTalde" = $1 and "idDenboraldiaTalde" = $2 order by "zenbakiMaila" desc, "izenaTalde" asc',[id, idDenboraldia],function(err,wrows) {
           
               if(err)
                  console.log("Error Selecting : %s ",err );
-
+              rowstalde = wrows.rows;     //postgres 
 /*              for(var i in rowstalde ){
                 if(idTaldeak == rowstalde[i].idTaldeak){
                     idTaldeak = rowstalde[i].idTaldeak;
@@ -1173,7 +1221,7 @@ exports.taldekideakkopiatu = function(req, res){
           });                  
       }); 
    });
-  });
+//postgresConnect  });
 };
 
 exports.taldekideakkopiatuegin = function(req, res){
@@ -1182,13 +1230,16 @@ exports.taldekideakkopiatuegin = function(req, res){
   var idDenboraldia = req.session.idDenboraldia;
   var idTaldeak = req.params.idTaldeak;
   var taldekide = [], ordaintzeko = 0;
-  req.getConnection(function(err,connection){
+//postgres  req.getConnection(function(err,connection){
+//postgresConnect  req.connection.connect(function(err,connection){                //postgres 
     
 //      console.log("Body:" +JSON.stringify(req.body));
-    connection.query('SELECT * FROM denboraldiak where idElkarteakDenb = ? and idDenboraldia = ?',[id,idDenboraldia],function(err,rowsdenb) {
+//postgres    connection.query('SELECT * FROM denboraldiak where idElkarteakDenb = ? and idDenboraldia = ?',[id,idDenboraldia],function(err,rowsdenb) {
+    req.connection.query('SELECT * FROM denboraldiak where "idElkarteakDenb" = $1 and "idDenboraldia" = $2',[id,idDenboraldia],function(err,wrows) {
           
       if(err)
-          console.log("Error Selecting : %s ",err );  
+          console.log("Error Selecting : %s ",err ); 
+      rowsdenb = wrows.rows;     //postgres      
 // ADI ADI idMotaKide  4  edo ?
       if(taldekide[1] == 4) 
           ordaintzeko = rowsdenb[0].kuotaDenb;
@@ -1215,7 +1266,7 @@ exports.taldekideakkopiatuegin = function(req, res){
         };
         
   
-        var query = connection.query("INSERT INTO taldekideak set ? ",data, function(err, rows)
+        var query = req.connection.query("INSERT INTO taldekideak set ? ",data, function(err, rows)
         {
   
           if (err)
@@ -1225,7 +1276,7 @@ exports.taldekideakkopiatuegin = function(req, res){
       }
       res.redirect('/admin/taldekideak/'+idTaldeak);
     });  
-  });
+//postgresConnect  });
 };
 
 exports.taldekideakordainduta = function(req, res){
@@ -1233,7 +1284,8 @@ exports.taldekideakordainduta = function(req, res){
   var input = JSON.parse(JSON.stringify(req.body));
   var idDenboraldia = req.session.idDenboraldia;
   var taldekide = [], ordaintzeko = 0;
-  req.getConnection(function(err,connection){
+//postgres  req.getConnection(function(err,connection){
+//postgresConnect  req.connection.connect(function(err,connection){                //postgres 
     
 //      console.log("Body:" +JSON.stringify(req.body));
  
@@ -1241,11 +1293,13 @@ exports.taldekideakordainduta = function(req, res){
       var  idTaldekideak = input.aukeratuo[i];                                           //  ADI   .split("-");
 // ADI- taldekideakkopiatu.handlebars : gehitu checkbox-en kopiatu nahi duguna        
 //        console.log("input : " + i + "-" + input.aukeratuo[i] + "-" + idTaldekideak);
-      connection.query('SELECT * FROM taldekideak WHERE idElkarteakKide = ? and idTaldekideak= ?',[id,idTaldekideak],function(err,rows)
+//postgres      connection.query('SELECT * FROM taldekideak WHERE idElkarteakKide = ? and idTaldekideak= ?',[id,idTaldekideak],function(err,rows)
+      req.connection.query('SELECT * FROM taldekideak WHERE "idElkarteakKide" = $1 and "idTaldekideak"= $2',[id,idTaldekideak],function(err,wrows)
       {
        
         if(err)
-          console.log("Error Selecting : %s ",err );        
+          console.log("Error Selecting : %s ",err );
+        rows = wrows.rows;     //postgres         
 //        console.log("kide : " + i + "-" + rows[0].ordaintzekoKide + "-" + rows[0].idTaldekideak);
         var  idTaldekide = rows[0].idTaldekideak; 
         var data = {
@@ -1265,7 +1319,7 @@ exports.taldekideakordainduta = function(req, res){
     for (var j = 0; j < 1000; j++) {}  // atseden denbora ADI ADI
 
     res.redirect('/admin/taldekideakikusi/');
-  });
+//postgresConnect  });
 };
 
 exports.taldekideakbazkideegin = function(req, res){
@@ -1274,7 +1328,8 @@ exports.taldekideakbazkideegin = function(req, res){
   var idDenboraldia = req.session.idDenboraldia;
   var taldekide = [], ordaintzeko = 0;
   var now= new Date();
-  req.getConnection(function(err,connection){
+//postgres  req.getConnection(function(err,connection){
+//postgresConnect  req.connection.connect(function(err,connection){                //postgres 
     
 //      console.log("Body:" +JSON.stringify(req.body));
  
@@ -1282,11 +1337,13 @@ exports.taldekideakbazkideegin = function(req, res){
       var  idTaldekideak = input.aukeratub[i];                                           //  ADI   .split("-");
 // ADI- taldekideakkopiatu.handlebars : gehitu checkbox-en kopiatu nahi duguna        
 //        console.log("input : " + i + "-" + input.aukeratub[i] + "-" + idTaldekideak);
-      connection.query('SELECT * FROM taldekideak WHERE idElkarteakKide = ? and idTaldekideak= ?',[id,idTaldekideak],function(err,rows)
+//postgres      connection.query('SELECT * FROM taldekideak WHERE idElkarteakKide = ? and idTaldekideak= ?',[id,idTaldekideak],function(err,rows)
+      req.connection.query('SELECT * FROM taldekideak WHERE "idElkarteakKide" = $1 and "idTaldekideak"= $2',[id,idTaldekideak],function(err,wrows)
       {
        
         if(err)
-          console.log("Error Selecting : %s ",err );        
+          console.log("Error Selecting : %s ",err );
+        rows = wrows.rows;     //postgres         
 //        console.log("kide : " + i + "-" + rows[0].ordaintzekoKide + "-" + rows[0].idTaldekideak);
         var  idTaldekide = rows[0].idTaldekideak; 
 
@@ -1300,7 +1357,7 @@ exports.taldekideakbazkideegin = function(req, res){
               dataBazk : now
             };
 
-            var query = connection.query("INSERT INTO bazkideak set ? ",data, function(err, rows)
+            var query = req.connection.query("INSERT INTO bazkideak set ? ",data, function(err, rows)
            {
   
             if (err)
@@ -1312,7 +1369,7 @@ exports.taldekideakbazkideegin = function(req, res){
     for (var j = 0; j < 1000; j++) {}  // atseden denbora ADI ADI
 
     res.redirect('/admin/taldekideakikusi/');
-  });
+//postgresConnect  });
 };
 
 exports.taldekidetxartelak = function(req, res){
@@ -1322,18 +1379,23 @@ exports.taldekidetxartelak = function(req, res){
   var zenbatgarren = 1;
   var paper=(req.path.slice(0,24) == "/admin/paperatutxartelak");
   var emailPart;
-  req.getConnection(function(err,connection){
-
-    connection.query('SELECT * FROM taldeak, mailak, denboraldiak where idMailaTalde=idMailak and idDenboraldiaTalde = idDenboraldia and  idTaldeak = ? and idElkarteakTalde = ?',[idTaldeak,id],function(err,rowst) {
-     connection.query('SELECT *,DATE_FORMAT(jaiotzeDataPart,"%Y-%m-%d") AS jaiotzeDataPart FROM taldekideak, partaideMotak, taldeak, denboraldiak, mailak, partaideak where idMotaKide = 4 and idMotaKide=idPartaideMotak and idTaldeakKide=idTaldeak and idMailak=idMailaTalde and idPartaideakKide=idPartaideak and idDenboraldiaTalde = idDenboraldia and idDenboraldia= ? and idTaldeakKide = ? and idElkarteakTalde = ? order by zenbakiMota, abizena1Part, abizena2Part, izenaPart',[idDenboraldia,idTaldeak,id],function(err,rows) {
-//     connection.query('SELECT *,DATE_FORMAT(jaiotzeDataPart,"%Y-%m-%d") AS jaiotzeDataPart FROM taldekideak, partaideMotak, taldeak, denboraldiak, mailak Inner Join partaideak As p On idPartaideakKide=p.idPartaideak Inner Join partaideak As j On bazkideZenbKide=j.bazkideZenbPArt where idMotaKide=idPartaideMotak and idTaldeakKide=idTaldeak and idMailak=idMailaTalde and idPartaideakKide=idPartaideak and idDenboraldiaTalde = idDenboraldia and idDenboraldia= ? and idTaldeakKide = ? and idElkarteakTalde = ? order by deskribapenMota, kamixetaZenbKide, abizena1Part, abizena2Part, izenaPart',[idDenboraldia,idTaldeak,id],function(err,rows) {
+//postgres  req.getConnection(function(err,connection){
+//postgresConnect  req.connection.connect(function(err,connection){                //postgres 
+//postgres    connection.query('SELECT * FROM taldeak, mailak, denboraldiak where idMailaTalde=idMailak and idDenboraldiaTalde = idDenboraldia and  idTaldeak = ? and idElkarteakTalde = ?',[idTaldeak,id],function(err,rowst) {
+    req.connection.query('SELECT * FROM taldeak, mailak, denboraldiak where "idMailaTalde"="idMailak" and "idDenboraldiaTalde" = "idDenboraldia" and  "idTaldeak" = $1 and "idElkarteakTalde" = $2',[idTaldeak,id],function(err,wrows) {
+     if(err)
+           console.log("Error Selecting : %s ",err );
+     rowst = wrows.rows;     //postgres 
+//postgres     connection.query('SELECT *,DATE_FORMAT(jaiotzeDataPart,"%Y-%m-%d") AS jaiotzeDataPart FROM taldekideak, partaideMotak, taldeak, denboraldiak, mailak, partaideak where idMotaKide = 4 and idMotaKide=idPartaideMotak and idTaldeakKide=idTaldeak and idMailak=idMailaTalde and idPartaideakKide=idPartaideak and idDenboraldiaTalde = idDenboraldia and idDenboraldia= ? and idTaldeakKide = ? and idElkarteakTalde = ? order by zenbakiMota, abizena1Part, abizena2Part, izenaPart',[idDenboraldia,idTaldeak,id],function(err,rows) {
+     req.connection.query('SELECT *,DATE_FORMAT(jaiotzeDataPart,"%Y-%m-%d") AS jaiotzeDataPart FROM taldekideak, partaideMotak, taldeak, denboraldiak, mailak, partaideak where "idMotaKide" = 4 and "idMotaKide"="idPartaideMotak" and "idTaldeakKide"="idTaldeak" and "idMailak"="idMailaTalde" and "idPartaideakKide"="idPartaideak" and "idDenboraldiaTalde" = "idDenboraldia" and "idDenboraldia"= $1 and "idTaldeakKide" = $2 and "idElkarteakTalde" = $3 order by "zenbakiMota", "abizena1Part", "abizena2Part", "izenaPart"',[idDenboraldia,idTaldeak,id],function(err,wrows) {
       if(err)
            console.log("Error Selecting : %s ",err );
-//      connection.query('SELECT *,DATE_FORMAT(jaiotzeDataPart,"%Y-%m-%d") AS jaiotzeDataPart FROM partaideMotak, taldeak, denboraldiak, mailak, taldekideak LEFT JOIN partaideak ON bazkideZenbKide <> """" and bazkideZenbPArt = bazkideZenbKide  where idMotaKide=idPartaideMotak and idTaldeakKide=idTaldeak and idMailak=idMailaTalde and idDenboraldiaTalde = idDenboraldia and idDenboraldia= ? and idTaldeakKide = ? and idElkarteakTalde = ? order by zenbakiMota, abizena1Part, abizena2Part, izenaPart',[idDenboraldia,idTaldeak,id],function(err,rowsb) {
-      connection.query('SELECT *,DATE_FORMAT(jaiotzeDataPart,"%Y-%m-%d") AS jaiotzeDataPart FROM partaideak, ordaintzekoerak  where (bazkideZenbPart >  1 and bazkideZenbPart <  999999) and idOrdaintzekoEraPart = idOrdaintzekoEraK and idElkarteakPart = ? order by bazkideZenbPart, abizena1Part, abizena2Part, izenaPart',[id],function(err,rowsb) {
+      rows = wrows.rows;     //postgres 
+//postgres      connection.query('SELECT *,DATE_FORMAT(jaiotzeDataPart,"%Y-%m-%d") AS jaiotzeDataPart FROM partaideak, ordaintzekoerak  where (bazkideZenbPart >  1 and bazkideZenbPart <  999999) and idOrdaintzekoEraPart = idOrdaintzekoEraK and idElkarteakPart = ? order by bazkideZenbPart, abizena1Part, abizena2Part, izenaPart',[id],function(err,rowsb) {
+      req.connection.query('SELECT *,DATE_FORMAT(jaiotzeDataPart,"%Y-%m-%d") AS jaiotzeDataPart FROM partaideak, ordaintzekoerak  where ("bazkideZenbPart" >  1 and "bazkideZenbPart" <  999999) and "idOrdaintzekoEraPart" = "idOrdaintzekoEraK" and "idElkarteakPart" = $1 order by "bazkideZenbPart", "abizena1Part", "abizena2Part", "izenaPart"',[id],function(err,wrows) {
         if(err)
            console.log("Error Selecting : %s ",err );
-
+        rowsb = wrows.rows;     //postgres 
         for(var i in rows){
           rows[i].paper = paper;
           if (paper){
@@ -1393,7 +1455,7 @@ exports.taldekidetxartelak = function(req, res){
       });
      });   
     });
-  });
+//postgresConnect  });
 };
 
 exports.taldeargazkiaigo = function(req, res){

@@ -21,8 +21,13 @@ var partaideak = require('./routes/partaideak');
 var kudeaketa = require('./routes/kudeaketa');
 var denboraldiak = require('./routes/denboraldiak');
 var app = express();
-var connection  = require('express-myconnection'); 
-var mysql = require('mysql');
+// postgres var connection  = require('express-myconnection'); 
+// postgres   var mysql = require('mysql');
+
+// postgresvar pg = require('pg');        // postgres
+// postgresconst pool = require('./db');  // postgres
+const {Pool} = require('pg');        // postgres
+//postgresConnect const { Client } = require('pg');       //postgresConnect
 
 var md = require('marked');
 
@@ -82,19 +87,37 @@ app.use(session({
 console.log("environment " + process.env.NODE_ENV);
 //if ('development' == app.get('env')) {
 if (process.env.NODE_ENV != 'production'){
-  app.use(
+// postgres  app.use(
+// postgres    connection(mysql, credentials.dbdevelop,'pool') 
+// postgres );
+   const connection = new Pool (credentials.pgdevelop)   //postgresConnect
+//postgresConnect   const connection = new Client (credentials.pgdevelop)   // postgres
 
-    connection(mysql, credentials.dbdevelop,'pool') 
-
- );
+   app.use(function(req, res, next){
+     req.connection = connection;
+     next();
+   });
               console.log("localhost1" );
 }
 else{
-  app.use(
+//mysql  app.use(
+//mysql    connection(mysql, credentials.dbproduction,'pool') 
+//mysql );
+/*//mysql
+const client = new Client({
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false
+  }
+});
+*/    
+   console.log(process.env.HEROKU_POSTGRESQL_BLACK_URL);
+   const connection = new Pool (process.env.HEROKU_POSTGRESQL_BLACK_URL)   //postgresConnect
 
-    connection(mysql, credentials.dbproduction,'pool') 
-    
- );
+   app.use(function(req, res, next){
+     req.connection = connection;
+     next();
+   });
               console.log("herokuBerria" );
 }
   
@@ -172,46 +195,65 @@ return next();*/
   req.session.jardunaldia= year + '-' + month + '-' + day;
 
   //return next();
-
-  req.getConnection(function(err,connection){
+//postgres  req.getConnection(function(err,connection){
+//postgresConnect  req.connection.connect(function(err,connection){    ////postgresConnect           //postgres
 
 //    connection.query('SELECT idDenboraldia, deskribapenaDenb FROM denboraldiak where egoeraDenb=1 and idElkarteakDenb = ? order by deskribapenaDenb desc',[req.session.idKirolElkarteak],function(err,rowsdenb) {
-    connection.query('SELECT * FROM denboraldiak where idElkarteakDenb = ? order by egoeraDenb desc, deskribapenaDenb desc',[req.session.idKirolElkarteak],function(err,rowsdenb) {          
+//postgresConnect    connection.query('SELECT * FROM denboraldiak where "idElkarteakDenb" = $1 order by "egoeraDenb" desc, "deskribapenaDenb" desc',[req.session.idKirolElkarteak],function(err,wrows) {          
+    req.connection.query('SELECT * FROM denboraldiak where "idElkarteakDenb" = $1 order by "egoeraDenb" desc, "deskribapenaDenb" desc',[req.session.idKirolElkarteak],function(err,wrows) {          
+
         if(err)
               console.log("Error Selecting : %s ",err );
 
         //if (rowsdenb.length != 0){
-          req.session.idDenboraldia=rowsdenb[0].idDenboraldia;
+
+             rowsdenb = wrows.rows;     //postgres
+//postgres             console.log(rowsdenb);   //postgres
+             req.session.idDenboraldia=rowsdenb[0].idDenboraldia;   //postgres  .rows
+             console.log(req.session.idDenboraldia);
 //          req.session.jardunaldia= '2017-09-09';
 //          if (rowsdenb[0].jardunaldiaIkusgai != null) 
 //        {
-              today = new Date(rowsdenb[0].jardunaldiaIkusgai);
+              today = new Date(rowsdenb[0].jardunaldiaIkusgai);   //postgres  .rows
               day = ('0' + today.getDate()).slice(-2);
               month = ('0' + (today.getMonth() + 1)).slice(-2);
               year = today.getFullYear();
               req.session.jardunaldia= year + '-' + month + '-' + day;
 //        } 
         //}
-
-        connection.query('SELECT DISTINCT DATE_FORMAT(jardunaldiDataPartidu,"%Y-%m-%d") AS jardunaldiDataPartidu FROM partiduak where idElkarteakPartidu = ? and idDenboraldiaPartidu = ? order by jardunaldiDataPartidu desc',[req.session.idKirolElkarteak, req.session.idDenboraldia],function(err,rowsd) {
+//postgres        connection.query('SELECT DISTINCT DATE_FORMAT(jardunaldiDataPartidu,"%Y-%m-%d") AS jardunaldiDataPartidu FROM partiduak where idElkarteakPartidu = ? and idDenboraldiaPartidu = ? order by jardunaldiDataPartidu desc',[req.session.idKirolElkarteak, req.session.idDenboraldia],function(err,rowsd) {
+//postgresConnect         connection.query('SELECT DISTINCT to_char("jardunaldiDataPartidu", \'YYYY-MM-DD\') as "jardunaldiDataPartidu" FROM partiduak where "idElkarteakPartidu" = $1 and "idDenboraldiaPartidu" = $2 order by "jardunaldiDataPartidu" desc',[req.session.idKirolElkarteak, req.session.idDenboraldia],function(err,wrows) {
+        req.connection.query('SELECT DISTINCT to_char("jardunaldiDataPartidu", \'YYYY-MM-DD\') as "jardunaldiDataPartidu" FROM partiduak where "idElkarteakPartidu" = $1 and "idDenboraldiaPartidu" = $2 order by "jardunaldiDataPartidu" desc',[req.session.idKirolElkarteak, req.session.idDenboraldia],function(err,wrows) {
           
           if(err)
            console.log("Error Selecting : %s ",err );
-          
+          rowsd = wrows.rows;     //postgres
+//postgres          console.log(rowsd);     //postgres
           if (rowsd.length !=0){
-            if (req.session.jardunaldia > rowsd[0].jardunaldiDataPartidu){
-              req.session.jardunaldia=rowsd[0].jardunaldiDataPartidu;
+            if (req.session.jardunaldia > rowsd[0].jardunaldiDataPartidu){    //postgres  .rows
+              req.session.jardunaldia=rowsd[0].jardunaldiDataPartidu;         //postgres  .rows
             }
           }
-
-           connection.query('SELECT * FROM atalak where zenbakiAtala > 0 AND zenbakiAtala <= 10 AND idElkarteakAtala = ? order by zenbakiAtala asc',[req.session.idKirolElkarteak],function(err,rowsatal) {
+//postgres           connection.query('SELECT * FROM atalak where zenbakiAtala > 0 AND zenbakiAtala <= 10 AND idElkarteakAtala = ? order by zenbakiAtala asc',[req.session.idKirolElkarteak],function(err,rowsatal) {
+//postgresConnect           connection.query('SELECT * FROM atalak where "zenbakiAtala" <= \'10\' AND "idElkarteakAtala" = $1 order by "zenbakiAtala" asc',[req.session.idKirolElkarteak],function(err,wrows) {
+           req.connection.query('SELECT * FROM atalak where "zenbakiAtala" <= \'10\' AND "idElkarteakAtala" = $1 order by "zenbakiAtala" asc',[req.session.idKirolElkarteak],function(err,wrows) {
             if(err)
                 console.log("Error Selecting : %s ",err );
-            connection.query('SELECT * FROM atalak where zenbakiAtala > 10 AND idElkarteakAtala = ? order by zenbakiAtala asc',[req.session.idKirolElkarteak],function(err,rowsadminatalak) {
+              rowsatal = wrows.rows;     //postgres
+//postgres              console.log(rowsatal);    //postgres    .rows
+//postgres            connection.query('SELECT * FROM atalak where zenbakiAtala > 10 AND idElkarteakAtala = ? order by zenbakiAtala asc',[req.session.idKirolElkarteak],function(err,rowsadminatalak) {
+//postgresConnection            connection.query('SELECT * FROM atalak where "zenbakiAtala" > \'10\' AND "idElkarteakAtala" = $1 order by "zenbakiAtala" asc',[req.session.idKirolElkarteak],function(err,wrows) {
+            req.connection.query('SELECT * FROM atalak where "zenbakiAtala" > \'10\' AND "idElkarteakAtala" = $1 order by "zenbakiAtala" asc',[req.session.idKirolElkarteak],function(err,wrows) {
               if(err)
                 console.log("Error Selecting : %s ",err );
+              rowsadminatalak = wrows.rows;     //postgres
+//postgres               console.log(rowsadminatalak);   //postgres    .rows
               req.session.atalak = rowsatal;         // atalak;  
               req.session.adminatalak = rowsadminatalak;
+//postgres              req.session.atalak = rowsatal.rows;         // atalak;  //postgres
+//postgres              req.session.adminatalak = rowsadminatalak.rows;         //postgres 
+
+//postgresConnection              connection.end();    //postgres
 
               return next();
             });
@@ -221,8 +263,8 @@ return next();*/
       });
 
                // connection.end({ timeout: 60000 });
-
-  });
+       
+//postgresConnect  }); //postgresConnect
 
 }
 
