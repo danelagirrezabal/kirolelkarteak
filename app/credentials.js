@@ -45,10 +45,10 @@ dbproduction: {
       //  port : 3306, //port mysql
 //        database:'heroku_73bb959756e3c82''heroku_3a7c26fa617acae'
 
-        host: 'us-cluster-east-01.k8s.cleardb.net',
-        user: 'b900c630a65f0c',
-        password : '8b68512656cdcf3',                   //'ff86419e'
-      //  port : 3306, //port mysql
-        database:'heroku_73bb959756e3c82'
+        host: 'ce0lkuo944ch99.cluster-czrs8kj4isg7.us-east-1.rds.amazonaws.com',
+        user: 'u58r4mfv13b0b6',
+        password : 'p585efce010d4b1d476e468deb01a0d25ac6dd4326c48aaf2c7ab1c6965de2f6d',                   //'ff86419e'
+      //  port : 5432, //port postgres
+        database:'dcnba9s42cng59'
 }
 };

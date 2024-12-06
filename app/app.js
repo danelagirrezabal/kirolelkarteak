@@ -111,8 +111,7 @@ const client = new Client({
   }
 });
 */    
-   console.log(process.env.HEROKU_POSTGRESQL_BLACK_URL);
-   const connection = new Pool (process.env.HEROKU_POSTGRESQL_BLACK_URL)   //postgresConnect
+   const connection = new Pool (credentials.dbproduction)   //postgresConnect
 
    app.use(function(req, res, next){
      req.connection = connection;
