@@ -49,7 +49,7 @@ dbproduction: {
         user: 'u58r4mfv13b0b6',
         password : 'p585efce010d4b1d476e468deb01a0d25ac6dd4326c48aaf2c7ab1c6965de2f6d',                   //'ff86419e'
         port : 5432,                //port postgres
-        database:'dcnba9s42cng59',
-        ssl: true
+        database:'dcnba9s42cng59'
+//        ssl: true
 }
 };
