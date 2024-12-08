@@ -408,6 +408,7 @@ exports.jardunaldikopartiduakbilatu = function(req, res){
 exports.jardunaldikopartiduakbilatupartaide = function(req, res){
   var id = req.session.idKirolElkarteak;
   var jardunaldia = req.params.jardunaldia;
+      jardunaldia = jardunaldia.substring(0,10);   //postgres
   var idDenboraldia = req.params.idDenboraldia;
   req.session.jardunaldia = jardunaldia;
   req.session.idDenboraldia = idDenboraldia;
@@ -887,6 +888,7 @@ exports.partiduakaldatu = function(req,res){
 exports.partiduordutegiak = function (req,res){
 var id = req.session.idKirolElkarteak;
 var jardunaldia = req.params.jardunaldia;
+    jardunaldia = jardunaldia.substring(0,10);   //postgres
 var idDenboraldia = req.params.idDenboraldia;
 req.session.jardunaldia = jardunaldia;
 req.session.idDenboraldia = idDenboraldia;
@@ -1622,6 +1624,7 @@ exports.jardunaldikoemaitzakikusi = function(req, res){
 exports.partiduemaitzak = function(req, res){
   var id = req.session.idKirolElkarteak;
   var jardunaldia = req.params.jardunaldia;
+      jardunaldia = jardunaldia.substring(0,10);   //postgres
   var idDenboraldia = req.params.idDenboraldia;
   var idTaldeak = req.params.idTaldeak;
   var emaitzak=[];
@@ -1733,7 +1736,7 @@ exports.partiduemaitzaktalde = function(req, res){
 //postgres  req.getConnection(function(err,connection){
 //postgresConnect  req.connection.connect(function(err,connection){                //postgres 
 //postgres     connection.query('SELECT *,DATE_FORMAT(dataPartidu,"%Y/%m/%d") AS dataPartidu FROM partiduak, mailak, taldeak, lekuak where idLekuak=idLekuakPartidu and idTaldeakPartidu=idTaldeak and idMailak=idMailaTalde and idElkarteakPartidu = ? and idDenboraldiaPartidu = ? and idTaldeakPartidu = ? order by jardunaldiDataPartidu asc, dataPartidu, orduaPartidu',[id, idDenboraldia, idTaldeak],function(err,rows) {
-     req.connection.query('SELECT *, to_char("dataPartidu", \'YYYY-MM-DD\')AS "dataPartidu" FROM partiduak, mailak, taldeak, lekuak where "idLekuak"="idLekuakPartidu" and "idTaldeakPartidu"="idTaldeak and "idMailak"="idMailaTalde" and "idElkarteakPartidu" = $1 and "idDenboraldiaPartidu" = $2 and "idTaldeakPartidu" = $3 order by "jardunaldiDataPartidu" asc, "dataPartidu", "orduaPartidu"',[id, idDenboraldia, idTaldeak],function(err,rows) {
+     req.connection.query('SELECT *, to_char("dataPartidu", \'YYYY-MM-DD\')AS "dataPartiduF" FROM partiduak, mailak, taldeak, lekuak where "idLekuak"="idLekuakPartidu" and "idTaldeakPartidu"="idTaldeak" and "idMailak"="idMailaTalde" and "idElkarteakPartidu" = $1 and "idDenboraldiaPartidu" = $2 and "idTaldeakPartidu" = $3 order by "jardunaldiDataPartidu" asc, "dataPartidu", "orduaPartidu"',[id, idDenboraldia, idTaldeak],function(err,wrows) {
             
         if(err)
            console.log("Error Selecting : %s ",err );
