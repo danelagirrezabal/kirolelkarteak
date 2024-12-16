@@ -283,8 +283,8 @@ exports.taldeakaldatu = function(req,res){
             idDenboraldiaTalde : input.idDenboraldiaTalde,
             arbitraiaTalde : input.arbitraiaTalde
         };
-        
-        req.connection.query("UPDATE taldeak set ? WHERE idElkarteakTalde = ? and idTaldeak = ?",[data,id, idTaldeak], function(err, rows)
+//postgres        connection.query("UPDATE taldeak set ? WHERE idElkarteakTalde = ? and idTaldeak = ?",[data,id, idTaldeak], function(err, rows)
+        req.connection.query('UPDATE taldeak set "izenaTalde"=$1,"idMailaTalde"=$2,"akronimoTalde"=$3,"arduradunEmailTalde"=$4,"idArduradunTalde"=$5,"urlSailkapenTalde"=$6,"federazioaTalde"=$7,"idDenboraldiaTalde"=$8,"arbitraiaTalde"=$9 WHERE "idElkarteakTalde" = $10 and "idTaldeak" = $11',[input.izenaTalde,input.iMailaTalde,input.akronimoTalde,input.arduradunEmailTalde,input.idArduradunTalde,input.urlSailkapenTalde,input.federazioaTalde,input.idDenboraldiaTalde,input.arbitraiaTalde,id, idTaldeak], function(err, rows)
         {
   
           if (err)
@@ -407,7 +407,7 @@ var ordaintzekoa = 0, ordaindutakoa = 0;
                rowsm[i].aukeratua = false;
       }          
 //postgres      connection.query('SELECT *,DATE_FORMAT(jaiotzeDataPart,"%Y-%m-%d") AS jaiotzeDataPart FROM taldekideak, partaideMotak, taldeak, denboraldiak, mailak, partaideak LEFT JOIN bazkideak ON idPartaideak=idPartaideakBazk where idMotaKide=idPartaideMotak and idTaldeakKide=idTaldeak and idMailak=idMailaTalde and idPartaideakKide=idPartaideak and idDenboraldiaTalde = idDenboraldia and idDenboraldia= ? and idElkarteakTalde = ? order by zenbakiMaila desc, izenaTalde asc, zenbakiMota, abizena1Part, abizena2Part, izenaPart',[idDenboraldia,id],function(err,rows) {
-      req.connection.query('SELECT *,DATE_FORMAT(jaiotzeDataPart,"%Y-%m-%d") AS jaiotzeDataPart FROM taldekideak, partaideMotak, taldeak, denboraldiak, mailak, partaideak LEFT JOIN bazkideak ON "idPartaideak"="idPartaideakBazk" where "idMotaKide"="idPartaideMotak" and "idTaldeakKide"="idTaldeak" and "idMailak"="idMailaTalde" and "idPartaideakKide"="idPartaideak" and "idDenboraldiaTalde" = "idDenboraldia" and "idDenboraldia"= $1 and "idElkarteakTalde" = $2 order by "zenbakiMaila" desc, "izenaTalde" asc, "zenbakiMota", "abizena1Part", "abizena2Part", "izenaPart"',[idDenboraldia,id],function(err,wrows) {
+      req.connection.query('SELECT *,to_char("jaiotzeDataPart", \'YYYY-MM-DD\') AS "jaiotzeDataPart" FROM taldekideak, partaideMotak, taldeak, denboraldiak, mailak, partaideak LEFT JOIN bazkideak ON "idPartaideak"="idPartaideakBazk" where "idMotaKide"="idPartaideMotak" and "idTaldeakKide"="idTaldeak" and "idMailak"="idMailaTalde" and "idPartaideakKide"="idPartaideak" and "idDenboraldiaTalde" = "idDenboraldia" and "idDenboraldia"= $1 and "idElkarteakTalde" = $2 order by "zenbakiMaila" desc, "izenaTalde" asc, "zenbakiMota", "abizena1Part", "abizena2Part", "izenaPart"',[idDenboraldia,id],function(err,wrows) {
             
         if(err)
            console.log("Error Selecting : %s ",err );
@@ -532,7 +532,7 @@ var weekNumber = today.getWeek();
 //postgres  req.getConnection(function(err,connection){
 //postgresConnect  req.connection.connect(function(err,connection){                //postgres 
 //postgres      connection.query('SELECT *,DATE_FORMAT(jaiotzeDataPart,"%Y-%m-%d") AS jaiotzeDataPart FROM taldekideak, partaideMotak, taldeak, denboraldiak, mailak, partaideak where idMotaKide=idPartaideMotak and idTaldeakKide=idTaldeak and idMailak=idMailaTalde and idPartaideakKide=idPartaideak and idDenboraldiaTalde = idDenboraldia and idDenboraldia= ? and idElkarteakTalde = ? order by zenbakiMaila desc, izenaTalde asc, zenbakiMota, abizena1Part, abizena2Part, izenaPart',[idDenboraldia,id],function(err,rows) {
-      req.connection.query('SELECT *,DATE_FORMAT(jaiotzeDataPart,"%Y-%m-%d") AS jaiotzeDataPart FROM taldekideak, partaideMotak, taldeak, denboraldiak, mailak, partaideak where "idMotaKide"="idPartaideMotak" and "idTaldeakKide"="idTaldeak" and "idMailak"="idMailaTalde" and "idPartaideakKide"="idPartaideak" and "idDenboraldiaTalde" = "idDenboraldia" and "idDenboraldia"= $1 and "idElkarteakTalde" = $2 order by "zenbakiMaila" desc, "izenaTalde" asc, "zenbakiMota", "abizena1Part", "abizena2Part", "izenaPart"',[idDenboraldia,id],function(err,wrows) {
+      req.connection.query('SELECT *,to_char("jaiotzeDataPart", \'YYYY-MM-DD\') AS "jaiotzeDataPart" FROM taldekideak, partaideMotak, taldeak, denboraldiak, mailak, partaideak where "idMotaKide"="idPartaideMotak" and "idTaldeakKide"="idTaldeak" and "idMailak"="idMailaTalde" and "idPartaideakKide"="idPartaideak" and "idDenboraldiaTalde" = "idDenboraldia" and "idDenboraldia"= $1 and "idElkarteakTalde" = $2 order by "zenbakiMaila" desc, "izenaTalde" asc, "zenbakiMota", "abizena1Part", "abizena2Part", "izenaPart"',[idDenboraldia,id],function(err,wrows) {
         if(err)
            console.log("Error Selecting : %s ",err );
         rows = wrows.rows;     //postgres 
@@ -626,7 +626,7 @@ var date = new Date();
 //postgresConnect  req.connection.connect(function(err,connection){                //postgres 
        
 //postgres     connection.query('SELECT *,DATE_FORMAT(jaiotzeDataPart,"%Y-%m-%d") AS jaiotzeDataPart FROM taldekideak, partaideMotak, taldeak, denboraldiak, mailak, partaideak where idMotaKide=idPartaideMotak and idTaldeakKide=idTaldeak and idMailak=idMailaTalde and idPartaideakKide=idPartaideak and idDenboraldiaTalde = idDenboraldia and idDenboraldia= ? and idElkarteakTalde = ? order by abizena1Part, abizena2Part, izenaPart',[idDenboraldia,id],function(err,rows) {
-     req.connection.query('SELECT *,DATE_FORMAT(jaiotzeDataPart,"%Y-%m-%d") AS jaiotzeDataPart FROM taldekideak, partaideMotak, taldeak, denboraldiak, mailak, partaideak where "idMotaKide"="idPartaideMotak" and "idTaldeakKide"="idTaldeak" and "idMailak"="idMailaTalde" and "idPartaideakKide"="idPartaideak" and "idDenboraldiaTalde" = "idDenboraldia" and "idDenboraldia"= $1 and "idElkarteakTalde" = $2 order by "abizena1Part", "abizena2Part", "izenaPart"',[idDenboraldia,id],function(err,wrows) {
+     req.connection.query('SELECT *,to_char("jaiotzeDataPart", \'YYYY-MM-DD\') AS "jaiotzeDataPart"  FROM taldekideak, partaideMotak, taldeak, denboraldiak, mailak, partaideak where "idMotaKide"="idPartaideMotak" and "idTaldeakKide"="idTaldeak" and "idMailak"="idMailaTalde" and "idPartaideakKide"="idPartaideak" and "idDenboraldiaTalde" = "idDenboraldia" and "idDenboraldia"= $1 and "idElkarteakTalde" = $2 order by "abizena1Part", "abizena2Part", "izenaPart"',[idDenboraldia,id],function(err,wrows) {
 
         if(err)
            console.log("Error Selecting : %s ",err );
@@ -689,7 +689,7 @@ var date = new Date();
 //postgresConnect  req.connection.connect(function(err,connection){                //postgres 
      
 //postgres     connection.query('SELECT *,DATE_FORMAT(jaiotzeDataPart,"%Y-%m-%d") AS jaiotzeDataPart FROM taldekideak, partaideMotak, taldeak, denboraldiak, mailak, partaideak where idMotaKide=idPartaideMotak and idTaldeakKide=idTaldeak and idMailak=idMailaTalde and idPartaideakKide=idPartaideak and idDenboraldiaTalde = idDenboraldia and idDenboraldia= ? and idElkarteakTalde = ? order by abizena1Part, abizena2Part, izenaPart',[idDenboraldia,id],function(err,rows) {
-     req.connection.query('SELECT *,DATE_FORMAT(jaiotzeDataPart,"%Y-%m-%d") AS jaiotzeDataPart FROM taldekideak, partaideMotak, taldeak, denboraldiak, mailak, partaideak where "idMotaKide"="idPartaideMotak" and "idTaldeakKide"="idTaldeak" and "idMailak"="idMailaTalde" and "idPartaideakKide"="idPartaideak" and "idDenboraldiaTalde" = "idDenboraldia" and "idDenboraldia"= $1 and "idElkarteakTalde" = $2 order by "abizena1Part", "abizena2Part", "izenaPart"',[idDenboraldia,id],function(err,wrows) {
+     req.connection.query('SELECT *,to_char("jaiotzeDataPart", \'YYYY-MM-DD\') AS "jaiotzeDataPart" FROM taldekideak, partaideMotak, taldeak, denboraldiak, mailak, partaideak where "idMotaKide"="idPartaideMotak" and "idTaldeakKide"="idTaldeak" and "idMailak"="idMailaTalde" and "idPartaideakKide"="idPartaideak" and "idDenboraldiaTalde" = "idDenboraldia" and "idDenboraldia"= $1 and "idElkarteakTalde" = $2 order by "abizena1Part", "abizena2Part", "izenaPart"',[idDenboraldia,id],function(err,wrows) {
 
         if(err)
            console.log("Error Selecting : %s ",err );
@@ -731,8 +731,8 @@ var date = new Date();
           var data = {
             ordaintzekoKide   : req.body.ordainduBerria
           };
-        
-          req.connection.query("UPDATE taldekideak set ? WHERE idElkarteakKide = ? and idTaldekideak = ?",[data,id, vidTaldekideak], function(err, rows)
+//postgres          connection.query("UPDATE taldekideak set ? WHERE idElkarteakKide = ? and idTaldekideak = ?",[data,id, vidTaldekideak], function(err, rows)
+          req.connection.query('UPDATE taldekideak set "ordaintzekoKide"=$1 WHERE "idElkarteakKide" = $2 and "idTaldekideak" = $3',[req.body.ordainduBerria,id, vidTaldekideak], function(err, rows)
           {
             if (err)
               console.log("Error Updating : %s ",err );
@@ -758,7 +758,7 @@ exports.taldekideakbilatu = function(req, res){
            console.log("Error Selecting : %s ",err );
      rowst = wrows.rows;     //postgres        
 //postgres     connection.query('SELECT *,DATE_FORMAT(jaiotzeDataPart,"%Y-%m-%d") AS jaiotzeDataPart FROM taldekideak, partaideMotak, taldeak, denboraldiak, mailak, partaideak where idMotaKide=idPartaideMotak and idTaldeakKide=idTaldeak and idMailak=idMailaTalde and idPartaideakKide=idPartaideak and idDenboraldiaTalde = idDenboraldia and idDenboraldia= ? and idTaldeakKide = ? and idElkarteakTalde = ? order by zenbakiMota, abizena1Part, abizena2Part, izenaPart',[idDenboraldia,idTaldeak,id],function(err,rows) {
-     req.connection.query('SELECT *,DATE_FORMAT(jaiotzeDataPart,"%Y-%m-%d") AS jaiotzeDataPart FROM taldekideak, partaideMotak, taldeak, denboraldiak, mailak, partaideak where "idMotaKide"="idPartaideMotak" and "idTaldeakKide"="idTaldeak" and "idMailak"="idMailaTalde" and "idPartaideakKide"="idPartaideak" and "idDenboraldiaTalde" = "idDenboraldia" and "idDenboraldia"= $ and "idTaldeakKide" = $1 and "idElkarteakTalde" = $2 order by "zenbakiMota", "abizena1Part", "abizena2Part", "izenaPart"',[idDenboraldia,idTaldeak,id],function(err,wrows) {
+     req.connection.query('SELECT *,to_char("jaiotzeDataPart", \'YYYY-MM-DD\') AS "jaiotzeDataPart" FROM taldekideak, partaideMotak, taldeak, denboraldiak, mailak, partaideak where "idMotaKide"="idPartaideMotak" and "idTaldeakKide"="idTaldeak" and "idMailak"="idMailaTalde" and "idPartaideakKide"="idPartaideak" and "idDenboraldiaTalde" = "idDenboraldia" and "idDenboraldia"= $ and "idTaldeakKide" = $1 and "idElkarteakTalde" = $2 order by "zenbakiMota", "abizena1Part", "abizena2Part", "izenaPart"',[idDenboraldia,idTaldeak,id],function(err,wrows) {
             
         if(err)
            console.log("Error Selecting : %s ",err );
@@ -1130,8 +1130,8 @@ exports.taldekideakaldatu = function(req,res){
             idPartaideakKide: input.idPartaideakKide,
             bazkideZenbKide : input.bazkideZenbKide,
         };
-        
-        req.connection.query("UPDATE taldekideak set ? WHERE idElkarteakKide = ? and idTaldekideak = ?",[data,id, idTaldekideak], function(err, rows)
+//postgres        connection.query("UPDATE taldekideak set ? WHERE idElkarteakKide = ? and idTaldekideak = ?",[data,id, idTaldekideak], function(err, rows)
+        req.connection.query('UPDATE taldekideak set "materialaKide"=$1,"ordaintzekoKide"=$2,"ordaindutaKide"=$3,"kamixetaZenbKide"=$4,"idMotaKide"=$5,"idPartaideakKide"=$6,"bazkideZenbKide"=$7 WHERE "idElkarteakKide" = $8 and "idTaldekideak" = $9',[input.materialaKide,input.ordaintzekoKide,input.ordaindutaKide,input.kamixetaZenbKide,input.idMotaKide,input.idPartaideakKide,input.bazkideZenbKide,id, idTaldekideak], function(err, rows)
         {
   
           if (err)
@@ -1308,7 +1308,7 @@ exports.taldekideakordainduta = function(req, res){
 
         };
         
-        connection.query("UPDATE taldekideak set ? WHERE idElkarteakKide = ? and idTaldekideak = ?",[data,id, idTaldekide], function(err, rows)
+        req.connection.query('UPDATE taldekideak set "ordaindutaKide"=$1 WHERE "idElkarteakKide" = $2 and "idTaldekideak" = $3',[rows[0].ordaintzekoKide,id, idTaldekide], function(err, rows)
         { 
           if (err)
               console.log("Error updating : %s ",err );
@@ -1387,12 +1387,12 @@ exports.taldekidetxartelak = function(req, res){
            console.log("Error Selecting : %s ",err );
      rowst = wrows.rows;     //postgres 
 //postgres     connection.query('SELECT *,DATE_FORMAT(jaiotzeDataPart,"%Y-%m-%d") AS jaiotzeDataPart FROM taldekideak, partaideMotak, taldeak, denboraldiak, mailak, partaideak where idMotaKide = 4 and idMotaKide=idPartaideMotak and idTaldeakKide=idTaldeak and idMailak=idMailaTalde and idPartaideakKide=idPartaideak and idDenboraldiaTalde = idDenboraldia and idDenboraldia= ? and idTaldeakKide = ? and idElkarteakTalde = ? order by zenbakiMota, abizena1Part, abizena2Part, izenaPart',[idDenboraldia,idTaldeak,id],function(err,rows) {
-     req.connection.query('SELECT *,DATE_FORMAT(jaiotzeDataPart,"%Y-%m-%d") AS jaiotzeDataPart FROM taldekideak, partaideMotak, taldeak, denboraldiak, mailak, partaideak where "idMotaKide" = 4 and "idMotaKide"="idPartaideMotak" and "idTaldeakKide"="idTaldeak" and "idMailak"="idMailaTalde" and "idPartaideakKide"="idPartaideak" and "idDenboraldiaTalde" = "idDenboraldia" and "idDenboraldia"= $1 and "idTaldeakKide" = $2 and "idElkarteakTalde" = $3 order by "zenbakiMota", "abizena1Part", "abizena2Part", "izenaPart"',[idDenboraldia,idTaldeak,id],function(err,wrows) {
+     req.connection.query('SELECT *,to_char("jaiotzeDataPart", \'YYYY-MM-DD\') AS "jaiotzeDataPart"  FROM taldekideak, partaideMotak, taldeak, denboraldiak, mailak, partaideak where "idMotaKide" = 4 and "idMotaKide"="idPartaideMotak" and "idTaldeakKide"="idTaldeak" and "idMailak"="idMailaTalde" and "idPartaideakKide"="idPartaideak" and "idDenboraldiaTalde" = "idDenboraldia" and "idDenboraldia"= $1 and "idTaldeakKide" = $2 and "idElkarteakTalde" = $3 order by "zenbakiMota", "abizena1Part", "abizena2Part", "izenaPart"',[idDenboraldia,idTaldeak,id],function(err,wrows) {
       if(err)
            console.log("Error Selecting : %s ",err );
       rows = wrows.rows;     //postgres 
 //postgres      connection.query('SELECT *,DATE_FORMAT(jaiotzeDataPart,"%Y-%m-%d") AS jaiotzeDataPart FROM partaideak, ordaintzekoerak  where (bazkideZenbPart >  1 and bazkideZenbPart <  999999) and idOrdaintzekoEraPart = idOrdaintzekoEraK and idElkarteakPart = ? order by bazkideZenbPart, abizena1Part, abizena2Part, izenaPart',[id],function(err,rowsb) {
-      req.connection.query('SELECT *,DATE_FORMAT(jaiotzeDataPart,"%Y-%m-%d") AS jaiotzeDataPart FROM partaideak, ordaintzekoerak  where ("bazkideZenbPart" >  1 and "bazkideZenbPart" <  999999) and "idOrdaintzekoEraPart" = "idOrdaintzekoEraK" and "idElkarteakPart" = $1 order by "bazkideZenbPart", "abizena1Part", "abizena2Part", "izenaPart"',[id],function(err,wrows) {
+      req.connection.query('SELECT *,to_char("jaiotzeDataPart", \'YYYY-MM-DD\') AS "jaiotzeDataPart"  FROM partaideak, ordaintzekoerak  where ("bazkideZenbPart" >  1 and "bazkideZenbPart" <  999999) and "idOrdaintzekoEraPart" = "idOrdaintzekoEraK" and "idElkarteakPart" = $1 order by "bazkideZenbPart", "abizena1Part", "abizena2Part", "izenaPart"',[id],function(err,wrows) {
         if(err)
            console.log("Error Selecting : %s ",err );
         rowsb = wrows.rows;     //postgres 

@@ -230,9 +230,8 @@ exports.aldatu = function(req,res){
         
         console.log(data);
   //postgres      var query = connection.query("UPDATE elkarteak set ? WHERE idElkarteak = ? ",[data,id], function(err, rows)
-        var query = req.connection.query('UPDATE elkarteak set $1 WHERE "idElkarteak" = $2 ',[data,id], function(err, rows)
+        var query = req.connection.query('UPDATE elkarteak set "izenaElk"=$1,"ifz"=$2,"helbideaElk"=$3,"postaKodeaElk"=$4,"herriaElk"=$5,"telefonoaElk"=$6,"emailElk"=$7 WHERE "idElkarteak" = $8',[input.izenaElk,input.ifz,input.helbideaElk,input.postaKodeaElk,input.herriaElk,input.telefonoaElk,input.emailElk,id], function(err, rows)
         {
-  
           if (err)
               console.log("Error inserting : %s ",err );
           
@@ -389,7 +388,7 @@ exports.berriakaldatu = function(req,res){
             //argazkia
         };
 //postgres        connection.query("UPDATE berriak set ? WHERE idElkarteakBerria = ? and idBerriak = ? ",[data,id,idBerriak], function(err, rows)
-        req.connection.query('UPDATE berriak set $1 WHERE "idElkarteakBerria" = $2 and "idBerriak" = $3',[data,id,idBerriak], function(err, rows) 
+        req.connection.query('UPDATE berriak set "izenburuaBerria"=$1,"testuaBerria"=$2 WHERE "idElkarteakBerria" = $3 and "idBerriak" = $4',[input.izenburuaBerria,input.testuaBerria,id,idBerriak], function(err, rows) 
         {
   
           if (err)
@@ -1348,7 +1347,7 @@ exports.atalakaldatu = function(req,res){
             //argazkia
         };
 //postgres        connection.query("UPDATE atalak set ? WHERE idElkarteakAtala = ? and idAtalak = ? ",[data,id,idAtalak], function(err, rows)
-        req.connection.query('UPDATE atalak set $1 WHERE "idElkarteakAtala" = $2 and "idAtalak" = $3 ',[data,id,idAtalak], function(err, rows)
+        req.connection.query('UPDATE atalak set "izenaAtala"=$1,"zenbakiAtala"=$2 WHERE "idElkarteakAtala" = $3 and "idAtalak" = $4 ',[input.izenaAtala,input.zenbakiAtala,id,idAtalak], function(err, rows)
         {
   
           if (err)
@@ -1526,8 +1525,8 @@ exports.azpiAtalakaldatu = function(req,res){
             //zenbakiBerria: input.zenbakiBerria
             //argazkia
         };
-        
-        req.connection.query("UPDATE azpiAtalak set ? WHERE idElkarteakAzpiAtala = ? and idAzpiAtalak = ? ",[data,id,idAzpiAtalak], function(err, rows)
+//postgres        connection.query("UPDATE azpiAtalak set ? WHERE idElkarteakAzpiAtala = ? and idAzpiAtalak = ? ",[data,id,idAzpiAtalak], function(err, rows)
+        req.connection.query('UPDATE azpiAtalak set "izenaAzpiAtala"=$1,"zenbakiAzpiAtala"=$2 WHERE idElkarteakAzpiAtala = $3 and idAzpiAtalak = $4 ',[input.izenaAzpiAtala,input.zenbakiAzpiAtala,id,idAzpiAtalak], function(err, rows)
         {
   
           if (err)
@@ -1725,7 +1724,7 @@ exports.agiriakbilatu = function(req, res){
 //postgres  req.getConnection(function(err,connection){
 //postgresConnect  req.connection.connect(function(err,connection){                //postgres
 //postgres     connection.query('SELECT *, DATE_FORMAT(dataAgiria,"%Y/%m/%d") AS dataAgiria FROM agiriak, elkarteak where idElkarteakAgiria = ? and idElkarteak = idElkarteakAgiria and idDenboraldiaAgiria = ? order by publikoAgiria, dataAgiria desc',[id, idDenboraldia],function(err,rows) {
-     req.connection.query('SELECT *, DATE_FORMAT(dataAgiria,"%Y/%m/%d") AS dataAgiria FROM agiriak, elkarteak where "idElkarteakAgiria" = $1 and "idElkarteak" = "idElkarteakAgiria" and "idDenboraldiaAgiria" = $2 order by "publikoAgiria", "dataAgiria" desc',[id, idDenboraldia],function(err,wrows) {
+     req.connection.query('SELECT *, to_char("dataAgiria", \'YYYY-MM-DD\') AS "dataAgiria" FROM agiriak, elkarteak where "idElkarteakAgiria" = $1 and "idElkarteak" = "idElkarteakAgiria" and "idDenboraldiaAgiria" = $2 order by "publikoAgiria", "dataAgiria" desc',[id, idDenboraldia],function(err,wrows) {
             
         if(err)
            console.log("Error Selecting : %s ",err );
@@ -1775,7 +1774,7 @@ exports.agiriakeditatu = function(req, res){
 //postgres  req.getConnection(function(err,connection){
 //postgresConnect  req.connection.connect(function(err,connection){                //postgres
 //postgres     connection.query('SELECT *,DATE_FORMAT(dataAgiria,"%Y/%m/%d") AS dataAgiria FROM agiriak WHERE idElkarteakAgiria = ? and idAgiriak = ?',[id,idAgiriak],function(err,rows)
-     req.connection.query('SELECT *,DATE_FORMAT(dataAgiria,"%Y/%m/%d") AS dataAgiria FROM agiriak WHERE "idElkarteakAgiria" = $1 and "idAgiriak" = $2',[id,idAgiriak],function(err,rows)
+     req.connection.query('SELECT *,to_char("dataAgiria", \'YYYY-MM-DD\')AS "dataAgiria" FROM agiriak WHERE "idElkarteakAgiria" = $1 and "idAgiriak" = $2',[id,idAgiriak],function(err,wrows)
         {
             
             if(err)
@@ -1817,10 +1816,9 @@ exports.agiriakaldatu = function(req,res){
             publikoAgiria : publikoa
 
         };
-        
-        req.connection.query("UPDATE agiriak set ? WHERE idElkarteakAgiria = ? and idAgiriak = ? ",[data,id,idAgiriak], function(err, rows)
+//postgres        connection.query("UPDATE agiriak set ? WHERE idElkarteakAgiria = ? and idAgiriak = ? ",[data,id,idAgiriak], function(err, rows)
+        req.connection.query('UPDATE agiriak set "atalaAgiria"=$1,"izenaAgiria"=$2,"urlAgiria"=$3,"dataAgiria"=$4,"publikoAgiria"=$5 WHERE idElkarteakAgiria = $6 and idAgiriak = $7 ',[input.atalaAgiria,input.izenaAgiria,input.urlAgiria,input.dataAgiria,publikoa,id,idAgiriak], function(err, rows)
         {
-  
           if (err)
               console.log("Error Updating : %s ",err );
          
@@ -1884,7 +1882,7 @@ exports.agiriakaldatufitxategi = function(req,res){
             urlAgiria : fitxategiIzena,
         };
         
-        req.connection.query("UPDATE agiriak set ? WHERE idElkarteakAgiria = ? and idAgiriak = ? ",[data,id,idAgiriak], function(err, rows)
+        req.connection.query('UPDATE agiriak set "urlAgiria"=$1 WHERE "idElkarteakAgiria" = $2 and "idAgiriak" = $3 ',[fitxategiIzena,id,idAgiriak], function(err, rows)
         {
   
           if (err)
@@ -2370,8 +2368,8 @@ exports.mailakaldatu = function(req,res){
             akronimoMaila   : input.akronimoMaila
 
         };
-        
-        req.connection.query("UPDATE mailak set ? WHERE idElkarteakMaila = ? and idMailak = ? ",[data,id,idMailak], function(err, rows)
+//postgres        connection.query("UPDATE mailak set ? WHERE idElkarteakMaila = ? and idMailak = ? ",[data,id,idMailak], function(err, rows)
+        req.connection.query('UPDATE mailak set "izenaMaila"=$1,"generoMaila"=$2,"zenbakiMaila"=$3,"akronimoMaila"=$4 WHERE idElkarteakMaila = $5 and idMailak = $6 ',[input.izenaMaila,input.generoMaila,input.zenbakiMaila,input.akronimoMaila,id,idMailak], function(err, rows)
         {
   
           if (err)
@@ -2487,8 +2485,8 @@ exports.partaidemotakaldatu = function(req,res){
             deskribapenMota : input.deskribapenMota,
             zenbakiMota : input.zenbakiMota
         };
-        
-        req.connection.query("UPDATE partaideMotak set ? WHERE idElkarteakPartaideMotak = ? and idPartaideMotak = ? ",[data,id,idPartaideMotak], function(err, rows)
+//postgres        connection.query("UPDATE partaideMotak set ? WHERE idElkarteakPartaideMotak = ? and idPartaideMotak = ? ",[data,id,idPartaideMotak], function(err, rows)
+        req.connection.query('UPDATE partaideMotak set "deskribapenMota"=$1,"zenbakiMota"=$2 WHERE idElkarteakPartaideMotak = $3 and idPartaideMotak = $4 ',[input.deskribapenMota,input.zenbakiMota,id,idPartaideMotak], function(err, rows)
         {
   
           if (err)
@@ -2660,7 +2658,7 @@ console.log("nondik: "+ nondik );
          
         if(input.mezumota == "emarbi"){
     //postgres        connection.query('SELECT *,DATE_FORMAT(dataPartidu,"%Y/%m/%d") AS dataPartidu FROM partiduak, mailak, taldeak, lekuak where federazioaTalde != 9 and zenbakiLeku != 8 and idLekuak=idLekuakPartidu and idTaldeakPartidu=idTaldeak and idTaldeakPartidu=idTaldeak and idMailak=idMailaTalde and idElkarteakPartidu = ? and jardunaldiDataPartidu = ? order by zenbakiMaila, izenaTalde asc ,orduaPartidu',[id, jardunaldia],function(err,rows) {
-            req.connection.query('SELECT *,DATE_FORMAT(dataPartidu,"%Y/%m/%d") AS dataPartidu FROM partiduak, mailak, taldeak, lekuak where "federazioaTalde" != 9 and "zenbakiLeku" != 8 and "idLekuak"="idLekuakPartidu" and "idTaldeakPartidu"="idTaldeak" and "idTaldeakPartidu"="idTaldeak" and "idMailak"="idMailaTalde" and "idElkarteakPartidu" = $1 and "jardunaldiDataPartidu" = $2 order by "zenbakiMaila", "izenaTalde" asc ,"orduaPartidu"',[id, jardunaldia],function(err,wrows) {
+            req.connection.query('SELECT *,to_char("dataPartidu", \'YYYY-MM-DD\')AS "dataPartidu" FROM partiduak, mailak, taldeak, lekuak where "federazioaTalde" != 9 and "zenbakiLeku" != 8 and "idLekuak"="idLekuakPartidu" and "idTaldeakPartidu"="idTaldeak" and "idTaldeakPartidu"="idTaldeak" and "idMailak"="idMailaTalde" and "idElkarteakPartidu" = $1 and "jardunaldiDataPartidu" = $2 order by "zenbakiMaila", "izenaTalde" asc ,"orduaPartidu"',[id, jardunaldia],function(err,wrows) {
             
               if(err) 
                console.log("Error Selecting : %s ",err );
@@ -2936,7 +2934,7 @@ exports.partiduemaitzaeguneratu = function(req,res){
 //postgres  req.getConnection(function(err,connection){
 //postgresConnect    req.connection.connect(function(err,connection){                //postgres 
 //postgres      connection.query('SELECT *,DATE_FORMAT(dataPartidu,"%Y/%m/%d") AS dataPartidu FROM partiduak, mailak, taldeak, denboraldiak where idDenboraldiaPartidu=idDenboraldia and idTaldeakPartidu=idTaldeak and idMailak=idMailaTalde and idPartiduak = ?',[idPartidua],function(err,rows) {    
-      req.connection.query('SELECT *,DATE_FORMAT(dataPartidu,"%Y/%m/%d") AS dataPartidu FROM partiduak, mailak, taldeak, denboraldiak where "idDenboraldiaPartidu"="idDenboraldia" and "idTaldeakPartidu"="idTaldeak" and "idMailak"="idMailaTalde" and "idPartiduak" = $1',[idPartidua],function(err,wrows) {
+      req.connection.query('SELECT *,to_char("dataPartidu", \'YYYY-MM-DD\')AS "dataPartidu" FROM partiduak, mailak, taldeak, denboraldiak where "idDenboraldiaPartidu"="idDenboraldia" and "idTaldeakPartidu"="idTaldeak" and "idMailak"="idMailaTalde" and "idPartiduak" = $1',[idPartidua],function(err,wrows) {
             
        if(err)
            console.log("Error Selecting : %s ",err );
@@ -2948,8 +2946,8 @@ exports.partiduemaitzaeguneratu = function(req,res){
              data.arbitraiaPartidu = arbitraia; 
          if (emaitza) 
              data.emaitzaPartidu = emaitza; 
-           
-         req.connection.query("UPDATE partiduak set ? WHERE idPartiduak = ? ",[data, idPartidua], function(err, rowsu)
+//postgres         connection.query("UPDATE partiduak set ? WHERE idPartiduak = ? ",[data, idPartidua], function(err, rowsu)
+         req.connection.query('UPDATE partiduak set "arbitraiaPartidu"=$1,"emaitzaPartidu"=$2 WHERE idPartiduak = $3 ',[arbitraia, emaitza, idPartidua], function(err, rowsu)
           {
    
           if (err)

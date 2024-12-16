@@ -196,8 +196,8 @@ exports.denboraldiakaldatu = function(req,res){
             egoeraDenb: input.egoeraDenb,
             kuotaDenb: input.kuotaDenb
         };
-        
-        req.connection.query("UPDATE denboraldiak set ? WHERE idElkarteakDenb = ? and idDenboraldia = ? ",[data,id,idDenboraldia], function(err, rows)
+//postgres        connection.query("UPDATE denboraldiak set ? WHERE idElkarteakDenb = ? and idDenboraldia = ? ",[data,id,idDenboraldia], function(err, rows)
+        req.connection.query('UPDATE denboraldiak set "noiztikDenb"=$1,"noraDenb"=$2,"deskribapenaDenb"=$3,"egoeraDenb"=$4,"kuotaDenb"=$5 WHERE "idElkarteakDenb" = $6 and "idDenboraldia" = $7 ',[input.noiztikDenb,input.noraDenb,input.deskribapenaDenb,input.egoeraDenb,input.kuotaDenb,id,idDenboraldia], function(err, rows)
         {
   
           if (err)
@@ -338,8 +338,8 @@ exports.ekintzakaldatu = function(req,res){
             kontuKorronteEkintza : input.kontuKorronteEkintza,
             diruaEkintza : input.diruaEkintza
         };
-        
-        req.connection.query("UPDATE ekintzak set ? WHERE idElkarteakEkintza = ? and idDenboraldiaEkintza = ? and idEkintzak = ?",[data,id,idDenboraldia, idEkintzak], function(err, rows)
+//postgres        connection.query("UPDATE ekintzak set ? WHERE idElkarteakEkintza = ? and idDenboraldiaEkintza = ? and idEkintzak = ?",[data,id,idDenboraldia, idEkintzak], function(err, rows)
+        req.connection.query('UPDATE ekintzak set "motaEkintza"=$1,"noiztikEkintza"=$2,"noraEkintza"=$3,"kontuKorronteEkintza"=$4,"diruaEkintza"=$5 WHERE "idElkarteakEkintza" = $6 and "idDenboraldiaEkintza" = $7 and "idEkintzak" = $8',[input.motaEkintza,input.noiztikEkintza,input.noraEkintza,input.kontuKorronteEkintza,input.diruaEkintza,id,idDenboraldia, idEkintzak], function(err, rows)
         {
   
           if (err)
@@ -357,6 +357,7 @@ exports.jardunaldikopartiduakbilatu = function(req, res){
   var id = req.session.idKirolElkarteak;
   var idDenboraldia = req.session.idDenboraldia;
   var jardunaldia = req.params.jardunaldia;
+      jardunaldia = jardunaldia.substring(0,10);   //postgres
   console.log("Jardunaldia:" + jardunaldia);
 //postgres  req.getConnection(function(err,connection){
 //postgresConnect  req.connection.connect(function(err,connection){                //postgres 
@@ -1192,7 +1193,7 @@ var kanpokoaPartidu;
 //postgresConnect  req.connection.connect(function(err,connection){                //postgres 
 
 //postgres      connection.query('SELECT jardunaldiDataPartidu FROM partiduak where idElkarteakPartidu = ? and idDenboraldiaPartidu = ? order by dataPartidu',[id, idDenboraldia],function(err,rowsj) {
-      req.connection.query('SELECT jardunaldiDataPartidu FROM partiduak where "idElkarteakPartidu" = $1 and "idDenboraldiaPartidu" = $2 order by "dataPartidu"',[id, idDenboraldia],function(err,wrows) {
+      req.connection.query('SELECT "jardunaldiDataPartidu" FROM partiduak where "idElkarteakPartidu" = $1 and "idDenboraldiaPartidu" = $2 order by "dataPartidu"',[id, idDenboraldia],function(err,wrows) {
 
         if(err)
            console.log("Error Selecting : %s ",err );
@@ -1203,7 +1204,7 @@ var kanpokoaPartidu;
        }
 //      connection.query('SELECT *,DATE_FORMAT(bidaiEgunaPartidu,"%Y/%m/%d") AS bidaiEgunaPartidu, DATE_FORMAT(dataPartidu,"%Y/%m/%d") AS dataPartidu FROM partiduak, mailak, taldeak, lekuak where idLekuak=idLekuakPartidu and idTaldeakPartidu=idTaldeak and idMailak=idMailaTalde and idElkarteakPartidu = ? and jardunaldiDataPartidu = ? and idDenboraldiaPartidu = ? order by dataPartidu, zenbakiLeku, orduaPartidu, zenbakiMaila ',[id, jardunaldia, idDenboraldia],function(err,rows) {      
 //postgres      connection.query('SELECT *,DATE_FORMAT(bidaiEgunaPartidu,"%Y/%m/%d") AS bidaiEgunaPartidu, DATE_FORMAT(dataPartidu,"%Y/%m/%d") AS dataPartidu FROM partiduak, mailak, taldeak, lekuak where zenbakiLeku = 7 and idLekuak=idLekuakPartidu and idTaldeakPartidu=idTaldeak and idMailak=idMailaTalde and idElkarteakPartidu = ? and idDenboraldiaPartidu = ? order by herriaLeku, dataPartidu, zenbakiMaila, izenaTalde asc ',[id, idDenboraldia],function(err,rows) {    
-      req.connection.query('SELECT *,to_char("bidaiEgunaPartidu", \'YYYY-MM-DD\') AS "bidaiEgunaPartidu", to_char("dataPartidu ", \'YYYY-MM-DD\') AS "dataPartidu" FROM partiduak, mailak, taldeak, lekuak where "zenbakiLeku" = 7 and "idLekuak"="idLekuakPartidu" and "idTaldeakPartidu"="idTaldeak" and "idMailak"="idMailaTalde" and "idElkarteakPartidu" = $1 and "idDenboraldiaPartidu" = $2 order by "herriaLeku", "dataPartidu", "zenbakiMaila", "izenaTalde" asc ',[id, idDenboraldia],function(err,wrows) {    
+      req.connection.query('SELECT *, to_char("dataPartidu", \'YYYY-MM-DD\') AS "dataPartiduF" FROM partiduak, mailak, taldeak, lekuak where "zenbakiLeku" = 7 and "idLekuak"="idLekuakPartidu" and "idTaldeakPartidu"="idTaldeak" and "idMailak"="idMailaTalde" and "idElkarteakPartidu" = $1 and "idDenboraldiaPartidu" = $2 order by "herriaLeku", "dataPartidu", "zenbakiMaila", "izenaTalde" asc ',[id, idDenboraldia],function(err,wrows) {    
 
         if(err)
            console.log("Error Selecting : %s ",err );
@@ -1291,7 +1292,7 @@ var kanpokoaPartidu;
             t=0;
 
             eguna = {
-                  dataPartidu    : rows[i].dataPartidu,
+                  dataPartidu    : rows[i].dataPartiduF,
                   egunaTexto   : egunatextobihurtu(rows[i].dataPartidu)
                  // egunIzena : egunIzena
                };
@@ -1397,6 +1398,7 @@ exports.jardunaldiaikusgai = function(req, res){
   var id = req.session.idKirolElkarteak;
   var idDenboraldia = req.session.idDenboraldia;
   var jardunaldia = req.params.jardunaldia;
+      jardunaldia = jardunaldia.substring(0,10);   //postgres
   console.log(jardunaldia);
 
 //postgres  req.getConnection(function(err,connection){
@@ -1600,6 +1602,7 @@ exports.jardunaldikoemaitzakikusi = function(req, res){
   var id = req.session.idKirolElkarteak;
   var idDenboraldia = req.session.idDenboraldia;
   var jardunaldia = req.params.jardunaldia;
+      jardunaldia = jardunaldia.substring(0,10);   //postgres
   console.log("Jardunaldia:" + jardunaldia);
 //postgres  req.getConnection(function(err,connection){
 //postgresConnect  req.connection.connect(function(err,connection){                //postgres 
@@ -1804,6 +1807,7 @@ exports.partiduemaitzaktalde = function(req, res){
 exports.partiduemaitzakadmin = function(req, res){
   var id = req.session.idKirolElkarteak;
   var jardunaldia = req.params.jardunaldia;
+      jardunaldia = jardunaldia.substring(0,10);   //postgres
   var idDenboraldia = req.params.idDenboraldia;
   var idTaldeak = req.params.idTaldeak;
   var admin = (req.path.slice(0,22) == "/admin/partiduemaitzak");
@@ -1951,8 +1955,8 @@ exports.partiduemaitzakgordeadmin = function(req,res){
             arbitraiaPartidu : input.arbitraiaPartidu,
             diruaPartidu : input.diruaPartidu
         };
-        
-        req.connection.query("UPDATE partiduak set ? WHERE idElkarteakPartidu = ? and idPartiduak = ? ",[data,id,idPartidua], function(err, rows)
+//postgres        connection.query("UPDATE partiduak set ? WHERE idElkarteakPartidu = ? and idPartiduak = ? ",[data,id,idPartidua], function(err, rows)
+        req.connection.query('UPDATE partiduak set "emaitzaPartidu"=$1,"arbitraiaPartidu"=$2,"diruaPartidu"=$3 WHERE "idElkarteakPartidu" = $4 and "idPartiduak" = $5 ',[input.emaitzaPartidu,input.arbitraiaPartidu,input.diruaPartidu ,id,idPartidua], function(err, rows)
         {
   
           if (err)
@@ -1986,6 +1990,7 @@ exports.partiduemaitzakgordeadmin = function(req,res){
 exports.ekitaldiakikusi = function(req, res){
   var id = req.session.idKirolElkarteak;
   var jardunaldia = req.params.jardunaldia;
+      jardunaldia = jardunaldia.substring(0,10);   //postgres
   var idDenboraldia = req.params.idDenboraldia;
   req.session.jardunaldia = jardunaldia;
   req.session.idDenboraldia = idDenboraldia;
@@ -2101,6 +2106,7 @@ exports.jardunaldikoekitaldiakbilatu = function(req, res){
   var id = req.session.idKirolElkarteak;
   var idDenboraldia = req.session.idDenboraldia;
   var jardunaldia = req.params.jardunaldia;
+      jardunaldia = jardunaldia.substring(0,10);   //postgres
   console.log("Jardunaldia:" + jardunaldia);
 //postgres  req.getConnection(function(err,connection){
 //postgresConnect  req.connection.connect(function(err,connection){                //postgres 
