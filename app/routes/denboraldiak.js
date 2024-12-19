@@ -53,12 +53,12 @@ exports.denboraldiaksortu = function(req,res){
             egoeraDenb: input.egoeraDenb
         };
         
-  
-        var query = req.connection.query("INSERT INTO denboraldiak set ? ",data, function(err, rows)
+//postgres        var query = req.connection.query("INSERT INTO denboraldiak set ? ",data, function(err, rows)
+        var query = req.connection.query('INSERT INTO denboraldiak ("noiztikDenb","noraDenb","deskribapenaDenb","idElkarteakDenb","egoeraDenb") VALUES ($1,$2,$3,$4,$5)',[input.noiztikDenb,input.noraDenb,input.deskribapenaDenb,id,input.egoeraDenb], function(err, rows)
         {
   
           if (err)
-              console.log("Error inserting : %s ",err );
+              console.log("Error inserting : %s ",err );input.
          
           res.redirect('/admin/denboraldiak');
         });
@@ -91,7 +91,9 @@ exports.denboraldiakopiatu = function(req, res){
             egoeraDenb: rows[0].egoeraDenb
            };
        
-           var query = req.connection.query("INSERT INTO denboraldiak set ? ",data, function(err, rows)
+//postgres           var query = req.connection.query("INSERT INTO denboraldiak set ? ",data, function(err, rows)
+           var query = req.connection.query('INSERT INTO denboraldiak ("noiztikDenb","noraDenb","deskribapenaDenb","idElkarteakDenb","egoeraDenb") VALUES ($1,$2,$3,$4,$5)',[rows[0].noiztikDenb,rows[0].noraDenb,"Denboraldi berria EGOKITU",id,rows[0].egoeraDenb], function(err, rows)
+
            {
             if (err)
               console.log("Error inserting : %s ",err );
@@ -259,9 +261,8 @@ exports.ekintzaksortu = function(req,res){
             idElkarteakEkintza : id,
             idDenboraldiaEkintza : idDenboraldia
         };
-        
-  
-        var query = req.connection.query("INSERT INTO ekintzak set ? ",data, function(err, rows)
+//postgres        var query = req.connection.query("INSERT INTO ekintzak set ? ",data, function(err, rows)
+        var query = req.connection.query('INSERT INTO ekintzak ("motaEkintza","noiztikEkintza","noraEkintza","kontuKorronteEkintza","diruaEkintza","idElkarteakEkintza","idDenboraldiaEkintza") VALUES ($1,$2,$3,$4,$5)',[input.motaEkintza,input.noiztikEkintza,input.noraEkintza,input.kontuKorronteEkintza,input.diruaEkintza,id,idDenboraldia], function(err, rows)
         {
   
           if (err)
@@ -1549,14 +1550,12 @@ exports.partiduakkargatuegin = function(req, res){
             bidaiOrduaPartidu : '00:00:00',
             bidaiaNolaPartidu : bidaiaNola  
           };
-        
-  
-        var query = req.connection.query("INSERT INTO partiduak set ? ",data, function(err, rows)
+//postgres        var query = req.connection.query("INSERT INTO partiduak set ? ",data, function(err, rows)
+        var query = req.connection.query('INSERT INTO partiduak ("idElkarteakPartidu","idDenboraldiaPartidu","idLekuakPartidu","idTaldeakPartidu","jardunaldiaPartidu","jardunaldiDataPartidu","etxekoaPartidu","kanpokoaPartidu","txapelketaPartidu","dataPartidu","orduaPartidu","bidaiOrduaPartidu","bidaiaNolaPartidu") VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)',[id,idDenboraldia,idLekuak,input.idTaldeakPartidu,parseInt(i) + 1,partidua[4],partidua[1],partidua[3],input.txapelketa,partiduanoiz,vOrdua,"00:00:00",bidaiaNola], function(err, rows)
         {
   
           if (err)
               console.log("Error inserting : %s ",err );
-         
           
         }); 
       }
@@ -2217,9 +2216,8 @@ exports.ekitaldiaksortu = function(req,res){
             harmailak: input.harmailak,
             komentarioa: input.komentarioa
         };
-        
-  
-        var query = req.connection.query("INSERT INTO ekitaldiak set ? ",data, function(err, rows)
+//postgres        var query = req.connection.query("INSERT INTO ekitaldiak set ? ",data, function(err, rows)
+        var query = req.connection.query('INSERT INTO ekitaldiak ("idElkarteakEkitaldiak","idPartiduakEkitaldiak","bazkideeguna","bazkideordua","noizarteeguna","noizarteordua","zenbatentzat","bakoitzak","eserlekuak","harmailak","komentarioa") VALUES ($1,$2,$3,$4,$5)',[id,input.idPartiduakEkitaldiak,input.bazkideeguna,input.bazkideordua,input.noizarteeguna,input.noizarteordua,input.zenbatentzat,input.bakoitzak,input.eserlekuak,input.harmailak,input.komentarioa], function(err, rows)
         {
   
           if (err)
@@ -2302,8 +2300,8 @@ exports.ekitaldiakaldatu = function(req,res){
             harmailak: input.harmailak,
             komentarioa: input.komentarioa
         };
-        
-        req.connection.query("UPDATE ekitaldiak set ? WHERE idElkarteakEkitaldiak = ? and idEkitaldiak = ? ",[data,id,idEkitaldiak], function(err, rows)
+//postgres        connection.query("UPDATE ekitaldiak set ? WHERE idElkarteakEkitaldiak = ? and idEkitaldiak = ? ",[data,id,idEkitaldiak], function(err, rows)
+        req.connection.query('UPDATE ekitaldiak set bazkideeguna=$1,bazkideordua=$2,noizarteeguna=$3,noizarteordua=$4,zenbatentzat=$5,bakoitzak=$6,eserlekuak=$7,harmailak=$8,komentarioa=$9 WHERE "idElkarteakEkitaldiak" = $10 and "idEkitaldiak" = $11 ',[input.bazkideeguna,input.bazkideordua,input.noizarteeguna,input.noizarteordua,input.zenbatentzat,input.bakoitzak,input.eserlekuak,input.harmailak,input.komentarioa,id,idEkitaldiak], function(err, rows)
         {
   
           if (err)
@@ -3131,9 +3129,8 @@ exports.ikusleaksortu = function(req,res){
 //         console.log ("data : " +JSON.stringify(data));
 
         datak[0] = data;
-        
-  
-        var query = req.connection.query("INSERT INTO ikusleak set ? ",data, function(err, rowsi)
+//postgres        var query = req.connection.query("INSERT INTO ikusleak set ? ",data, function(err, rowsi)  
+        var query = req.connection.query('INSERT INTO ikusleak set ? ',data, function(err, rowsi)
         {
   
          if (err)
@@ -3228,7 +3225,7 @@ exports.sarrerakbalidatu = function(req,res){
       
         };
         
-        req.connection.query("UPDATE ikusleak set ? WHERE idEkitaldiakIkusle = ? and idIkusleak = ? and balidatuta = 0" ,[data, idEkitaldiak,idIkusleak], function(err, rowsu)
+        req.connection.query('UPDATE ikusleak set balidatuta = $1 WHERE "idEkitaldiakIkusle" = $2 and "idIkusleak" = $3 and balidatuta = $4' ,[1, idEkitaldiak,idIkusleak,0], function(err, rowsu)
         {
   
           if (err)
@@ -3403,8 +3400,8 @@ exports.ikusleakaldatu = function(req,res){
         };
 
 //        console.log ("dataU : " +JSON.stringify(data));
-        
-        req.connection.query("UPDATE ikusleak set ? WHERE idElkarteakIkusle = ? and idIkusleak = ? ",[data,id,idIkusleak], function(err, rows)
+//postgres        connection.query("UPDATE ikusleak set ? WHERE idElkarteakIkusle = ? and idIkusleak = ? ",[data,id,idIkusleak], function(err, rows)
+        req.connection.query('UPDATE ikusleak set ? WHERE "idElkarteakIkusle" = $2 and "idIkusleak" = $3 ',[data,id,idIkusleak], function(err, rows)
         {
   
           if (err)

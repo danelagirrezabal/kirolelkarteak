@@ -36,8 +36,8 @@ exports.aukeratzeko = function(req, res){
 
 //postgres  req.getConnection(function(err,connection){
 //postgresConnect  req.connection.connect(function(err,connection){                //postgres
-      if (err)
-              console.log("Error connection : %s ",err );
+//postgresConnect      if (err)
+//postgresConnect              console.log("Error connection : %s ",err );
       //Txapelketa bat pruebetako ixkutatuta idKirolElkarteak != 42
 //postgres      connection.query('SELECT idElkarteak, izenaElk FROM elkarteak',function(err,rows)  {
       req.connection.query('SELECT "idElkarteak", "izenaElk" FROM elkarteak',function(err,wrows)  {        
@@ -91,8 +91,8 @@ exports.sortu = function(req,res){
 //postgres  req.getConnection(function(err,connection){
 //postgresConnect  req.connection.connect(function(err,connection){                //postgres
       //2016-05-31
-      if (err)
-              console.log("Error connection : %s ",err ); 
+//postgresConnect      if (err)
+//postgresConnect              console.log("Error connection : %s ",err ); 
             //
 //postgres      connection.query('SELECT * FROM elkarteak where izenaElk = ?',[req.body.izenaElk],function(err,rows)  {
       req.connection.query('SELECT * FROM elkarteak where "izenaElk" = $1',[req.body.izenaElk],function(err,wrows)  {
@@ -129,7 +129,7 @@ exports.sortu = function(req,res){
 
         };
 //postgres        var query = connection.query("INSERT INTO elkarteak set ? ",data, function(err, rows)        
-        var query = req.connection.query("INSERT INTO elkarteak set $1 ",data, function(err, wrows)
+        var query = req.connection.query('INSERT INTO elkarteak("izenaElk","ifz","helbideaElk","postaKodeaElk","herriaElk","telefonoaElk","emailElk") VALUES ($1,$2,$3,$4,$5,$6,$7) ',[input.izenaElk,input.ifz,input.helbideaElk,input.postaKodeaElk,input.herriaElk,input.telefonoaElk,input.emailElk], function(err, wrows)
         {
           if (err)
               console.log("Error inserting : %s ",err ); 
@@ -156,7 +156,7 @@ exports.sortu = function(req,res){
         debugger;
         console.log(data);
 //postgres        var query = connection.query("INSERT INTO partaideak set ? ",data, function(err, rows)
-        var query = req.connection.query("INSERT INTO partaideak set $1 ",data, function(err, wrows)          
+        var query = req.connection.query('INSERT INTO partaideak("izenaPart","abizena1Part","helbideaPart","postaKodeaPart","herriaPart","telefonoaPart","emailPart","idElkarteakPart","jaiotzeDataPart","pasahitzaPart","balidatutaPart") VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) ',[input.izenaPart,input.izenaElk,input.helbideaElk,input.postaKodeaElk,input.herriaElk,input.telefonoaElk,input.emailElk,idKirolElkarteak,now,password_hash,"admin"], function(err, wrows)          
         {
          rows = wrows.rows;     //postgres
           if (err)
@@ -271,7 +271,7 @@ exports.berriaksortu = function(req,res){
         };
         
 //postgres        var query = connection.query("INSERT INTO berriak set ? ",data, function(err, rows)  
-        var query = req.connection.query("INSERT INTO berriak set $1 ",data, function(err, rows)
+        var query = req.connection.query('INSERT INTO berriak("izenburuaBerria","testuaBerria","dataBerria","idElkarteakBerria","zenbakiBerria") VALUES ($1,$2,$3,$4,$5) ',[input.izenburuaBerria,input.testuaBerria,now,id,0], function(err, rows)
         {
   
           if (err)
@@ -450,9 +450,8 @@ exports.edukiaksortu = function(req,res){
             zenbakiEdukia: input.zenbakiEdukia
         };
 //postgres        var query = connection.query("INSERT INTO edukiak set ? ",data, function(err, rows)        
-        var query = req.connection.query("INSERT INTO edukiak set $1 ",data, function(err, rows)
+        var query = req.connection.query('INSERT INTO edukiak("izenburuaEdukia","testuaEdukia","dataEdukia","idElkarteakEdukia","idAzpiAtalakEdukia","zenbakiEdukia") VALUES ($1,$2,$3,$4,$5,$6) ',[input.izenburuaEdukia,input.testuaEdukia,now,id,idAzpiAtalak,input.zenbakiEdukia], function(err, rows)
         {
-  
           if (err)
               console.log("Error inserting : %s ",err );
          
@@ -518,7 +517,7 @@ exports.edukiakosoriksortu = function(req,res){
             zenbakiAtala: 0
         };  
 //postgres        var query = connection.query("INSERT INTO atalak set ? ",dataatala, function(err, rows)  
-        var query = req.connection.query("INSERT INTO atalak set $1 ",dataatala, function(err, rows)
+        var query = req.connection.query('INSERT INTO atalak("izenaAtala","idElkarteakAtala","zenbakiAtala") VALUES ($1,$2,$3) ',[input.izenaAtala,id,0], function(err, rows)
         {
   
           if (err)
@@ -533,7 +532,7 @@ exports.edukiakosoriksortu = function(req,res){
             zenbakiAzpiAtala: 0
           };
 //postgres          var query = connection.query("INSERT INTO azpiAtalak set ? ",dataazpiatala, function(err, rows)
-          var query = req.connection.query("INSERT INTO azpiAtalak set $1 ",dataazpiatala, function(err, rows)
+          var query = req.connection.query('INSERT INTO azpiAtalak("izenaAzpiAtala","idElkarteakAzpiAtala","idAtalakAzpiAtala","zenbakiAzpiAtala") VALUES ($1,$2,$3,$4)',[input.izenaAzpiAtala,id,rows.insertId,0], function(err, rows)
           {
   
                 if (err)
@@ -549,7 +548,7 @@ exports.edukiakosoriksortu = function(req,res){
                     zenbakiEdukia: 0
                 };
 //postgres                var query = connection.query("INSERT INTO edukiak set ? ",dataedukia, function(err, rows)
-                var query = req.connection.query("INSERT INTO edukiak set $1 ",dataedukia, function(err, rows)
+                var query = req.connection.query('INSERT INTO edukiak("izenburuaEdukia","testuaEdukia","dataEdukia","idElkarteakEdukia","idAzpiAtalakEdukia","zenbakiEdukia") VALUES ($1,$2,$3,$4,$5,$6) ',[input.izenburuaEdukia,input.testuaEdukia,now,id,idAzpiAtalak,input.zenbakiEdukia], function(err, rows) 
                 {
   
                   if (err)
@@ -591,10 +590,9 @@ exports.edukiakosoriksortu = function(req,res){
 
             }
 //postgres            var query = connection.query("INSERT INTO edukiak set ? ",dataedukia, function(err, rows)
-            var query = req.connection.query("INSERT INTO edukiak set $1 ",dataedukia, function(err, rows)
+            var query = req.connection.query('INSERT INTO edukiak("izenburuaEdukia","testuaEdukia","dataEdukia","idElkarteakEdukia","idAzpiAtalakEdukia","zenbakiEdukia") VALUES ($1,$2,$3,$4,$5,$6) ',[input.izenburuaEdukia,input.testuaEdukia,now,id,input.azpiAtalak,0], function(err, rows) 
             {
-  
-                if (err)
+                  if (err)
                     console.log("Error inserting : %s ",err );
 
                 if (input.bidali){
@@ -1231,7 +1229,7 @@ exports.atalaksortu = function(req,res){
         };
         
 //postgres        var query = connection.query("INSERT INTO atalak set ? ",data, function(err, rows)  
-        var query = req.connection.query("INSERT INTO atalak set $1 ",data, function(err, rows)
+        var query = req.connection.query('INSERT INTO atalak("izenaAtala","idElkarteakAtala","zenbakiAtala") VALUES ($1,$2,$3) ',[input.izenaAtala,id,input.zenbakiAtala], function(err, rows)
         {
   
           if (err)
@@ -1409,7 +1407,7 @@ exports.azpiAtalaksortu = function(req,res){
         };
         
 //postgres        var query = connection.query("INSERT INTO azpiAtalak set ? ",data, function(err, rows)  
-        var query = req.connection.query("INSERT INTO azpiAtalak set $1 ",data, function(err, rows)
+        var query = req.connection.query('INSERT INTO azpiAtalak("izenaAzpiAtala","idElkarteakAzpiAtala","idAtalakAzpiAtala","zenbakiAzpiAtala") VALUES ($1,$2,$3,$4)',[input.izenaAzpiAtala,id,idAtalak,input.zenbakiAzpiAtala], function(err, rows)
         {
   
           if (err)
@@ -1617,9 +1615,8 @@ exports.agiriaksortu = function(req,res){
             idElkarteakAgiria : id,
             idDenboraldiaAgiria : idDenboraldia
         };
-        
-  
-        var query = req.connection.query("INSERT INTO agiriak set ? ",[data], function(err, rows)
+//postgres        var query = req.connection.query("INSERT INTO agiriak set ? ",[data], function(err, rows)  
+        var query = req.connection.query('INSERT INTO agiriak("atalaAgiria","izenaAgiria","urlAgiria","dataAgiria","publikoAgiria","idElkarteakAgiria","idDenboraldiaAgiria") VALUES ($1,$2,$3,$4,$5,$6,$7)',[input.atalaAgiria,input.izenaAgiria,input.urlAgiria,now,publikoa,id,idDenboraldia], function(err, rows)
         {
   
           if (err)
@@ -2099,7 +2096,7 @@ exports.mantenimentu = function(req, res){
         
             };
         
-            req.connection.query("UPDATE taldeak set ? WHERE idtaldeak = ?  ",[data,rows[i].idtaldeak], function(err, rows)
+            req.connection.query('UPDATE taldeak set "balidatuta" =$1 WHERE "idtaldeak" = $2  ',[1,rows[i].idtaldeak], function(err, rows)
             {
                 if(err)
                   console.log("Error Updating : %s ",err );
@@ -2205,9 +2202,8 @@ exports.lekuaksortu = function(req,res){
             zenbakiLeku : input.zenbakiLeku,
             idElkarteakLeku    : id
         };
-        
-        console.log(data);
-        var query = req.connection.query("INSERT INTO lekuak set ? ",data, function(err, rows)
+//postgres        var query = req.connection.query("INSERT INTO lekuak set ? ",data, function(err, rows)
+        var query = req.connection.query('INSERT INTO lekuak("izenaLeku","helbideaLeku","herriaLeku","zenbakiLeku","idElkarteakLeku") VALUES ($1,$2,$3,$4,$5) ',[input.izenaLeku,input.helbideaLeku,input.herriaLeku,input.zenbakiLeku,id], function(err, rows)
         {
   
           if (err)
@@ -2337,15 +2333,12 @@ exports.mailaksortu = function(req,res){
             akronimoMaila   : input.akronimoMaila,
             idElkarteakMaila    : id
         };
-        
-        console.log(data);
-        var query = req.connection.query("INSERT INTO mailak set ? ",data, function(err, rows)
+//postgres        var query = req.connection.query("INSERT INTO mailak set ? ",data, function(err, rows)
+        var query = req.connection.query('INSERT INTO mailak("izenaMaila","generoMaila","zenbakiMaila","akronimoMaila","idElkarteakMaila") VALUES ($1,$2,$3,$4,$5) ',[input.izenaMaila,input.generoMaila,input.zenbakiMaila,input.akronimoMaila,id], function(err, rows)
         {
-  
           if (err)
               console.log("Error inserting : %s ",err );
-             res.redirect('/admin/mailak');
-          
+          res.redirect('/admin/mailak');
         });
     
 //postgresConnect    });
@@ -2453,14 +2446,13 @@ exports.partaidemotaksortu = function(req,res){
 //postgresConnect    req.connection.connect(function(err,connection){                //postgres
         
         var data = {
-            
             deskribapenMota : input.deskribapenMota,
             zenbakiMota : input.zenbakiMota,
             idElkarteakPartaideMotak    : id
         };
         
         console.log(data);
-        var query = req.connection.query("INSERT INTO partaideMotak set ? ",data, function(err, rows)
+        var query = req.connection.query('INSERT INTO partaideMotak("deskribapenMota","zenbakiMota","idElkarteakPartaideMotak") VALUES ($1,$2,$3) ',[input.deskribapenMota,input.zenbakiMota,id], function(err, rows)
         {
   
           if (err)
@@ -2572,9 +2564,8 @@ exports.ordaintzekoeraksortu = function(req,res){
             deskribapenaOrdainEra : input.deskribapenaOrdainEra,
             idElkarteakOrdaintzekoErak    : id
         };
-        
-        console.log(data);
-        var query = req.connection.query("INSERT INTO ordaintzekoErak set ? ",data, function(err, rows)
+//postgres        var query = req.connection.query("INSERT INTO ordaintzekoErak set ? ",data, function(err, rows)
+        var query = req.connection.query('INSERT INTO ordaintzekoErak("deskribapenaOrdainEra","idElkarteakOrdaintzekoErak") VALUES ($1,$2)',[input.deskribapenaOrdainEra,id], function(err, rows)
         {
   
           if (err)

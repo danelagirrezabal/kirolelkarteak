@@ -151,11 +151,9 @@ exports.taldeaksortu = function(req,res){
             idElkarteakTalde : id
             //idDenboraldiaEkintza : idDenboraldia
         };
-        
-  
-        var query = req.connection.query("INSERT INTO taldeak set ? ",data, function(err, rows)
+//postgres        var query = req.connection.query("INSERT INTO taldeak set ? ",data, function(err, rows)
+        var query = req.connection.query('INSERT INTO taldeak("izenaTalde","idMailaTalde","akronimoTalde","arduradunEmailTalde","idArduradunTalde","urlSailkapenTalde","federazioaTalde","idDenboraldiaTalde","idElkarteakTalde") VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)',[input.izenaTalde,input.idMailaTalde,input.akronimoTalde,input.arduradunEmailTalde,input.idArduradunTalde,input.urlSailkapenTalde,input.federazioaTalde,input.idDenboraldiaTalde,id], function(err, rows)
         {
-  
           if (err)
               console.log("Error inserting : %s ",err );
          
@@ -356,11 +354,9 @@ exports.taldeakkopiatuegin = function(req, res){
             idElkarteakTalde : id
             //idDenboraldiaEkintza : idDenboraldia
         };
-        
-  
-        var query = req.connection.query("INSERT INTO taldeak set ?",[data], function(err, rows)
+//postgres        var query = req.connection.query("INSERT IN)TO taldeak set ?",[data], function(err, rows)  
+        var query = req.connection.query('INSERT INTO taldeak("izenaTalde","idMailaTalde","akronimoTalde","arduradunEmailTalde","idArduradunTalde","urlSailkapenTalde","federazioaTalde","idDenboraldiaTalde","idElkarteakTalde") VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)',[rowstaldeak[i].izenaTalde,rowstaldeak[i].idMailaTalde,rowstaldeak[i].akronimoTalde,rowstaldeak[i].arduradunEmailTalde,rowstaldeak[i].idArduradunTalde,rowstaldeak[i].urlSailkapenTalde,rowstaldeak[i].federazioaTalde,idDenboraldiaNora,id], function(err, rows)
         {
-  
           if (err)
               console.log("Error inserting : %s ",err );
 
@@ -993,7 +989,8 @@ exports.taldekideaksortu = function(req,res){
             idElkarteakKide : id
         };
  
-        var query = req.connection.query("INSERT INTO taldekideak set ? ",data, function(err, rows)
+//postgres        var query = req.connection.query("INSERT INTO taldekideak set ? ",data, function(err, rows)
+        var query = req.connection.query('INSERT INTO taldekideak ("materialaKide","ordaintzekoKide","ordaindutaKide","kamixetaZenbKide","idMotaKide","idTaldeakKide","idPartaideakKide","bazkideZenbKide","idElkarteakKide") VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)',[input.materialaKide,input.ordainduKide,input.ordaintzekoKide,input.ordaindutaKide,input.kamixetaZenbKide,input.idMotaKide,idTaldeak,input.idPartaideakKide,input.bazkideZenbKide,id], function(err, rows)
         {
   
             if (err)
@@ -1265,8 +1262,8 @@ exports.taldekideakkopiatuegin = function(req, res){
             ordaintzekoKide: ordaintzeko
         };
         
-  
-        var query = req.connection.query("INSERT INTO taldekideak set ? ",data, function(err, rows)
+//postgres        var query = req.connection.query("INSERT INTO taldekideak set ? ",data, function(err, rows)
+        var query = req.connection.query('INSERT INTO taldekideak ("idMotaKide","idTaldeakKide","idPartaideakKide","bazkideZenbKide","idElkarteakKide","ordaintzekoKide") VALUES ($1,$2,$3,$4,$5,$6)',[taldekide[1],idTaldeak,taldekide[0],taldekide[2],id,ordaintzeko], function(err, rows)
         {
   
           if (err)
@@ -1357,7 +1354,8 @@ exports.taldekideakbazkideegin = function(req, res){
               dataBazk : now
             };
 
-            var query = req.connection.query("INSERT INTO bazkideak set ? ",data, function(err, rows)
+//postgres            var query = req.connection.query("INSERT INTO bazkideak set ? ",data, function(err, rows)
+          var query = req.connection.query('INSERT INTO bazkideak ("idMotaBazk","idDenboraldiaBazk","idPartaideakBazk","ordainduBazk","idOrdaintzekoEraBazk","idElkarteakBazkide","dataBazk") VALUES ($1,$2,$3,$4,$5,$6,$7)',[rows[0].idMotaKide,idDenboraldia,rows[0].idPartaideakKide,"EZ",12,id,now], function(err, rows)
            {
   
             if (err)

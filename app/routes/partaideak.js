@@ -647,8 +647,8 @@ exports.sortu = function(req,res){
 //ADI              balidatutaPart : "0"
               balidatutaPart : "1"
             };
-
-            var query = req.connection.query("INSERT INTO partaideak set ? ",data, function(err, rows)
+//postgres         var query = req.connection.query("INSERT INTO partaideak set ? ",data, function(err, rows)
+            var query = req.connection.query('INSERT INTO partaideak(idMotaPart,izenaPart,abizena1Part,abizena2Part,bazkideZenbPart,helbideaPart,postaKodeaPart,nanPart,herriaPart,telefonoaPart,emailPart,idElkarteakPart,jaiotzeDataPart,sexuaPart,pasahitzaPart,berezitasunakPart,idOrdaintzekoEraPart,kontuZenbPart,kontuIbanPart,balidatutaPart) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$8,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20) ',[input.idMotaPart,input.izenaPart,input.abizena1Part,input.abizena2Part,input.bazkideZenbPart,input.helbideaPart,input.postaKodeaPart,input.nanPart,input.herriaPart,input.telefonoaPart,input.emailPart,id,input.jaiotzeDataPart,input.sexuaPart,password_hash,input.berezitasunakPart,input.idOrdaintzekoEraPart,input.kontuZenbPart,input.kontuIbanPart,"1"], function(err, rows)
            {
   
             if (err)
@@ -1257,9 +1257,9 @@ exports.partaideakkargatuegin = function(req, res){
             berezitasunakPart : partaidea[16],
             idMotaPart : partaidea[17] 
           };
-        
-  
-        var query = req.connection.query("INSERT INTO partaideak set ? ",data, function(err, rows)
+
+//postgres         var query = req.connection.query("INSERT INTO partaideak set ? ",data, function(err, rows)
+        var query = req.connection.query('INSERT INTO partaideak("izenaPart","abizena1Part","abizena2Part","nanPart","bazkideZenbPart","jaiotzeDataPart","helbideaPart","telefonoaPart","herriaPart","postaKodeaPart","emailPart","kontuZenbPart","idOrdaintzekoEraPart","idElkarteakPart","balidatutaPart","pasahitzaPart","sexuaPart","berezitasunakPart","idMotaPart") VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$8,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19) ',[partaidea[0],partaidea[1],partaidea[2],partaidea[3],partaidea[4],partaidea[5],partaidea[6],partaidea[7],partaidea[8],partaidea[9],partaidea[10],partaidea[11],partaidea[12],id,partaidea[13],password_hash,partaidea[15],partaidea[16],partaidea[17]], function(err, rows)
         {
          if (err)
               console.log("Error inserting : %s ",err );
@@ -1284,7 +1284,9 @@ exports.partaideakkargatuegin = function(req, res){
             idElkarteakKide : id
            };
        
-           var query = req.connection.query("INSERT INTO taldekideak set ? ",data, function(err, rows)
+//postgres           var query = req.connection.query("INSERT INTO taldekideak set ? ",data, function(err, rows)
+        var query = req.connection.query('INSERT INTO taldekideak ("ordaintzekoKide","idMotaKide","idTaldeakKide","idPartaideakKide","idElkarteakKide") VALUES ($1,$2,$3,$4,$5)',[rowst[0].kuotaDenb,partaidea[17],idTaldeakPartaide,rows.insertId,id], function(err, rows)
+
              {
   
               if (err)
@@ -1490,8 +1492,8 @@ exports.bazkideaksortu = function(req,res){
               idElkarteakBazkide: id,
               dataBazk : now
             };
-
-            var query = req.connection.query("INSERT INTO bazkideak set ? ",data, function(err, rows)
+//postgres            var query = req.connection.query("INSERT INTO bazkideak set ? ",data, function(err, rows)
+          var query = req.connection.query('INSERT INTO bazkideak ("idMotaBazk","idDenboraldiaBazk","idPartaideakBazk","ordainduBazk","idOrdaintzekoEraBazk","idElkarteakBazkide","dataBazk") VALUES ($1,$2,$3,$4,$5,$6,$7)',[rows[0].idMotaPart,idDenboraldia,idPartaideak,"EZ",rows[0].idOrdaintzekoEraPart,id,now], function(err, rows)
            {
   
             if (err)
